@@ -1,6 +1,10 @@
-/** Lightweight Vercel relay. Model files and OpenAI secrets stay in the Python service. */
+import { createCloudHandler } from "../lib/cloud.js";
+
+/** Direct serverless RAG with PostgreSQL, or the original container relay. */
 export default {
   async fetch(request) {
+    if (process.env.CLOUD_DATABASE_URL || process.env.SUPABASE_DATABASE_URL)
+      return createCloudHandler()(request);
     const route = new URL(request.url).pathname.split("/").pop();
     const allowed =
       route === "chat" ? "POST" : route === "status" ? "GET" : null;

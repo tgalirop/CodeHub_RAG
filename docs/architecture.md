@@ -116,10 +116,26 @@ questions. Keep some questions held out from tuning.
 
 The implemented interface follows Code.Hub's inspected palette and original logo,
 with source cards, suggested questions and streaming replies. It identifies itself
-as an independent portfolio demo. Static UI assets and a small Node.js relay are
-prepared for Vercel; the existing Python retriever runs in a separate container.
-The local preview is served by FastAPI. See deployment instructions for the hosting
-split and browser-verification limit.
+as an independent portfolio demo. The local preview is served by FastAPI.
+The recommended cloud mode runs the complete chat API in Vercel Node.js, with
+Neon PostgreSQL/pgvector and OpenAI query embeddings; no Python process or ONNX
+model runs in the serverless function. The original container relay remains optional.
+
+Cloud corpus embeddings use `text-embedding-3-small` at 384 dimensions. They live
+in a separate `rag_cloud` schema and cannot be mixed with local E5 vectors.
+The offline publisher stores N, average length, per-chunk lengths, DF/IDF and
+Lucene BM25 term/chunk weights in PostgreSQL. Online search sums saved postings
+for query terms and fuses them with exact cosine candidates at canonical-page level.
+It never rebuilds the corpus index per request. Generated tokenizer/glossary JSON
+and a fingerprint keep the Python publisher and Node runtime compatible.
+
+Publication validates corpus hashes, embedding completeness and row counts before
+atomically activating a snapshot. All search statements pin the same snapshot ID.
+Durable SQL request reservations cap public demo API calls across serverless workers
+and retain hashed address counters for two days; conversation history remains local
+to the browser. These limits are not an exact spending cap or full user authentication.
+The historical E5 development benchmark is not a benchmark for the new API model.
+See deployment instructions for the provisioning steps and verification limits.
 
 ## Primary references
 

@@ -6,6 +6,7 @@ ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy PYTHONUNBUFFERED=1
 COPY pyproject.toml uv.lock README.md ./
 COPY src ./src
 COPY db ./db
+COPY cloud ./cloud
 COPY web/public ./web/public
 RUN uv sync --locked --no-dev --no-editable && \
     useradd --create-home --uid 10001 app

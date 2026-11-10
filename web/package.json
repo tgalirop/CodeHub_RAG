@@ -9,5 +9,8 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "postgres": "4.1.0"
   }
 }

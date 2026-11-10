@@ -42,3 +42,4 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.hatch.build.targets.wheel.force-include]
 "db" = "codehub_rag/sql"
 "web/public" = "codehub_rag/web"
+"cloud" = "codehub_rag/cloud_sql"

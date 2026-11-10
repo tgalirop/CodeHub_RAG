@@ -5,6 +5,8 @@ __pycache__/
 .ruff_cache/
 *.egg-info/
 .env
+.env.*
+!.env.example
 data/*
 !data/.gitkeep
 reports/local/

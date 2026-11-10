@@ -16,10 +16,13 @@ The branded UI uses real hybrid retrieval and streams OpenAI answers with source
 citations. Configure `OPENAI_API_KEY` only in the root `.env`; without it the UI
 clearly shows source-only preview results. Conversation history stays in the browser.
 
-For Vercel, import the repository with **Root Directory `web`**. The frontend and
-Node.js relay deploy there; the Python RAG service runs in a separate container.
-See [complete deployment instructions](docs/deployment.md) for environment variables,
-database/artifact transfer and the hosting split.
+For personal demo hosting, use **Vercel + Neon Free**, with **Root Directory `web`**.
+The Node.js API performs hybrid retrieval directly against hosted PostgreSQL;
+BM25 weights/statistics are persisted in the database and no local model is bundled.
+OpenAI embeddings and answers are charged separately from hosting.
+See [complete deployment instructions](docs/deployment.md) for export, resumable
+API embeddings, atomic database publication and Vercel environment variables.
+The original Python-container relay remains available as an alternative.
 
 See [chatbot validation](reports/chat-validation-2026-11-10.md) for live API checks,
 automated tests, Linux container validation and the browser-verification limit.
@@ -55,8 +58,11 @@ Implemented and runnable:
 - Activate validated, immutable snapshots atomically; verify artifact checksums on load.
 - Preserve original Code.Hub logo and source color tokens under `assets/brand/`.
 
-**Implemented chat layer:** FastAPI streaming API, OpenAI Responses with source
-citations, branded responsive UI and Vercel Node.js relay. CLI search commands
+**Implemented chat layer:** FastAPI local preview, OpenAI Responses with source
+citations, branded responsive UI and a direct Vercel Node.js/PostgreSQL hybrid API.
+The cloud mode uses `text-embedding-3-small` (384 dimensions), a private `rag_cloud`
+schema, persisted BM25 postings, atomic snapshots and durable demo request limits.
+Cloud provisioning/data upload are separate from deploying the frontend. CLI search commands
 continue returning source passages. Cross-encoder reranking and independent
 answer-quality evaluation remain next milestones.
 
