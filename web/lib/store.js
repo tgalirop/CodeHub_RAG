@@ -56,6 +56,30 @@ export function createStore(sql) {
           await tx`SELECT rag_cloud.reserve_request(${clientHash},${daily},${hourly}) AS allowed`;
         return row.allowed;
       }),
+    catalogueCount: (snapshot) =>
+      transaction(async (tx) => {
+        const [count] = await tx`SELECT count(DISTINCT url)::integer AS total
+        FROM rag_cloud.chunks WHERE snapshot_id=${snapshot.id} AND 'course'=ANY(categories)`;
+        const rows =
+          await tx`SELECT url,title,body AS text,heading_path,categories,warnings,fetched_at
+        FROM rag_cloud.chunks WHERE snapshot_id=${snapshot.id}
+        AND url='https://codehub.gr/training-programs/' ORDER BY id`;
+        const matches = rows.flatMap((row) =>
+          [...row.text.matchAll(/\b(\d+)\s+courses?\b/gi)].map((match) => ({
+            total: Number(match[1]),
+            row,
+          })),
+        );
+        const totals = new Set(matches.map((match) => match.total));
+        if (totals.size !== 1) return null;
+        const { total, row } = matches[0];
+        // The published catalogue is authoritative if indexed page coverage differs.
+        return {
+          total,
+          indexed_courses: count.total,
+          source: { ...row, id: 1 },
+        };
+      }),
     search: (snapshot, query, vector, kind = null) =>
       transaction(async (tx) => {
         const literal = JSON.stringify(vector);

@@ -2,6 +2,7 @@ import { createHmac } from "node:crypto";
 import { database, createStore } from "./store.js";
 import { contextualQuery, expandQuery } from "./lexical.js";
 import { embed, answer, ProviderError } from "./provider.js";
+import { isCatalogueCount, catalogueAnswer } from "./catalogue.js";
 
 const HEADERS = {
   "Cache-Control": "no-store, no-transform",
@@ -177,6 +178,18 @@ export function createCloudHandler({
         try {
           emit("stage", { stage: "searching" });
           const start = performance.now();
+          const question = parsed.payload.messages.at(-1).content;
+          if (isCatalogueCount(question)) {
+            const summary = await store.catalogueCount(snapshot);
+            signal.throwIfAborted();
+            emit("sources", {
+              sources: summary ? [summary.source] : [],
+              retrieval_ms: Math.round(performance.now() - start),
+            });
+            emit("delta", { text: catalogueAnswer(summary, question) });
+            emit("done", { mode: "catalogue", usage: null });
+            return;
+          }
           const query = expandQuery(contextualQuery(parsed.payload.messages));
           const vector = await embed(
             query,

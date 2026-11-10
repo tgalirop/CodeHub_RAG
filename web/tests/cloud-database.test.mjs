@@ -40,6 +40,7 @@ test(
       assert.ok(filtered.every((s) => s.categories.includes("course")));
       const absent = await store.search(snapshot, "training", vector, "post");
       assert.equal(absent.length, 0);
+      assert.equal(await store.catalogueCount(snapshot), null);
       const decisions = await Promise.all(
         Array.from({ length: 5 }, () =>
           store.reserve("integration-test", 100, 2),

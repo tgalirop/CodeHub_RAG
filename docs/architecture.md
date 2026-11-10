@@ -145,6 +145,16 @@ The cloud answer path first checks answerability with a strict structured verdic
 and validates its source IDs. Unsupported questions receive fixed text; the free-form
 answer generator sees only approved passages. The check adds an API call and can
 still make mistakes, so generated answers require evaluation against the source.
+General questions asking how many trainings/courses exist use a separate catalogue
+count path. The site's generic Trainings navigation refers to the Training Programs
+course catalogue; scheduled training events are a separate listing. The API counts
+distinct course URLs in the pinned snapshot and reads the published catalogue total
+from its stored source text. The catalogue's explicit number is authoritative if
+indexed page coverage differs. The cited answer is formatted without paid model
+calls. Qualified questions about subjects, dates or registration status are excluded
+from this whole-catalogue shortcut. Retrieval prompts also prohibit estimating total
+counts from a limited set of passages or source IDs.
+
 See deployment instructions for the provisioning steps and verification limits.
 
 ## Primary references
