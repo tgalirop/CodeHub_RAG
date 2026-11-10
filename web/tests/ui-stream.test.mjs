@@ -4,18 +4,18 @@ import { readFile } from "node:fs/promises";
 import { webcrypto } from "node:crypto";
 import vm from "node:vm";
 import { parseHTML } from "linkedom";
+import { citedSources } from "../public/citations.js";
 
 const html = await readFile(
   new URL("../public/index.html", import.meta.url),
   "utf8",
 );
-const script = await readFile(
-  new URL("../public/app.js", import.meta.url),
-  "utf8",
-);
+const script = (
+  await readFile(new URL("../public/app.js", import.meta.url), "utf8")
+).replace('import { citedSources } from "./citations.js";', "");
 const tick = () => new Promise((resolve) => setImmediate(resolve));
 
-async function preview() {
+async function preview(history = []) {
   const { document } = parseHTML(html);
   // LinkeDOM does not implement the browser's select.value setter or layout metrics.
   Object.defineProperty(document.querySelector("#kind"), "value", {
@@ -45,7 +45,8 @@ async function preview() {
     crypto: webcrypto,
     innerWidth: 1280,
     navigator: {},
-    localStorage: { getItem: () => null, setItem: () => {} },
+    localStorage: { getItem: () => JSON.stringify(history), setItem: () => {} },
+    citedSources,
     URL,
     AbortController,
     TextDecoder,
@@ -166,4 +167,61 @@ test("stream follows the bottom but respects scrolling up, including completion"
   ui.flush();
   assert.equal(ui.scroll.scrollTop, 20);
   assert.equal(ui.writes(), before);
+});
+
+test("retrieved candidates stay hidden until cited, including split streamed citations", async () => {
+  const ui = await preview();
+  const complete = vm.runInContext("send('Contact?')", ui.context);
+  ui.flush();
+  const sources = [1, 2, 3].map((id) => ({
+    id,
+    title: `Source ${id}`,
+    url: `https://codehub.gr/${id}/`,
+  }));
+  await ui.emit("sources", { sources });
+  assert.equal(ui.document.querySelectorAll(".source-card").length, 0);
+  await ui.emit("delta", { text: "Phone number [" });
+  assert.equal(ui.document.querySelectorAll(".source-card").length, 0);
+  await ui.emit("delta", { text: "3]." });
+  assert.equal(ui.document.querySelectorAll(".source-card").length, 1);
+  assert.ok(ui.document.getElementById("source-3"));
+  const card = ui.document.getElementById("source-3");
+  await ui.emit("delta", { text: " More details." });
+  assert.equal(ui.document.getElementById("source-3"), card);
+  await ui.emit("sources", { sources: [sources[2]] });
+  await ui.emit("done", { mode: "openai" });
+  ui.finish();
+  await complete;
+  ui.flush();
+  assert.equal(ui.document.querySelectorAll(".source-chip").length, 1);
+  assert.equal(
+    ui.document.querySelector(".source-chip").textContent,
+    "3 · Source 3",
+  );
+});
+
+test("saved conversations also hide retrieved but uncited source cards and chips", async () => {
+  const sources = [1, 2].map((id) => ({
+    id,
+    title: `Source ${id}`,
+    url: `https://codehub.gr/${id}/`,
+  }));
+  const ui = await preview([
+    {
+      id: "saved-chat",
+      title: "Saved",
+      messages: [
+        { role: "user", content: "Contact?" },
+        {
+          role: "assistant",
+          content: "Contact details [2].",
+          sources,
+          mode: "openai",
+        },
+      ],
+    },
+  ]);
+  assert.equal(ui.document.querySelectorAll(".source-card").length, 1);
+  assert.ok(ui.document.getElementById("source-2"));
+  assert.equal(ui.document.querySelectorAll(".source-chip").length, 1);
 });

@@ -4,6 +4,7 @@ import {
   evidenceInput,
   unsupportedAnswer,
 } from "./grounding.js";
+import { citedSources } from "../public/citations.js";
 
 export class ProviderError extends Error {
   constructor(status) {
@@ -145,14 +146,15 @@ export async function* answer(payload, sources, env, signal, fetcher = fetch) {
     await response.body?.cancel();
     throw new ProviderError(response.status);
   }
-  let wroteText = false;
+  let text = "";
   for await (const update of readEvents(response.body)) {
     if (update.type === "response.output_text.delta") {
       if (typeof update.delta !== "string") throw new Error("invalid_delta");
-      wroteText ||= update.delta.length > 0;
+      text += update.delta;
       yield ["delta", { text: update.delta }];
     } else if (update.type === "response.completed") {
-      if (!wroteText) throw new Error("empty_answer");
+      if (!text) throw new Error("empty_answer");
+      yield ["sources", { sources: citedSources(text, supported) }];
       const usage = update.response?.usage;
       yield [
         "done",

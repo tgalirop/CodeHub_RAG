@@ -1,3 +1,5 @@
+import { citedSources } from "./citations.js";
+
 const ICONS = {
   plus: "M12 5v14M5 12h14",
   grid: "M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z",
@@ -69,6 +71,11 @@ try {
       )
       .slice(0, 8);
 } catch {}
+// Older saved chats may contain every retrieved candidate. Display only citations.
+for (const conversation of conversations)
+  for (const message of conversation.messages)
+    if (message.role === "assistant")
+      message.sources = citedSources(message.content, message.sources || []);
 const fresh = () => ({
   id: crypto.randomUUID(),
   kind: "",
@@ -477,6 +484,20 @@ function historyPayload(messages) {
   while (items.reduce((n, m) => n + m.content.length, 0) > 20000) items.shift();
   return items;
 }
+function updateCitedSources(message, candidates) {
+  const selected = citedSources(message.content, candidates);
+  if (
+    selected.length === message.sources.length &&
+    selected.every(
+      (source, index) =>
+        source.id === message.sources[index].id &&
+        source.url === message.sources[index].url,
+    )
+  )
+    return false;
+  message.sources = selected;
+  return true;
+}
 async function send(question, retry = false) {
   if (busy) {
     controller?.abort();
@@ -513,6 +534,7 @@ async function send(question, retry = false) {
   renderSources([]);
   schedule(true);
   let finished = false;
+  let candidates = [];
   try {
     const response = await fetch("/api/chat", {
       method: "POST",
@@ -559,15 +581,15 @@ async function send(question, retry = false) {
         } catch {
           continue;
         }
+        let sourcesChanged = false;
         if (name === "stage") responseMessage.stage = data.stage;
         else if (name === "sources") {
-          responseMessage.sources = Array.isArray(data.sources)
-            ? data.sources
-            : [];
-          if (current.id === target.id) renderSources(responseMessage.sources);
-        } else if (name === "delta" && typeof data.text === "string")
+          candidates = Array.isArray(data.sources) ? data.sources : [];
+          sourcesChanged = updateCitedSources(responseMessage, candidates);
+        } else if (name === "delta" && typeof data.text === "string") {
           responseMessage.content += data.text;
-        else if (name === "done") {
+          sourcesChanged = updateCitedSources(responseMessage, candidates);
+        } else if (name === "done") {
           responseMessage.mode = data.mode;
           finished = true;
         } else if (name === "error") {
@@ -575,7 +597,10 @@ async function send(question, retry = false) {
             data.message || "Δεν ολοκληρώθηκε η απάντηση.";
           finished = true;
         }
-        if (current.id === target.id) schedule();
+        if (current.id === target.id) {
+          if (sourcesChanged) renderSources(responseMessage.sources);
+          schedule();
+        }
       }
       if (done) break;
     }

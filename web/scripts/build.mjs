@@ -4,6 +4,7 @@ for (const path of [
   "public/index.html",
   "public/styles.css",
   "public/app.js",
+  "public/citations.js",
   "public/brand/codehub.svg",
   "api/[route].js",
   "lib/cloud.js",
