@@ -8,3 +8,7 @@ __pycache__/
 data/*
 !data/.gitkeep
 reports/local/
+node_modules/
+.vercel/
+.env.local
+.env.*.local

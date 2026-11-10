@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="el">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#1d1036" />
+    <meta
+      name="description"
+      content="Γνώρισε την Code.Hub. Εκπαίδευση, καριέρα και υπηρεσίες για την ομάδα σου, με απαντήσεις από τις πραγματικές πηγές του site."
+    />
+    <title>Code.Hub — Your next step, connected.</title>
+    <link rel="icon" href="/brand/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#question">Πήγαινε στην ερώτηση</a>
+    <div class="app-shell">
+      <button
+        class="nav-scrim"
+        id="nav-scrim"
+        aria-label="Κλείσιμο μενού"
+        tabindex="-1"
+      ></button>
+      <aside class="sidebar" id="sidebar" aria-label="Κύρια πλοήγηση">
+        <a class="brand" href="/" aria-label="Code.Hub Assistant — αρχική"
+          ><img
+            src="/brand/codehub.svg"
+            alt="Code.Hub"
+            width="166"
+            height="28"
+          /><span>YOUR NEXT STEP, CONNECTED.</span></a
+        >
+        <button class="new-chat" id="new-chat">
+          <span data-icon="plus"></span>Νέα συνομιλία<span class="key-hint"
+            >↗</span
+          >
+        </button>
+        <p class="nav-label">ΕΞΕΡΕΥΝΗΣΕ</p>
+        <nav class="topic-nav" aria-label="Ενότητες">
+          <button class="topic active" data-kind="">
+            <span data-icon="grid"></span>Όλα για την Code.Hub<span
+              class="topic-dot"
+            ></span>
+          </button>
+          <button class="topic" data-kind="course">
+            <span data-icon="book"></span>Εκπαίδευση & skills
+          </button>
+          <button class="topic" data-kind="job">
+            <span data-icon="briefcase"></span>Καριέρα & ευκαιρίες
+          </button>
+          <button class="topic" data-kind="page">
+            <span data-icon="people"></span>Λύσεις για επιχειρήσεις
+          </button>
+          <button class="topic" data-kind="training">
+            <span data-icon="calendar"></span>Προγράμματα & events
+          </button>
+        </nav>
+        <div class="recent-heading">
+          <p class="nav-label">ΟΙ ΣΥΝΟΜΙΛΙΕΣ ΣΟΥ</p>
+          <span id="recent-count">0</span>
+        </div>
+        <div class="recent-list" id="recent-list">
+          <p class="recent-empty">
+            Η επόμενη ιδέα σου<br />ξεκινά με μια ερώτηση.
+          </p>
+        </div>
+        <div class="sidebar-bottom">
+          <div class="sidebar-quote">
+            <span class="quote-mark">“</span>
+            <p>Technology growth<br />is built around <em>people.</em></p>
+          </div>
+          <a
+            class="visit-site"
+            href="https://codehub.gr/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Γνώρισε την Code.Hub<span data-icon="external"></span
+          ></a>
+          <div class="demo-label"><span></span>Ανεξάρτητο portfolio demo</div>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div class="topbar-left">
+            <button
+              id="nav-toggle"
+              class="icon-button mobile-menu"
+              aria-label="Άνοιγμα πλοήγησης"
+              aria-expanded="false"
+            >
+              <span data-icon="menu"></span></button
+            ><span class="app-name">Code.Hub <span>Assistant</span></span
+            ><span class="version-pill">BETA</span>
+          </div>
+          <div class="topbar-right">
+            <span class="status" id="status"><i></i><span>Σύνδεση…</span></span
+            ><button
+              class="icon-button"
+              id="about-button"
+              aria-label="Σχετικά με τον βοηθό"
+            >
+              <span data-icon="info"></span>
+            </button>
+          </div>
+        </header>
+
+        <div class="workspace">
+          <section class="conversation" aria-label="Συνομιλία με τον βοηθό">
+            <div class="chat-scroll" id="chat-scroll">
+              <div class="welcome" id="welcome">
+                <div class="welcome-eyebrow">
+                  <span class="brand-mark" aria-hidden="true"
+                    ><i></i><i></i><i></i></span
+                  >Η ΤΕΧΝΟΛΟΓΙΑ ΞΕΚΙΝΑ ΑΠΟ ΤΟΥΣ ΑΝΘΡΩΠΟΥΣ.
+                </div>
+                <h1>Ρώτησέ μας.<br />Προχώρα <span>μπροστά.</span></h1>
+                <p class="welcome-intro">
+                  Γεια σου! Είμαι ο βοηθός της Code.Hub.
+                </p>
+                <p class="welcome-description">
+                  Εκπαίδευση, καριέρα ή η επόμενη τεχνολογική σου ομάδα.<br
+                    class="desktop-break"
+                  />
+                  Βρες αυτό που χρειάζεσαι, με πηγές από το codehub.gr.
+                </p>
+                <div class="suggestions" id="suggestions">
+                  <button
+                    class="suggestion"
+                    data-question="Τι μαθήματα προσφέρει η Code.Hub για AI και Python;"
+                  >
+                    <div class="suggestion-top">
+                      <span data-icon="book"></span><span>01 / LEARN</span
+                      ><span data-icon="arrow-up-right"></span>
+                    </div>
+                    <strong>Χτίσε το επόμενο skill σου</strong
+                    ><span>Μαθήματα, AI και νέες τεχνολογίες</span>
+                  </button>
+                  <button
+                    class="suggestion"
+                    data-question="Ποιες θέσεις εργασίας για Java developers υπάρχουν στην Code.Hub;"
+                  >
+                    <div class="suggestion-top">
+                      <span data-icon="briefcase"></span><span>02 / GROW</span
+                      ><span data-icon="arrow-up-right"></span>
+                    </div>
+                    <strong>Κάνε το επόμενο βήμα</strong
+                    ><span>Ευκαιρίες για την καριέρα σου</span>
+                  </button>
+                  <button
+                    class="suggestion"
+                    data-question="Πώς μπορεί η Code.Hub να βοηθήσει στην εκπαίδευση της ομάδας μου;"
+                  >
+                    <div class="suggestion-top">
+                      <span data-icon="people"></span><span>03 / BUILD</span
+                      ><span data-icon="arrow-up-right"></span>
+                    </div>
+                    <strong>Δώσε ώθηση στην ομάδα σου</strong
+                    ><span>Εκπαίδευση και λύσεις για επιχειρήσεις</span>
+                  </button>
+                  <button
+                    class="suggestion"
+                    data-question="Πώς μπορώ να επικοινωνήσω με την Code.Hub;"
+                  >
+                    <div class="suggestion-top">
+                      <span data-icon="message"></span><span>04 / CONNECT</span
+                      ><span data-icon="arrow-up-right"></span>
+                    </div>
+                    <strong>Ας ξεκινήσουμε μια συζήτηση</strong
+                    ><span>Βρες πώς θα έρθεις σε επαφή</span>
+                  </button>
+                </div>
+              </div>
+              <div
+                class="messages"
+                id="messages"
+                role="log"
+                aria-label="Μηνύματα συνομιλίας"
+                aria-live="polite"
+                aria-relevant="additions"
+              ></div>
+            </div>
+            <div class="composer-area">
+              <div class="mode-note" id="mode-note" hidden>
+                Η αναζήτηση πηγών είναι ενεργή. Η σύνθεση απαντήσεων AI
+                περιμένει σύνδεση με OpenAI.
+              </div>
+              <form class="composer" id="chat-form">
+                <label class="sr-only" for="question"
+                  >Η ερώτησή σου για την Code.Hub</label
+                >
+                <textarea
+                  id="question"
+                  rows="1"
+                  maxlength="1500"
+                  placeholder="Τι θα ήθελες να μάθεις για την Code.Hub;"
+                  autocomplete="off"
+                ></textarea>
+                <div class="composer-bottom">
+                  <div class="composer-context">
+                    <span class="small-mark" aria-hidden="true"
+                      ><i></i><i></i><i></i></span
+                    ><label class="sr-only" for="kind"
+                      >Περιορισμός αναζήτησης</label
+                    ><select id="kind">
+                      <option value="">Όλες οι ενότητες</option>
+                      <option value="course">Εκπαίδευση & skills</option>
+                      <option value="job">Καριέρα & ευκαιρίες</option>
+                      <option value="page">Υπηρεσίες & εταιρεία</option>
+                      <option value="training">Προγράμματα & events</option>
+                    </select>
+                  </div>
+                  <div class="composer-controls">
+                    <span class="input-hint">Enter <span>↵</span></span
+                    ><button
+                      id="send"
+                      class="send-button"
+                      type="submit"
+                      aria-label="Αποστολή ερώτησης"
+                      disabled
+                    >
+                      <span data-icon="arrow-up"></span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+              <p class="composer-footnote">
+                Με πηγές από την Code.Hub. Επιβεβαίωσε ημερομηνίες και
+                διαθεσιμότητα στο site.
+              </p>
+            </div>
+          </section>
+
+          <aside
+            class="source-panel"
+            id="source-panel"
+            aria-label="Πηγές της απάντησης"
+          >
+            <div class="panel-heading">
+              <span class="panel-eyebrow">ΑΠΟ ΤΟ CODEHUB.GR</span
+              ><span class="panel-icon" data-icon="layers"></span>
+            </div>
+            <div id="source-empty" class="source-empty">
+              <h2>Η πληροφορία,<br />στην πηγή της<span>.</span></h2>
+              <p>
+                Κάθε απάντηση σε φέρνει πιο κοντά στις πραγματικές πληροφορίες
+                της Code.Hub.
+              </p>
+              <div class="source-principles">
+                <div>
+                  <span data-icon="link"></span>
+                  <p>
+                    <strong>Δες από πού προέρχεται</strong
+                    ><span>Άνοιξε τις πηγές κάθε απάντησης.</span>
+                  </p>
+                </div>
+                <div>
+                  <span data-icon="globe"></span>
+                  <p>
+                    <strong>Ρώτα όπως σε βολεύει</strong
+                    ><span>Στα ελληνικά ή στα αγγλικά.</span>
+                  </p>
+                </div>
+                <div>
+                  <span data-icon="compass"></span>
+                  <p>
+                    <strong>Βρες τη δική σου διαδρομή</strong
+                    ><span>Skills, καριέρα και επιχειρήσεις.</span>
+                  </p>
+                </div>
+              </div>
+              <div class="brand-art" aria-hidden="true">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <span>People. Technology. Connected.</span>
+              </div>
+            </div>
+            <div id="source-results" hidden>
+              <div class="sources-title">
+                <h2>Πηγές απάντησης</h2>
+                <span id="source-count">0</span>
+              </div>
+              <p class="source-description">
+                Οι σελίδες που βρήκε ο βοηθός για την ερώτησή σου.
+              </p>
+              <div id="source-cards"></div>
+            </div>
+            <div class="source-footer">
+              <span class="live-dot"></span
+              ><span id="corpus-label">Συνδεδεμένο με το codehub.gr</span>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+    <div class="toast" id="toast" role="status" hidden></div>
+    <dialog id="about-dialog">
+      <button class="dialog-close icon-button" aria-label="Κλείσιμο">
+        <span data-icon="close"></span></button
+      ><span class="dialog-eyebrow">CODE.HUB ASSISTANT</span>
+      <h2>Μια ερώτηση πιο κοντά<br />στο επόμενο βήμα σου.</h2>
+      <p>
+        Ο βοηθός αναζητά πληροφορίες στον ιστότοπο της Code.Hub και συνδέει την
+        απάντηση με τις πηγές της.
+      </p>
+      <p>
+        Πρόκειται για ανεξάρτητο portfolio demo, όχι για επίσημη υπηρεσία της
+        Code.Hub. Δεν υποβάλλει αιτήσεις και δεν πραγματοποιεί κρατήσεις.
+      </p>
+      <a href="https://codehub.gr/" target="_blank" rel="noopener noreferrer"
+        >Επίσημος ιστότοπος ↗</a
+      >
+    </dialog>
+  </body>
+</html>

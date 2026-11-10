@@ -8,6 +8,18 @@ permissions:
   contents: read
 
 jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: node --check web/public/app.js
+      - run: node web/scripts/build.mjs
+      - run: node --test web/tests/proxy.test.mjs
   test:
     runs-on: ubuntu-latest
     steps:

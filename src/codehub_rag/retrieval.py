@@ -205,7 +205,13 @@ def reciprocal_rank_fusion(
 class SearchEngine:
     """Load one immutable snapshot and BM25 index once per worker/session."""
 
-    def __init__(self, connection, embedder, snapshot_id: str | None = None):
+    def __init__(
+        self,
+        connection,
+        embedder,
+        snapshot_id: str | None = None,
+        artifact_root: Path | None = None,
+    ):
         self.connection = connection
         self.embedder = embedder
         if snapshot_id:
@@ -223,7 +229,8 @@ class SearchEngine:
         if row["manifest"].get("model_config") != embedder.config:
             raise ValueError("Query model configuration differs from snapshot configuration")
         self.snapshot_id = row["id"]
-        self.lexical = LexicalIndex(Path(row["bm25_artifact_path"]), row["bm25_artifact_sha256"])
+        directory = artifact_root / row["id"] if artifact_root else Path(row["bm25_artifact_path"])
+        self.lexical = LexicalIndex(directory, row["bm25_artifact_sha256"])
         if (
             self.lexical.manifest["snapshot_id"] != row["id"]
             or self.lexical.manifest["config"] != row["manifest"]

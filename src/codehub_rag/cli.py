@@ -32,6 +32,9 @@ def main() -> int:
         sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description="Code.Hub site audit and ingestion prototype")
     commands = parser.add_subparsers(dest="command", required=True)
+    serve_parser = commands.add_parser("serve", help="Start the local chatbot and FastAPI service")
+    serve_parser.add_argument("--host", default="127.0.0.1")
+    serve_parser.add_argument("--port", type=positive, default=8000)
     audit = commands.add_parser("audit", help="Discover sitemap URLs and extract a sample")
     audit.add_argument("--output", type=Path, default=Path("data/runs"))
     audit.add_argument(
@@ -98,6 +101,13 @@ def main() -> int:
     if getattr(args, "delay", 0) < 0:
         parser.error("--delay must be >= 0")
     try:
+        if args.command == "serve":
+            import uvicorn
+
+            if args.port > 65535:
+                parser.error("Port must be <= 65535")
+            uvicorn.run("codehub_rag.api:app", host=args.host, port=args.port)
+            return 0
         if args.command in {"migrate", "load", "model-download", "index", "search", "evaluate"}:
             return retrieval_command(args, parser)
         if args.command == "report":
