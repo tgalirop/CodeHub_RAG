@@ -218,7 +218,8 @@ Website → inventory → extraction → versioned chunks
 Question → bilingual glossary + multilingual embedding + lexical tokenization
          → dense retrieval + BM25 → canonical-page RRF → source passages
 
-Next: cross-encoder reranker → grounded LLM answer → branded chat interface
+Current web: source passages → grounded LLM answer → branded chat interface
+Planned: cross-encoder reranking before answer generation
 ```
 
 BM25 corpus statistics and weights are persisted during indexing. SearchEngine

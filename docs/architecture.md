@@ -47,7 +47,7 @@ details from the common footer are retained once on the Contact page.
 - Planned: typed job/course/training filters beyond the current category filter.
 - Planned: conditional HTTP requests and source retirement after complete crawls.
 - An existing page is not proof that its job/training is active. Source status and
-  dates remain evidence for the future answer layer to interpret.
+  dates remain evidence for the chat answer layer to interpret.
 
 Database imports are transactions, while embedding batches are committed separately
 so completed work can be reused after an interrupted index build. No pages are
@@ -92,8 +92,9 @@ vectors are filtered out by snapshot membership. Existing search sessions keep t
 pinned snapshot until restarted; they do not mix new vectors with old BM25 files.
 
 The current CLI returns passages, URLs, fetch timestamps and source warnings, not
-generated answers. The future answer layer must cite sources and acknowledge missing
-evidence. Retrieved webpage
+generated answers. The implemented FastAPI chat layer streams OpenAI Responses
+answers, with instructions to cite source IDs and acknowledge missing evidence.
+Those instructions are not a guarantee of correctness. Retrieved webpage
 text is untrusted reference material, never instructions to the assistant. Handle
 follow-up questions using conversation context without losing named entities or
 user filters. Display fetch dates for time-sensitive information.
@@ -113,9 +114,12 @@ using Recall@k/MRR, then assess citation correctness, unsupported answers, laten
 and per-question cost. Include exact technical terms and plausible but unanswerable
 questions. Keep some questions held out from tuning.
 
-The interface will follow the current Code.Hub visual identity using inspected
-colors and original logo assets, with source cards and sample questions. Identify
-it as an independent portfolio demo. The current milestone has no chat interface.
+The implemented interface follows Code.Hub's inspected palette and original logo,
+with source cards, suggested questions and streaming replies. It identifies itself
+as an independent portfolio demo. Static UI assets and a small Node.js relay are
+prepared for Vercel; the existing Python retriever runs in a separate container.
+The local preview is served by FastAPI. See deployment instructions for the hosting
+split and browser-verification limit.
 
 ## Primary references
 
