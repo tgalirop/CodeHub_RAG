@@ -10,11 +10,11 @@ Existing Supabase PostgreSQL projects are also supported by the same code.
 ```text
 Browser -> Vercel /api/chat -> OpenAI query embedding
                           -> PostgreSQL: pgvector + persisted BM25 -> page RRF
-                          -> OpenAI Responses -> streamed answer + source citations
+                          -> evidence check -> streamed answer + source citations
 ```
 
 Hosting can stay within the providers' Free/Hobby quotas for a personal demo.
-OpenAI embeddings and answers are metered separately, including the initial corpus
+OpenAI embeddings, evidence checks and answers are metered separately, including the initial corpus
 embedding run. Free hosting is not a guarantee of unlimited usage or availability.
 Vercel Hobby is for personal, non-commercial use. Review the current
 [Vercel Hobby terms](https://vercel.com/docs/plans/hobby) and
@@ -70,7 +70,12 @@ local E5 database tables are untouched. Repeating publication is idempotent.
 
 The application reads saved BM25 weights; it does not retokenize the corpus,
 rebuild BM25 statistics, download models or crawl pages per user question.
-Only question tokenization, query embedding, candidate search and fusion run online.
+Only question tokenization, query embedding, candidate search, fusion and answer
+generation run online. Before generating a free-form answer, a structured Responses
+check must identify supporting source IDs for a Code.Hub question. Unsupported
+questions receive a fixed localized response, with irrelevant source cards cleared.
+Malformed/incomplete verdicts fail closed. This additional model call adds latency
+and API usage, and is still a fallible model check, not a guarantee of factual accuracy.
 At 2,481 chunks exact cosine search avoids an approximate-index recall tradeoff.
 
 ### 3. Configure the existing Vercel project
@@ -83,7 +88,7 @@ In **Settings -> Environment Variables**, set these for **Production**:
 | --- | --- |
 | `CLOUD_DATABASE_URL` | The same pooled PostgreSQL URI |
 | `OPENAI_API_KEY` | A valid, rotated key, kept only server-side |
-| `OPENAI_MODEL` | `gpt-6-luna`, or another Responses model your account can access |
+| `OPENAI_MODEL` | `gpt-6-luna`, or another Responses model with structured outputs your account can access |
 | `RAG_DAILY_LIMIT` | `100` by default, across all visitors |
 | `RAG_HOURLY_IP_LIMIT` | `20` by default, per hashed address per UTC hour |
 | `RAG_RATE_LIMIT_SALT` | Optional long random secret for stable address hashing |

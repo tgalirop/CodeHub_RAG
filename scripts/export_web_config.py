@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from codehub_rag.chat import INSTRUCTIONS
+from codehub_rag.chat import GATE_INSTRUCTIONS, INSTRUCTIONS
 from codehub_rag.cloud import lexical_config
 
 parser = argparse.ArgumentParser(description=__doc__)
@@ -13,7 +13,7 @@ args = parser.parse_args()
 root = Path(__file__).resolve().parents[1] / "web/lib"
 for name, value in {
     "search-config.json": lexical_config(),
-    "chat-config.json": {"instructions": INSTRUCTIONS},
+    "chat-config.json": {"instructions": INSTRUCTIONS, "gate_instructions": GATE_INSTRUCTIONS},
 }.items():
     content = json.dumps(value, ensure_ascii=False, indent=2) + "\n"
     path = root / name

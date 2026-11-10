@@ -1,3 +1,10 @@
+import {
+  gateRequest,
+  parseVerdict,
+  evidenceInput,
+  unsupportedAnswer,
+} from "./grounding.js";
+
 export class ProviderError extends Error {
   constructor(status) {
     super("provider_unavailable");
@@ -69,14 +76,43 @@ export async function* readEvents(body) {
 export async function* answer(payload, sources, env, signal, fetcher = fetch) {
   const model = env.OPENAI_MODEL || "gpt-6-luna";
   const history = payload.messages.slice(-9, -1);
-  const evidence = sources.map((s) => ({
-    source: s.id,
-    url: s.url,
-    title: s.title,
-    fetched_at: s.fetched_at,
-    warnings: s.warnings,
-    text: s.text.slice(0, 4500),
-  }));
+  const gateResponse = await fetcher("https://api.openai.com/v1/responses", {
+    method: "POST",
+    signal,
+    headers: {
+      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(gateRequest(payload, sources, model)),
+  });
+  if (!gateResponse.ok) {
+    await gateResponse.body?.cancel();
+    throw new ProviderError(gateResponse.status);
+  }
+  const verdict = parseVerdict(await gateResponse.json(), sources);
+  if (!verdict.answerable) {
+    yield ["sources", { sources: [] }];
+    yield [
+      "delta",
+      { text: unsupportedAnswer(payload.messages.at(-1).content) },
+    ];
+    yield [
+      "done",
+      {
+        mode: "openai",
+        usage: verdict.usage
+          ? {
+              input_tokens: verdict.usage.input_tokens,
+              output_tokens: verdict.usage.output_tokens,
+            }
+          : null,
+      },
+    ];
+    return;
+  }
+  const supported = sources.filter((source) =>
+    verdict.source_ids.includes(source.id),
+  );
   const { default: config } = await import("./chat-config.json", {
     with: { type: "json" },
   });
@@ -94,11 +130,7 @@ export async function* answer(payload, sources, env, signal, fetcher = fetch) {
         ...history,
         {
           role: "user",
-          content: JSON.stringify({
-            question: payload.messages.at(-1).content,
-            today_utc: new Date().toISOString().slice(0, 10),
-            WEBSITE_EVIDENCE: evidence,
-          }),
+          content: JSON.stringify(evidenceInput(payload, supported)),
         },
       ],
       stream: true,
@@ -128,8 +160,10 @@ export async function* answer(payload, sources, env, signal, fetcher = fetch) {
           mode: "openai",
           usage: usage
             ? {
-                input_tokens: usage.input_tokens,
-                output_tokens: usage.output_tokens,
+                input_tokens:
+                  usage.input_tokens + (verdict.usage?.input_tokens || 0),
+                output_tokens:
+                  usage.output_tokens + (verdict.usage?.output_tokens || 0),
               }
             : null,
         },

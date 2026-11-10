@@ -45,6 +45,22 @@ const makeStore = (overrides = {}) => ({
   ...overrides,
 });
 const frame = (value) => `data: ${JSON.stringify(value)}\r\n\r\n`;
+const gateResult = (answerable = true, ids = [1]) =>
+  Response.json({
+    status: "completed",
+    output: [
+      {
+        type: "message",
+        content: [
+          {
+            type: "output_text",
+            text: JSON.stringify({ answerable, source_ids: ids }),
+          },
+        ],
+      },
+    ],
+    usage: { input_tokens: 30, output_tokens: 8 },
+  });
 
 test("Greek accents and technical terms, contextual followups and diverse RRF", () => {
   assert.deepEqual(tokens("Η Εκπαίδευση C# C++ .NET Node.js Java JavaScript"), [
@@ -140,11 +156,18 @@ test("direct API streams grounded sources, deltas and usage without exposing sec
   const calls = [];
   const handler = createCloudHandler({
     env,
-    getStore: () => makeStore(),
+    getStore: () =>
+      makeStore({
+        search: async () => [
+          source,
+          { ...source, id: 2, text: "UNSUPPORTED_DISTRACTOR" },
+        ],
+      }),
     fetcher: async (url, options) => {
       calls.push({ url, body: JSON.parse(options.body) });
       if (url.endsWith("embeddings"))
         return Response.json({ data: [{ embedding: Array(384).fill(0.1) }] });
+      if (!JSON.parse(options.body).stream) return gateResult();
       return new Response(
         frame({
           type: "response.output_text.delta",
@@ -168,6 +191,12 @@ test("direct API streams grounded sources, deltas and usage without exposing sec
   assert.equal(calls[1].body.store, false);
   assert.match(calls[1].body.instructions, /untrusted/);
   assert.match(calls[1].body.input.at(-1).content, /WEBSITE_EVIDENCE/);
+  assert.equal(calls[1].body.text.format.strict, true);
+  assert.equal(calls[2].body.stream, true);
+  assert.doesNotMatch(
+    calls[2].body.input.at(-1).content,
+    /UNSUPPORTED_DISTRACTOR/,
+  );
 });
 
 test("provider failure, incomplete stream and missing cloud state are sanitized", async () => {
@@ -189,10 +218,12 @@ test("provider failure, incomplete stream and missing cloud state are sanitized"
     const handler = createCloudHandler({
       env,
       getStore: () => makeStore(),
-      fetcher: async (url) =>
+      fetcher: async (url, options) =>
         url.endsWith("embeddings")
           ? Response.json({ data: [{ embedding: Array(384).fill(0.1) }] })
-          : failure,
+          : !JSON.parse(options.body).stream
+            ? gateResult()
+            : failure,
     });
     const output = await (await handler(request())).text();
     assert.match(output, /event: error/);
@@ -213,6 +244,49 @@ test("SSE parser handles split UTF-8, CRLF and multi-line data", async () => {
   const events = [];
   for await (const event of readEvents(stream)) events.push(event);
   assert.deepEqual(events, [{ type: "test", text: "Ελλάδα" }]);
+});
+
+test("unsupported questions never reach the free-form answer generator", async () => {
+  let calls = 0;
+  const handler = createCloudHandler({
+    env,
+    getStore: () => makeStore(),
+    fetcher: async (url, options) => {
+      calls++;
+      if (url.endsWith("embeddings"))
+        return Response.json({ data: [{ embedding: Array(384).fill(0.1) }] });
+      assert.equal(JSON.parse(options.body).stream, undefined);
+      return gateResult(false, []);
+    },
+  });
+  const output = await (
+    await handler(
+      request({
+        messages: [{ role: "user", content: "What is the capital of France?" }],
+      }),
+    )
+  ).text();
+  assert.equal(calls, 2);
+  assert.match(output, /couldn't find evidence/);
+  assert.doesNotMatch(output, /Paris/);
+  assert.match(output, /data: \{"sources":\[\]\}/);
+  assert.match(output, /event: done/);
+});
+
+test("invalid evidence verdicts fail closed before answer generation", async () => {
+  for (const verdict of [gateResult(true, [999]), gateResult(true, [])]) {
+    const handler = createCloudHandler({
+      env,
+      getStore: () => makeStore(),
+      fetcher: async (url) =>
+        url.endsWith("embeddings")
+          ? Response.json({ data: [{ embedding: Array(384).fill(0.1) }] })
+          : verdict,
+    });
+    const output = await (await handler(request())).text();
+    assert.match(output, /event: error/);
+    assert.doesNotMatch(output, /event: delta|event: done/);
+  }
 });
 
 test("client stop cancels the in-flight provider request", async () => {

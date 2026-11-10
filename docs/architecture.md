@@ -135,6 +135,10 @@ Durable SQL request reservations cap public demo API calls across serverless wor
 and retain hashed address counters for two days; conversation history remains local
 to the browser. These limits are not an exact spending cap or full user authentication.
 The historical E5 development benchmark is not a benchmark for the new API model.
+The cloud answer path first checks answerability with a strict structured verdict
+and validates its source IDs. Unsupported questions receive fixed text; the free-form
+answer generator sees only approved passages. The check adds an API call and can
+still make mistakes, so generated answers require evaluation against the source.
 See deployment instructions for the provisioning steps and verification limits.
 
 ## Primary references
