@@ -118,8 +118,10 @@ The implemented interface follows Code.Hub's inspected palette and original logo
 with source cards, suggested questions and streaming replies. It identifies itself
 as an independent portfolio demo. Cards and chips display only known source IDs
 cited in the answer text, including during streaming and when loading older saved
-conversations. Citation-like text inside code examples is excluded; source numbers
-are preserved. The cloud API also sends the final cited subset before completion.
+conversations. Citation-like text inside code examples is excluded. The UI numbers
+citations consecutively by first mention, with matching labels in answer text,
+source cards, chips and copied text. Raw evidence IDs remain unchanged in stored
+messages and API results. The cloud API sends the final cited subset before completion.
 The local preview is served by FastAPI.
 The recommended cloud mode runs the complete chat API in Vercel Node.js, with
 Neon PostgreSQL/pgvector and OpenAI query embeddings; no Python process or ONNX

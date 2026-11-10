@@ -1,4 +1,4 @@
-import { citedSources } from "./citations.js";
+import { citedSources, numberedCitations } from "./citations.js";
 
 const ICONS = {
   plus: "M12 5v14M5 12h14",
@@ -163,7 +163,7 @@ function renderRecent() {
       current = c;
       setKind(c.kind || "");
       renderMessages();
-      renderSources(lastAssistant()?.sources || []);
+      renderSources(displayAnswer(lastAssistant()).sources);
       renderRecent();
       closeNav();
     };
@@ -190,6 +190,9 @@ function renderRecent() {
 }
 function lastAssistant() {
   return [...current.messages].reverse().find((m) => m.role === "assistant");
+}
+function displayAnswer(message) {
+  return numberedCitations(message?.content || "", message?.sources || []);
 }
 function showSources(sources, id) {
   renderSources(sources);
@@ -336,7 +339,10 @@ function renderMessages() {
       view.failure !== m.error;
     view.box.classList.toggle("pending", !!m.pending);
     view.mode.hidden = m.mode !== "sources" || !!m.pending;
-    if (contentChanged) markdown(view.body, m.content, m.sources || []);
+    if (contentChanged) {
+      view.display = displayAnswer(m);
+      markdown(view.body, view.display.text, view.display.sources);
+    }
     view.status.hidden = !m.pending;
     const label =
       m.stage === "answering"
@@ -352,13 +358,13 @@ function renderMessages() {
       view.actions.replaceChildren();
     }
     if (footerChanged && m.sources?.length && !m.pending) {
-      for (const s of m.sources) {
+      for (const s of view.display.sources) {
         const b = el(
           "button",
           "source-chip",
           `${s.id} · ${s.title.split(" | ")[0]}`,
         );
-        b.onclick = () => showSources(m.sources, s.id);
+        b.onclick = () => showSources(view.display.sources, s.id);
         view.chips.append(b);
       }
     }
@@ -368,7 +374,7 @@ function renderMessages() {
         copy.append(icon("copy"), document.createTextNode("Αντιγραφή"));
         copy.onclick = async () => {
           try {
-            await navigator.clipboard.writeText(m.content);
+            await navigator.clipboard.writeText(view.display.text);
             toast("Η απάντηση αντιγράφηκε.");
           } catch {
             toast("Δεν ήταν δυνατή η αντιγραφή.");
@@ -598,7 +604,8 @@ async function send(question, retry = false) {
           finished = true;
         }
         if (current.id === target.id) {
-          if (sourcesChanged) renderSources(responseMessage.sources);
+          if (sourcesChanged)
+            renderSources(displayAnswer(responseMessage).sources);
           schedule();
         }
       }
@@ -717,6 +724,6 @@ $("#source-panel").prepend(closeSources);
 setKind(current.kind || "");
 renderRecent();
 renderMessages();
-renderSources(lastAssistant()?.sources || []);
+renderSources(displayAnswer(lastAssistant()).sources);
 controls();
 refreshStatus();

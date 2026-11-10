@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { citedSources } from "../public/citations.js";
+import { citedSources, numberedCitations } from "../public/citations.js";
 import { answer } from "../lib/provider.js";
 
 const sources = [1, 2, 3].map((id) => ({
@@ -30,6 +30,35 @@ test("citation examples inside inline/fenced code are not counted", () => {
   assert.deepEqual(
     citedSources(text, sources).map((s) => s.id),
     [3],
+  );
+});
+
+test("display labels follow first mention and preserve evidence identity", () => {
+  const evidence = [1, 2, 3, 4, 5].map((id) => ({
+    id,
+    url: `https://codehub.gr/${id}/`,
+  }));
+  const raw = "Training [2]. Skills [5]. Contact [1]. Again [2]. Unknown [99].";
+  const result = numberedCitations(raw, evidence);
+  assert.equal(
+    result.text,
+    "Training [1]. Skills [2]. Contact [3]. Again [1]. Unknown [99].",
+  );
+  assert.deepEqual(
+    result.sources.map((s) => [s.id, s.url]),
+    [
+      [1, "https://codehub.gr/2/"],
+      [2, "https://codehub.gr/5/"],
+      [3, "https://codehub.gr/1/"],
+    ],
+  );
+  assert.deepEqual(
+    evidence.map((s) => s.id),
+    [1, 2, 3, 4, 5],
+  );
+  assert.equal(
+    numberedCitations("Example `[2]`\n```\n[5]\n```\nFact [5]", evidence).text,
+    "Example `[2]`\n```\n[5]\n```\nFact [1]",
   );
 });
 

@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import { webcrypto } from "node:crypto";
 import vm from "node:vm";
 import { parseHTML } from "linkedom";
-import { citedSources } from "../public/citations.js";
+import { citedSources, numberedCitations } from "../public/citations.js";
 
 const html = await readFile(
   new URL("../public/index.html", import.meta.url),
@@ -12,11 +12,16 @@ const html = await readFile(
 );
 const script = (
   await readFile(new URL("../public/app.js", import.meta.url), "utf8")
-).replace('import { citedSources } from "./citations.js";', "");
+).replace(
+  'import { citedSources, numberedCitations } from "./citations.js";',
+  "",
+);
 const tick = () => new Promise((resolve) => setImmediate(resolve));
 
 async function preview(history = []) {
-  const { document } = parseHTML(html);
+  const { document, HTMLElement } = parseHTML(html);
+  HTMLElement.prototype.scrollIntoView = () => {};
+  let clipboard = null;
   // LinkeDOM does not implement the browser's select.value setter or layout metrics.
   Object.defineProperty(document.querySelector("#kind"), "value", {
     value: "",
@@ -44,14 +49,25 @@ async function preview(history = []) {
     document,
     crypto: webcrypto,
     innerWidth: 1280,
-    navigator: {},
+    navigator: {
+      clipboard: {
+        writeText: async (text) => {
+          clipboard = text;
+        },
+      },
+    },
     localStorage: { getItem: () => JSON.stringify(history), setItem: () => {} },
     citedSources,
+    numberedCitations,
     URL,
     AbortController,
     TextDecoder,
     Uint8Array,
-    setTimeout,
+    setTimeout: (...args) => {
+      const timer = setTimeout(...args);
+      timer.unref();
+      return timer;
+    },
     clearTimeout,
     requestAnimationFrame: (callback) => {
       frames.set(++frameId, callback);
@@ -98,6 +114,7 @@ async function preview(history = []) {
     },
     writes: () => scrollWrites,
     finish: () => stream.close(),
+    copied: () => clipboard,
   };
 }
 
@@ -184,10 +201,14 @@ test("retrieved candidates stay hidden until cited, including split streamed cit
   assert.equal(ui.document.querySelectorAll(".source-card").length, 0);
   await ui.emit("delta", { text: "3]." });
   assert.equal(ui.document.querySelectorAll(".source-card").length, 1);
-  assert.ok(ui.document.getElementById("source-3"));
-  const card = ui.document.getElementById("source-3");
+  assert.ok(ui.document.getElementById("source-1"));
+  const card = ui.document.getElementById("source-1");
+  assert.equal(
+    card.querySelector(".source-link").href,
+    "https://codehub.gr/3/",
+  );
   await ui.emit("delta", { text: " More details." });
-  assert.equal(ui.document.getElementById("source-3"), card);
+  assert.equal(ui.document.getElementById("source-1"), card);
   await ui.emit("sources", { sources: [sources[2]] });
   await ui.emit("done", { mode: "openai" });
   ui.finish();
@@ -196,7 +217,53 @@ test("retrieved candidates stay hidden until cited, including split streamed cit
   assert.equal(ui.document.querySelectorAll(".source-chip").length, 1);
   assert.equal(
     ui.document.querySelector(".source-chip").textContent,
-    "3 · Source 3",
+    "1 · Source 3",
+  );
+});
+
+test("saved out-of-order citations match sequential chips, panel links and copied text", async () => {
+  const sources = [1, 2, 3, 4, 5].map((id) => ({
+    id,
+    title: `Source ${id}`,
+    url: `https://codehub.gr/${id}/`,
+  }));
+  const raw = "Training [2]. Skills [5]. Contact [1].";
+  const ui = await preview([
+    {
+      id: "numbering",
+      title: "Training",
+      messages: [
+        { role: "user", content: "Training?" },
+        { role: "assistant", content: raw, sources, mode: "openai" },
+      ],
+    },
+  ]);
+  const links = [...ui.document.querySelectorAll(".citation")];
+  assert.deepEqual(
+    links.map((link) => link.textContent),
+    ["1", "2", "3"],
+  );
+  assert.deepEqual(
+    links.map((link) => link.href),
+    ["https://codehub.gr/2/", "https://codehub.gr/5/", "https://codehub.gr/1/"],
+  );
+  const chips = [...ui.document.querySelectorAll(".source-chip")];
+  assert.deepEqual(
+    chips.map((chip) => chip.textContent),
+    ["1 · Source 2", "2 · Source 5", "3 · Source 1"],
+  );
+  chips[1].onclick();
+  const selected = ui.document.getElementById("source-2");
+  assert.equal(
+    selected.querySelector(".source-link").href,
+    "https://codehub.gr/5/",
+  );
+  assert.equal(selected.classList.contains("highlight"), true);
+  await ui.document.querySelector(".answer-actions button").onclick();
+  assert.equal(ui.copied(), "Training [1]. Skills [2]. Contact [3].");
+  assert.equal(
+    vm.runInContext("current.messages.at(-1).content", ui.context),
+    raw,
   );
 });
 
