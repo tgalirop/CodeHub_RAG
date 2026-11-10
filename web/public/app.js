@@ -80,6 +80,7 @@ let current = conversations[0] || fresh(),
   busy = false,
   controller = null,
   frame = null,
+  forceScroll = false,
   toastTimer = null;
 function save() {
   current.updated = Date.now();
@@ -272,48 +273,78 @@ function markdown(target, text, sources) {
     }
   }
 }
+const messageViews = new Map();
+function createMessageView(m) {
+  const box = el("article", "message " + m.role);
+  if (m.role === "user") {
+    box.append(el("div", "user-bubble", m.content));
+    return { box };
+  }
+  const header = el("div", "assistant-header"),
+    avatar = el("span", "assistant-avatar"),
+    mark = el("span", "small-mark"),
+    mode = el("span", "", "Αναζήτηση πηγών");
+  for (let n = 0; n < 3; n++) mark.append(el("i"));
+  avatar.append(mark);
+  header.append(avatar, el("strong", "", "CODE.HUB ASSISTANT"), mode);
+  const body = el("div", "answer-body"),
+    status = el("div", "answer-status"),
+    dots = el("span", "typing-dots"),
+    stage = el("span"),
+    error = el("div", "error-note"),
+    chips = el("div", "message-source-chips"),
+    actions = el("div", "answer-actions");
+  for (let n = 0; n < 3; n++) dots.append(el("i"));
+  status.append(dots, stage);
+  box.append(header, body, status, error, chips, actions);
+  return { box, body, status, stage, mode, error, chips, actions };
+}
 function renderMessages() {
   const root = $("#messages");
-  root.replaceChildren();
+  const visible = new Set(current.messages);
+  for (const [message, view] of messageViews) {
+    if (!visible.has(message)) {
+      view.box.remove();
+      messageViews.delete(message);
+    }
+  }
   $("#welcome").hidden = current.messages.length > 0;
   root.setAttribute("aria-live", busy ? "off" : "polite");
   for (let i = 0; i < current.messages.length; i++) {
-    const m = current.messages[i],
-      box = el("article", "message " + m.role + (m.pending ? " pending" : ""));
-    if (m.role === "user") {
-      box.append(el("div", "user-bubble", m.content));
-      root.append(box);
-      continue;
+    const m = current.messages[i];
+    let view = messageViews.get(m);
+    if (!view) {
+      view = createMessageView(m);
+      messageViews.set(m, view);
+      root.append(view.box);
     }
-    const header = el("div", "assistant-header");
-    const avatar = el("span", "assistant-avatar");
-    const mark = el("span", "small-mark");
-    for (let n = 0; n < 3; n++) mark.append(el("i"));
-    avatar.append(mark);
-    header.append(avatar, el("strong", "", "CODE.HUB ASSISTANT"));
-    if (m.mode === "sources" && !m.pending)
-      header.append(el("span", "", "Αναζήτηση πηγών"));
-    box.append(header);
-    const body = el("div", "answer-body");
-    markdown(body, m.content, m.sources || []);
-    box.append(body);
-    if (m.pending) {
-      const status = el("div", "answer-status");
-      const dots = el("span", "typing-dots");
-      for (let n = 0; n < 3; n++) dots.append(el("i"));
-      status.append(
-        dots,
-        document.createTextNode(
-          m.stage === "answering"
-            ? "Συνθέτω την απάντηση…"
-            : "Αναζητώ στο codehub.gr…",
-        ),
-      );
-      box.append(status);
+    if (m.role === "user") continue;
+    const last = i === current.messages.length - 1;
+    const contentChanged =
+      view.content !== m.content || view.sources !== m.sources;
+    const footerChanged =
+      contentChanged ||
+      view.pending !== m.pending ||
+      view.last !== last ||
+      view.failure !== m.error;
+    view.box.classList.toggle("pending", !!m.pending);
+    view.mode.hidden = m.mode !== "sources" || !!m.pending;
+    if (contentChanged) markdown(view.body, m.content, m.sources || []);
+    view.status.hidden = !m.pending;
+    const label =
+      m.stage === "answering"
+        ? "Συνθέτω την απάντηση…"
+        : "Αναζητώ στο codehub.gr…";
+    if (view.stage.textContent !== label) view.stage.textContent = label;
+    view.error.hidden = !m.error;
+    if (view.failure !== m.error) view.error.textContent = m.error || "";
+    view.chips.hidden = !!m.pending || !m.sources?.length;
+    view.actions.hidden = !!m.pending;
+    if (footerChanged) {
+      view.chips.replaceChildren();
+      view.actions.replaceChildren();
     }
-    if (m.error) box.append(el("div", "error-note", m.error));
-    if (m.sources?.length && !m.pending) {
-      const chips = el("div", "message-source-chips");
+    if (footerChanged && m.sources?.length && !m.pending) {
       for (const s of m.sources.slice(0, 4)) {
         const b = el(
           "button",
@@ -321,12 +352,10 @@ function renderMessages() {
           `${s.id} · ${s.title.split(" | ")[0]}`,
         );
         b.onclick = () => showSources(m.sources, s.id);
-        chips.append(b);
+        view.chips.append(b);
       }
-      box.append(chips);
     }
-    if (!m.pending) {
-      const actions = el("div", "answer-actions");
+    if (footerChanged && !m.pending) {
       if (m.content) {
         const copy = el("button");
         copy.append(icon("copy"), document.createTextNode("Αντιγραφή"));
@@ -338,7 +367,7 @@ function renderMessages() {
             toast("Δεν ήταν δυνατή η αντιγραφή.");
           }
         };
-        actions.append(copy);
+        view.actions.append(copy);
       }
       if (i === current.messages.length - 1) {
         const retry = el("button");
@@ -351,11 +380,16 @@ function renderMessages() {
           current.messages.pop();
           send(null, true);
         };
-        actions.append(retry);
+        view.actions.append(retry);
       }
-      box.append(actions);
     }
-    root.append(box);
+    Object.assign(view, {
+      content: m.content,
+      sources: m.sources,
+      pending: m.pending,
+      failure: m.error,
+      last,
+    });
   }
 }
 function renderSources(sources) {
@@ -408,13 +442,19 @@ function renderSources(sources) {
     cards.append(article);
   }
 }
-function schedule() {
+function schedule(follow = false) {
+  forceScroll ||= follow;
   if (frame) return;
   frame = requestAnimationFrame(() => {
     frame = null;
-    renderMessages();
     const scroll = $("#chat-scroll");
-    scroll.scrollTop = scroll.scrollHeight;
+    // Measure before updating content so growth doesn't look like user scrolling.
+    const atBottom =
+      forceScroll ||
+      scroll.scrollHeight - scroll.scrollTop - scroll.clientHeight < 80;
+    forceScroll = false;
+    renderMessages();
+    if (atBottom) scroll.scrollTop = scroll.scrollHeight;
   });
 }
 function controls() {
@@ -471,7 +511,7 @@ async function send(question, retry = false) {
   controls();
   save();
   renderSources([]);
-  schedule();
+  schedule(true);
   let finished = false;
   try {
     const response = await fetch("/api/chat", {
@@ -554,9 +594,7 @@ async function send(question, retry = false) {
     if (current.id === target.id) {
       save();
       controls();
-      renderMessages();
-      const scroll = $("#chat-scroll");
-      scroll.scrollTop = scroll.scrollHeight;
+      schedule();
     } else {
       try {
         localStorage.setItem(STORAGE, JSON.stringify(conversations));

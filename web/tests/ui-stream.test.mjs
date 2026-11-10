@@ -1,0 +1,169 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { webcrypto } from "node:crypto";
+import vm from "node:vm";
+import { parseHTML } from "linkedom";
+
+const html = await readFile(
+  new URL("../public/index.html", import.meta.url),
+  "utf8",
+);
+const script = await readFile(
+  new URL("../public/app.js", import.meta.url),
+  "utf8",
+);
+const tick = () => new Promise((resolve) => setImmediate(resolve));
+
+async function preview() {
+  const { document } = parseHTML(html);
+  // LinkeDOM does not implement the browser's select.value setter or layout metrics.
+  Object.defineProperty(document.querySelector("#kind"), "value", {
+    value: "",
+    writable: true,
+  });
+  const scroll = document.querySelector("#chat-scroll");
+  let height = 600,
+    position = 200,
+    scrollWrites = 0;
+  Object.defineProperties(scroll, {
+    scrollHeight: { get: () => height },
+    clientHeight: { get: () => 400 },
+    scrollTop: {
+      get: () => position,
+      set: (value) => {
+        position = Math.min(value, height - 400);
+        scrollWrites++;
+      },
+    },
+  });
+  let stream;
+  const frames = new Map();
+  let frameId = 0;
+  const context = vm.createContext({
+    document,
+    crypto: webcrypto,
+    innerWidth: 1280,
+    navigator: {},
+    localStorage: { getItem: () => null, setItem: () => {} },
+    URL,
+    AbortController,
+    TextDecoder,
+    Uint8Array,
+    setTimeout,
+    clearTimeout,
+    requestAnimationFrame: (callback) => {
+      frames.set(++frameId, callback);
+      return frameId;
+    },
+    fetch: async (url) =>
+      url === "/api/status"
+        ? Response.json({ ready: true, answer_mode: "openai", documents: 167 })
+        : new Response(
+            new ReadableStream({
+              start(controller) {
+                stream = controller;
+              },
+            }),
+          ),
+  });
+  vm.runInContext(script, context);
+  await tick();
+  const flush = () => {
+    const callbacks = [...frames.values()];
+    frames.clear();
+    callbacks.forEach((callback) => callback());
+  };
+  const emit = async (event, data) => {
+    stream.enqueue(
+      new TextEncoder().encode(
+        `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`,
+      ),
+    );
+    await tick();
+    flush();
+  };
+  return {
+    document,
+    context,
+    flush,
+    emit,
+    scroll,
+    setHeight: (value) => {
+      height = value;
+    },
+    userScroll: (value) => {
+      position = value;
+    },
+    writes: () => scrollWrites,
+    finish: () => stream.close(),
+  };
+}
+
+test("stage/source/delta updates keep existing message and loading nodes mounted", async () => {
+  const ui = await preview();
+  const complete = vm.runInContext("send('Πώς επικοινωνώ;')", ui.context);
+  ui.flush();
+  const user = ui.document.querySelector(".message.user");
+  const assistant = ui.document.querySelector(".message.assistant");
+  const dots = assistant.querySelector(".typing-dots");
+  const header = assistant.querySelector(".assistant-header");
+  await ui.emit("stage", { stage: "searching" });
+  await ui.emit("sources", {
+    sources: [{ id: 1, title: "Contact", url: "https://codehub.gr/contact/" }],
+  });
+  await ui.emit("stage", { stage: "answering" });
+  assert.equal(ui.document.querySelector(".message.user"), user);
+  assert.equal(ui.document.querySelector(".message.assistant"), assistant);
+  assert.equal(assistant.querySelector(".typing-dots"), dots);
+  assert.equal(assistant.querySelector(".assistant-header"), header);
+  assert.match(
+    assistant.querySelector(".answer-status").textContent,
+    /Συνθέτω/,
+  );
+  assert.equal(assistant.querySelector(".answer-status").hidden, false);
+  await ui.emit("delta", { text: "Καλέστε " });
+  await ui.emit("delta", { text: "**2114117481** [1]" });
+  assert.equal(ui.document.querySelector(".message.assistant"), assistant);
+  assert.equal(
+    assistant.querySelector("strong:not(.assistant-header strong)")
+      ?.textContent,
+    "2114117481",
+  );
+  assert.equal(
+    assistant.querySelector(".citation").href,
+    "https://codehub.gr/contact/",
+  );
+  await ui.emit("done", { mode: "openai" });
+  ui.finish();
+  await complete;
+  ui.flush();
+  assert.equal(ui.document.querySelector(".message.assistant"), assistant);
+  assert.equal(assistant.querySelector(".answer-status").hidden, true);
+  assert.equal(assistant.querySelector(".answer-actions").hidden, false);
+  assert.equal(ui.document.querySelectorAll(".message").length, 2);
+});
+
+test("stream follows the bottom but respects scrolling up, including completion", async () => {
+  const ui = await preview();
+  const complete = vm.runInContext(
+    "send('Tell me about Code.Hub')",
+    ui.context,
+  );
+  ui.flush();
+  ui.setHeight(650);
+  await ui.emit("delta", { text: "First part" });
+  assert.equal(ui.scroll.scrollTop, 250);
+  ui.userScroll(20);
+  const before = ui.writes();
+  ui.setHeight(1100);
+  await ui.emit("delta", { text: " next part" });
+  assert.equal(ui.scroll.scrollTop, 20);
+  assert.equal(ui.writes(), before);
+  await ui.emit("done", { mode: "openai" });
+  ui.finish();
+  await complete;
+  ui.flush();
+  assert.equal(ui.scroll.scrollTop, 20);
+  assert.equal(ui.writes(), before);
+});
