@@ -352,7 +352,7 @@ function renderMessages() {
       view.actions.replaceChildren();
     }
     if (footerChanged && m.sources?.length && !m.pending) {
-      for (const s of m.sources.slice(0, 4)) {
+      for (const s of m.sources) {
         const b = el(
           "button",
           "source-chip",

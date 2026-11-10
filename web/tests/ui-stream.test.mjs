@@ -200,8 +200,8 @@ test("retrieved candidates stay hidden until cited, including split streamed cit
   );
 });
 
-test("saved conversations also hide retrieved but uncited source cards and chips", async () => {
-  const sources = [1, 2].map((id) => ({
+test("saved conversations show every cited source, including the fifth, and hide uncited candidates", async () => {
+  const sources = [1, 2, 3, 4, 5, 6].map((id) => ({
     id,
     title: `Source ${id}`,
     url: `https://codehub.gr/${id}/`,
@@ -214,14 +214,17 @@ test("saved conversations also hide retrieved but uncited source cards and chips
         { role: "user", content: "Contact?" },
         {
           role: "assistant",
-          content: "Contact details [2].",
+          content: "Training options [1] [2] [3] [4] [5].",
           sources,
           mode: "openai",
         },
       ],
     },
   ]);
-  assert.equal(ui.document.querySelectorAll(".source-card").length, 1);
-  assert.ok(ui.document.getElementById("source-2"));
-  assert.equal(ui.document.querySelectorAll(".source-chip").length, 1);
+  assert.equal(ui.document.querySelectorAll(".source-card").length, 5);
+  assert.ok(ui.document.getElementById("source-5"));
+  assert.equal(ui.document.getElementById("source-6"), null);
+  const chips = [...ui.document.querySelectorAll(".source-chip")];
+  assert.equal(chips.length, 5);
+  assert.equal(chips[4].textContent, "5 · Source 5");
 });
