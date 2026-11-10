@@ -10,10 +10,55 @@ const FILLER = new Set(
   does do there have has offer offers codehub code.hub code hub παρακαλω please
   τις της τους στις`
     .split(/\s+/)
-    .flatMap(tokens),
+    .map(normalizeGrammar),
 );
 const NEXT =
   /^(?:next|more|others?|continue|αλλεσ|αλλα|επομεν\p{L}*|περισσοτερ\p{L}*|συνεχ\p{L}*)$/u;
+const LIST_WORDS = new Set(
+  "ποιες ποιοι ποια τι δειξε δειξτε πες πειτε what which list show available open ολες"
+    .split(/\s+/)
+    .map(normalizeGrammar),
+);
+
+function normalizeGrammar(word) {
+  return word
+    .toLowerCase()
+    .replaceAll("ς", "σ")
+    .normalize("NFKD")
+    .replace(/\p{M}/gu, "");
+}
+
+// Tolerate one typo in Greek grammatical words, without discarding cities/skills.
+function oneEdit(left, right) {
+  if (Math.abs(left.length - right.length) > 1) return false;
+  let i = 0,
+    j = 0,
+    edits = 0;
+  while (i < left.length && j < right.length) {
+    if (left[i] === right[j]) {
+      i++;
+      j++;
+      continue;
+    }
+    if (++edits > 1) return false;
+    if (left.length >= right.length) i++;
+    if (right.length >= left.length) j++;
+  }
+  return edits + (left.length - i) + (right.length - j) <= 1;
+}
+function grammarWord(word, vocabulary) {
+  return (
+    vocabulary.has(word) ||
+    (word.length >= 4 &&
+      /^[α-ω]+$/u.test(word) &&
+      [...vocabulary].some(
+        (candidate) =>
+          candidate.length >= 4 &&
+          /^[α-ω]+$/u.test(candidate) &&
+          oneEdit(word, candidate),
+      ))
+  );
+}
 
 export function jobListIntent(messages) {
   const question = messages.at(-1).content;
@@ -21,7 +66,7 @@ export function jobListIntent(messages) {
   const next = words.some((word) => NEXT.test(word));
   const hasJob = words.some((word) => JOB.test(word));
   const allowed = words.every(
-    (word) => JOB.test(word) || NEXT.test(word) || FILLER.has(word),
+    (word) => JOB.test(word) || NEXT.test(word) || grammarWord(word, FILLER),
   );
   if (!allowed) return null;
   if (next) {
@@ -34,11 +79,7 @@ export function jobListIntent(messages) {
     if (page && Number(page[2]) < Number(page[3]))
       return { kind: "job", offset: Number(page[2]) };
   }
-  const asksList = words.some((word) =>
-    /^(?:ποιεσ|ποιοι|ποια|τι|δειξε|δειξτε|πες|πειτε|what|which|list|show|available|open|ολεσ)$/u.test(
-      word,
-    ),
-  );
+  const asksList = words.some((word) => grammarWord(word, LIST_WORDS));
   const nominal = words.every(
     (word) =>
       JOB.test(word) ||

@@ -17,6 +17,9 @@ const messages = (content) => [{ role: "user", content }];
 test("broad careers questions request job listings; specific topics keep semantic search", () => {
   for (const q of [
     "ποιες ειναι οι καριέρες;",
+    "ποιες εναι οι καριέρες?",
+    "ποιες ειναι οι καριερες?",
+    "ποιες εναι οι θεσεις εργασιας;",
     "Ποιες θέσεις εργασίας υπάρχουν;",
     "θέσεις εργασίας",
     "What jobs are available?",
@@ -29,6 +32,8 @@ test("broad careers questions request job listings; specific topics keep semanti
     "Πώς μπορώ να αλλάξω καριέρα;",
     "What jobs are available in Athens?",
     "Python jobs",
+    "Ποιες είναι οι θέσεις στην Αθήνα;",
+    "Ποιες είναι οι θέσεις για Java;",
     "What salary do jobs pay?",
     "How many trainings are there?",
   ]) {
