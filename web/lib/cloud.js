@@ -3,6 +3,7 @@ import { database, createStore } from "./store.js";
 import { contextualQuery, expandQuery } from "./lexical.js";
 import { embed, answer, ProviderError } from "./provider.js";
 import { isCatalogueCount, catalogueAnswer } from "./catalogue.js";
+import { jobListIntent, jobListAnswer } from "./jobs.js";
 
 const HEADERS = {
   "Cache-Control": "no-store, no-transform",
@@ -38,7 +39,25 @@ export function validate(payload) {
     messages.reduce((n, m) => n + m.content.length, 0) > 24000
   )
     throw new Error("invalid_history");
-  return { messages, kind: payload.kind || null };
+  let listing = null;
+  if (payload.listing !== undefined && payload.listing !== null) {
+    const value = payload.listing;
+    if (
+      value.kind !== "job" ||
+      !Number.isInteger(value.offset) ||
+      value.offset < 0 ||
+      value.offset > 10000 ||
+      (value.snapshot_id !== undefined &&
+        !/^[a-f0-9]{64}$/.test(value.snapshot_id))
+    )
+      throw new Error("invalid_listing");
+    listing = {
+      kind: "job",
+      offset: value.offset,
+      ...(value.snapshot_id ? { snapshot_id: value.snapshot_id } : {}),
+    };
+  }
+  return { messages, kind: payload.kind || null, listing };
 }
 async function readPayload(request) {
   if (!request.headers.get("content-type")?.includes("application/json"))
@@ -125,7 +144,9 @@ export function createCloudHandler({
     let store, snapshot;
     try {
       store = getStore();
-      snapshot = await store.snapshot();
+      snapshot = await store.snapshot(
+        parsed.payload.listing?.snapshot_id || null,
+      );
       const ip = (
         request.headers.get("x-vercel-forwarded-for") ||
         request.headers.get("x-forwarded-for") ||
@@ -179,6 +200,23 @@ export function createCloudHandler({
           emit("stage", { stage: "searching" });
           const start = performance.now();
           const question = parsed.payload.messages.at(-1).content;
+          const listing =
+            parsed.payload.listing || jobListIntent(parsed.payload.messages);
+          if (listing) {
+            const result = await store.listJobs(snapshot, listing.offset);
+            signal.throwIfAborted();
+            emit("sources", {
+              sources: result.sources,
+              retrieval_ms: Math.round(performance.now() - start),
+            });
+            emit("delta", { text: jobListAnswer(result, question) });
+            emit("done", {
+              mode: "job-list",
+              usage: null,
+              next_listing: result.next,
+            });
+            return;
+          }
           if (isCatalogueCount(question)) {
             const summary = await store.catalogueCount(snapshot);
             signal.throwIfAborted();

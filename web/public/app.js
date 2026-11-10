@@ -336,6 +336,7 @@ function renderMessages() {
       contentChanged ||
       view.pending !== m.pending ||
       view.last !== last ||
+      view.nextListing !== m.nextListing ||
       view.failure !== m.error;
     view.box.classList.toggle("pending", !!m.pending);
     view.mode.hidden = m.mode !== "sources" || !!m.pending;
@@ -369,6 +370,18 @@ function renderMessages() {
       }
     }
     if (footerChanged && !m.pending) {
+      if (m.nextListing) {
+        const more = el("button", "next-jobs", "Περισσότερες θέσεις");
+        more.onclick = () => {
+          if (!busy)
+            return send(
+              "Δείξε τις επόμενες θέσεις εργασίας.",
+              false,
+              m.nextListing,
+            );
+        };
+        view.actions.append(more);
+      }
       if (m.content) {
         const copy = el("button");
         copy.append(icon("copy"), document.createTextNode("Αντιγραφή"));
@@ -391,7 +404,7 @@ function renderMessages() {
         retry.onclick = () => {
           if (busy) return;
           current.messages.pop();
-          send(null, true);
+          send(null, true, m.requestListing);
         };
         view.actions.append(retry);
       }
@@ -402,6 +415,7 @@ function renderMessages() {
       pending: m.pending,
       failure: m.error,
       last,
+      nextListing: m.nextListing,
     });
   }
 }
@@ -504,7 +518,7 @@ function updateCitedSources(message, candidates) {
   message.sources = selected;
   return true;
 }
-async function send(question, retry = false) {
+async function send(question, retry = false, listing = null) {
   if (busy) {
     controller?.abort();
     return;
@@ -522,6 +536,7 @@ async function send(question, retry = false) {
   const payload = {
     messages: historyPayload(current.messages),
     kind: current.kind || null,
+    ...(listing ? { listing } : {}),
   };
   const responseMessage = {
     role: "assistant",
@@ -530,6 +545,7 @@ async function send(question, retry = false) {
     pending: true,
     stage: "searching",
     mode: null,
+    requestListing: listing,
   };
   current.messages.push(responseMessage);
   const target = current;
@@ -597,6 +613,15 @@ async function send(question, retry = false) {
           sourcesChanged = updateCitedSources(responseMessage, candidates);
         } else if (name === "done") {
           responseMessage.mode = data.mode;
+          const next = data.next_listing;
+          responseMessage.nextListing =
+            next?.kind === "job" &&
+            Number.isInteger(next.offset) &&
+            next.offset >= 0 &&
+            next.offset <= 10000 &&
+            /^[a-f0-9]{64}$/.test(next.snapshot_id)
+              ? next
+              : null;
           finished = true;
         } else if (name === "error") {
           responseMessage.error =

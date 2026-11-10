@@ -155,6 +155,16 @@ calls. Qualified questions about subjects, dates or registration status are excl
 from this whole-catalogue shortcut. Retrieval prompts also prohibit estimating total
 counts from a limited set of passages or source IDs.
 
+Broad careers/job-list questions use distinct job URLs from the pinned snapshot,
+ordered by title and URL, with ten listings per response. Each role has its own
+source citation and its posting reference when present in the URL. The next-page
+button carries a bounded offset and snapshot ID, so publication of a newer snapshot
+does not mix pages during browsing. Retrying a next-page request reuses its cursor.
+Natural-language requests for more jobs also recognize the previous page range.
+Specific job questions about technologies, cities or requirements retain hybrid
+retrieval. Listing the inventory does not call paid model APIs and describes the
+scope as recorded job pages, without asserting that every posting remains active.
+
 See deployment instructions for the provisioning steps and verification limits.
 
 ## Primary references

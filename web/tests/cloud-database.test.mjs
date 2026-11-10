@@ -41,6 +41,12 @@ test(
       const absent = await store.search(snapshot, "training", vector, "post");
       assert.equal(absent.length, 0);
       assert.equal(await store.catalogueCount(snapshot), null);
+      const jobs = await store.listJobs(snapshot, 0);
+      assert.equal(jobs.total, 2);
+      assert.equal(jobs.sources.length, 2);
+      assert.ok(jobs.sources.every((row) => row.categories.includes("job")));
+      assert.equal(jobs.next, null);
+      assert.equal((await store.snapshot(snapshot.id)).id, snapshot.id);
       const decisions = await Promise.all(
         Array.from({ length: 5 }, () =>
           store.reserve("integration-test", 100, 2),

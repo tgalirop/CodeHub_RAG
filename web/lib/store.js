@@ -32,10 +32,11 @@ export function createStore(sql) {
       return operation(tx);
     });
   return {
-    snapshot: () =>
+    snapshot: (snapshotId = null) =>
       transaction(async (tx) => {
         const [row] =
-          await tx`SELECT id,config,documents,chunks FROM rag_cloud.snapshots WHERE active AND ready`;
+          await tx`SELECT id,config,documents,chunks FROM rag_cloud.snapshots WHERE ready
+            AND ((${snapshotId}::text IS NULL AND active) OR id=${snapshotId})`;
         if (!row) throw new Error("cloud_index_missing");
         const c = row.config;
         if (
@@ -78,6 +79,33 @@ export function createStore(sql) {
           total,
           indexed_courses: count.total,
           source: { ...row, id: 1 },
+        };
+      }),
+    listJobs: (snapshot, requestedOffset = 0) =>
+      transaction(async (tx) => {
+        const [count] = await tx`SELECT count(DISTINCT url)::integer AS total
+        FROM rag_cloud.chunks WHERE snapshot_id=${snapshot.id} AND 'job'=ANY(categories)`;
+        const offset = Math.min(
+          requestedOffset,
+          Math.max(0, Math.floor((count.total - 1) / 10) * 10),
+        );
+        const rows = await tx`WITH jobs AS (
+        SELECT DISTINCT ON(url) url,title,body AS text,heading_path,categories,warnings,fetched_at
+        FROM rag_cloud.chunks WHERE snapshot_id=${snapshot.id} AND 'job'=ANY(categories)
+        ORDER BY url,length(body) DESC,id)
+        SELECT * FROM jobs ORDER BY lower(title),url LIMIT 10 OFFSET ${offset}`;
+        return {
+          total: count.total,
+          offset,
+          sources: rows.map((row, index) => ({ ...row, id: index + 1 })),
+          next:
+            offset + rows.length < count.total
+              ? {
+                  kind: "job",
+                  offset: offset + rows.length,
+                  snapshot_id: snapshot.id,
+                }
+              : null,
         };
       }),
     search: (snapshot, query, vector, kind = null) =>

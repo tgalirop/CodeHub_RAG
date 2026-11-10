@@ -43,6 +43,7 @@ async function preview(history = []) {
     },
   });
   let stream;
+  const requests = [];
   const frames = new Map();
   let frameId = 0;
   const context = vm.createContext({
@@ -73,16 +74,22 @@ async function preview(history = []) {
       frames.set(++frameId, callback);
       return frameId;
     },
-    fetch: async (url) =>
-      url === "/api/status"
-        ? Response.json({ ready: true, answer_mode: "openai", documents: 167 })
-        : new Response(
-            new ReadableStream({
-              start(controller) {
-                stream = controller;
-              },
-            }),
-          ),
+    fetch: async (url, options) => {
+      if (url === "/api/status")
+        return Response.json({
+          ready: true,
+          answer_mode: "openai",
+          documents: 167,
+        });
+      requests.push(JSON.parse(options.body));
+      return new Response(
+        new ReadableStream({
+          start(controller) {
+            stream = controller;
+          },
+        }),
+      );
+    },
   });
   vm.runInContext(script, context);
   await tick();
@@ -115,6 +122,7 @@ async function preview(history = []) {
     writes: () => scrollWrites,
     finish: () => stream.close(),
     copied: () => clipboard,
+    requests,
   };
 }
 
@@ -294,4 +302,31 @@ test("saved conversations show every cited source, including the fifth, and hide
   const chips = [...ui.document.querySelectorAll(".source-chip")];
   assert.equal(chips.length, 5);
   assert.equal(chips[4].textContent, "5 · Source 5");
+});
+
+test("more jobs button sends the next offset with its pinned snapshot", async () => {
+  const ui = await preview();
+  const first = vm.runInContext("send('Ποιες είναι οι καριέρες;')", ui.context);
+  ui.flush();
+  const source = { id: 1, title: "Role", url: "https://codehub.gr/job/role/" };
+  await ui.emit("sources", { sources: [source] });
+  await ui.emit("delta", { text: "Θέσεις **1–10** από **11**. Role [1]" });
+  const next = { kind: "job", offset: 10, snapshot_id: "a".repeat(64) };
+  await ui.emit("done", { mode: "job-list", next_listing: next });
+  ui.finish();
+  await first;
+  ui.flush();
+  const more = ui.document.querySelector(".next-jobs");
+  assert.ok(more);
+  const second = more.onclick();
+  ui.flush();
+  assert.deepEqual(ui.requests.at(-1).listing, next);
+  await ui.emit("sources", { sources: [source] });
+  await ui.emit("delta", { text: "Θέσεις **11–11** από **11**. Role [1]" });
+  await ui.emit("done", { mode: "job-list", next_listing: null });
+  ui.finish();
+  await second;
+  ui.flush();
+  const replies = ui.document.querySelectorAll(".message.assistant");
+  assert.equal(replies[replies.length - 1].querySelector(".next-jobs"), null);
 });
