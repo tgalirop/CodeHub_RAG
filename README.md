@@ -3,12 +3,16 @@
 Hybrid RAG assistant for the public content of [Code.Hub](https://codehub.gr/).
 Independent portfolio project by [tgalirop](https://github.com/tgalirop).
 
-## Current milestone: site audit and ingestion
+## Current milestone: local hybrid retrieval
 
 Latest full crawl (2026-11-10): **546 URLs attempted, 542 canonical documents,
-167 documents eligible for retrieval, 2,356 chunks and zero fetch errors**.
+167 documents eligible for retrieval and zero fetch errors**.
 Four duplicate canonical responses were excluded. See the
 [full audit report](reports/site-audit-2026-11-10.md).
+
+The active retrieval snapshot contains **2,481 token-budgeted chunks and 384-dimensional
+multilingual embeddings**. PostgreSQL, persisted BM25 and hybrid search are implemented.
+See [retrieval validation](reports/retrieval-validation-2026-11-10.md).
 
 Implemented and runnable:
 
@@ -22,12 +26,58 @@ Implemented and runnable:
 - Flag malformed/conflicting JSON-LD dates, event status and salary units for review.
 - Resolve Bricks animated counters from explicit source targets instead of indexing placeholder zeros.
 - Keep taxonomy pages in the audit while excluding them from retrieval chunks.
-- Provide a PostgreSQL + pgvector schema for the next ingestion milestone.
+- Import document versions and chunks transactionally into PostgreSQL + pgvector.
+- Cache pinned local E5-small embeddings by model and exact input hash.
+- Save BM25S weights, vocabulary, document frequencies, IDF, lengths and average length.
+- Search with dense cosine similarity, BM25 or canonical-page RRF hybrid ranking.
+- Filter both retrievers by page/course/job/training/post category.
+- Activate validated, immutable snapshots atomically; verify artifact checksums on load.
 - Preserve original Code.Hub logo and source color tokens under `assets/brand/`.
 
-**Not implemented yet:** database loading, embeddings, persisted BM25 indexing, hybrid
-retrieval, reranking, answer generation and the branded chat interface. The SQL is a
-foundation, not evidence that PostgreSQL has been started or populated.
+**Next milestones:** cross-encoder reranking, LLM answers with citations, a search/chat
+API and the branded interface. Current commands return retrieved source passages.
+
+## Run hybrid search (PowerShell)
+
+For a fresh checkout, first collect a full crawl as described below, start Docker,
+and create `.env` from `.env.example` with a local database password. On the existing
+development machine these steps and indexing have already been completed.
+
+```powershell
+uv sync --locked
+docker compose up -d
+uv run codehub-rag migrate
+uv run codehub-rag model-download
+uv run codehub-rag index data/runs/YOUR_FULL_RUN
+uv run codehub-rag search "Θέλω εκπαίδευση της ομάδας μου" --limit 5
+uv run codehub-rag search "C# ASP.NET Core" --kind course
+uv run codehub-rag search "Lead ML Engineer" --kind job --mode bm25
+uv run codehub-rag search --interactive
+```
+
+`model-download` fetches a pinned multilingual E5-small ONNX model (~470 MB plus
+tokenizer files). Embedding inference runs locally on CPU. No paid API key is needed.
+Use `--models` to choose a model-cache root, and `--threads` to control inference threads.
+
+`index` prepares passages within the model's 512-token budget, imports the corpus,
+reuses existing vectors, saves BM25 and activates a validated snapshot. An incomplete
+crawl cannot be activated. Interrupted embedding builds can be rerun; completed
+batches are cached. Repeating a successful build reuses vectors and the BM25 artifact.
+`load YOUR_RUN` is also available to import source documents/chunks without indexing.
+
+`search` supports `--mode hybrid`, `dense` or `bm25`. Hybrid search expands selected
+Greek domain terms using a versioned bilingual glossary, retrieves candidates from
+both indexes, merges rankings by canonical page and returns passages with URLs,
+timestamps and source warnings. Scores are ranking signals, not confidence percentages.
+Interactive mode loads the model and BM25 once for the whole session.
+
+```powershell
+uv run codehub-rag evaluate --output data/retrieval-evaluation.json
+```
+
+The 20 positive smoke questions are a development set used while improving retrieval,
+not a held-out benchmark. The full question list, baseline and latest results are in
+`evaluation/` and `reports/`. LLM answer correctness and abstention are not measured yet.
 
 ## Quick start (PowerShell)
 
@@ -95,7 +145,7 @@ preserves the original HTML and fetch timestamps. It reprocesses previously acce
 documents only. It does not retry failed, skipped or noindex pages. Source metadata
 conflicts are flagged and retained, not silently corrected.
 
-## PostgreSQL foundation
+## PostgreSQL and stored indexes
 
 Requires a running Docker engine. Create `.env` and set a local password:
 
@@ -108,15 +158,25 @@ docker compose ps
 
 PostgreSQL listens on localhost only and uses a persistent Docker volume. The
 initial schema is applied **only when that database volume is first initialized**;
-later schema changes require migrations. Do not remove the volume to apply changes
+later schema changes use `uv run codehub-rag migrate`. Do not remove the volume to apply changes
 to a database containing valuable data.
 
-`db/001_initial.sql` includes pages, immutable document versions, chunks, vectors
-and retrieval snapshots. Vector dimensions and ANN indexes will be selected after
-the embedding-model evaluation. No embedding or LLM credentials are needed for the
-current audit and extraction commands.
+Migrations are tracked with checksums and applied transactionally. The original
+milestone-one schema is adopted without deleting data. Historical document versions
+and retrieval snapshots are retained. New imports do not change a loaded search
+session's pinned snapshot.
 
-On a freshly initialized database, validate vector operations and snapshot
+Vectors use pgvector exact cosine search over the snapshot's members. With this
+corpus size an approximate index is unnecessary; HNSW remains an option if the
+corpus grows. All corpus-wide BM25 work happens during indexing, never per question.
+
+Artifacts under `data/indexes/SNAPSHOT_ID/` contain the saved BM25 arrays,
+`statistics.json` and a checksummed `manifest.json`. PostgreSQL records the artifact
+path, model configuration and exact chunk-position mapping. The indexer and search
+worker currently need access to the same artifact path; artifacts are not stored
+inside the PostgreSQL Docker volume. Back up both `data/` and the database volume.
+
+After migrations, validate vector operations and snapshot
 constraints with a transaction that rolls back its test rows:
 
 ```powershell
@@ -125,22 +185,23 @@ Get-Content db/smoke.sql -Raw | docker compose exec -T postgres psql -U codehub 
 
 The same Python checks and fresh-database smoke test are configured in GitHub Actions.
 
-## Planned retrieval
+## Retrieval pipeline
 
 ```text
 Website → inventory → extraction → versioned chunks
                                     ├─ PostgreSQL / pgvector
                                     └─ persisted BM25S artifact
 
-Question → multilingual embedding + lexical tokenization
-         → dense retrieval + BM25 → RRF → reranker
-         → grounded answer with links to Code.Hub sources
+Question → bilingual glossary + multilingual embedding + lexical tokenization
+         → dense retrieval + BM25 → canonical-page RRF → source passages
+
+Next: cross-encoder reranker → grounded LLM answer → branded chat interface
 ```
 
-BM25 corpus statistics and weights will be built during indexing and persisted.
-The API will load that artifact at startup instead of rebuilding it per question.
-A retrieval snapshot will tie its chunk ordering and checksum to the same chunk
-set used for vectors. New snapshots must be validated before becoming active.
+BM25 corpus statistics and weights are persisted during indexing. SearchEngine
+loads that artifact once per session/worker. A retrieval snapshot ties its chunk
+ordering and checksum to the same chunk set used for vectors. A failed build leaves
+the previous active snapshot available.
 
 See [architecture decisions](docs/architecture.md) for scope and remaining work.
 
@@ -152,4 +213,16 @@ uv run ruff check .
 uv run ruff format --check .
 ```
 
-Tests use a mock HTTP transport: they do not access the website or paid APIs.
+Default tests use mock HTTP and no model downloads or paid APIs. Five database
+integration tests are opt-in and require a dedicated database whose name ends in `_test`:
+
+```powershell
+docker compose exec -T postgres createdb -U codehub codehub_rag_test
+$env:POSTGRES_DB = "codehub_rag_test"
+$env:CODEHUB_TEST_DB = "1"
+uv run pytest tests/test_database.py -q
+Remove-Item Env:POSTGRES_DB
+Remove-Item Env:CODEHUB_TEST_DB
+```
+
+GitHub Actions run both the default checks and the real-database integration tests.

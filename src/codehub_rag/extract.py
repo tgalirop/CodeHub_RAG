@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup, Comment, NavigableString, Tag
 
 from .web import Resource, site_url
 
-EXTRACTOR_VERSION = "html-v2"
+EXTRACTOR_VERSION = "html-v3"
 CHUNKER_VERSION = "sections-v1"
 BLOCK_TAGS = {"h1", "h2", "h3", "h4", "h5", "h6", "p", "li", "tr", "blockquote", "pre", "dt", "dd"}
 
@@ -114,6 +114,23 @@ def extract(resource: Resource, categories: list[str]) -> dict:
             if (url := site_url(str(a["href"]), resource.url, page=True))
         }
     )
+    contact_blocks = []
+    if urlsplit(canonical).path.rstrip("/") == "/contact":
+        for anchor in soup.select("footer a[href], #brx-footer a[href]"):
+            href = str(anchor.get("href", ""))
+            value = ""
+            if href.startswith("mailto:"):
+                value = "Email: " + href[7:].split("?", 1)[0]
+            elif href.startswith("tel:"):
+                value = "Phone: " + href[4:]
+            elif urlsplit(href).hostname in {
+                "www.google.com",
+                "maps.google.com",
+                "maps.app.goo.gl",
+            }:
+                value = "Office address: " + clean(anchor.get_text(" ", strip=True))
+            if value and value not in contact_blocks:
+                contact_blocks.append(value)
     resolved_counters = []
     for counter in soup.select("[data-bricks-counter-options]"):
         try:
@@ -166,6 +183,10 @@ def extract(resource: Resource, categories: list[str]) -> dict:
     if fallback:
         sections = [{"heading_path": [], "blocks": [full_text]}]
     text = "\n".join(text for _, text in events).strip() if not fallback else full_text
+    if contact_blocks:
+        heading = "Published contact details: email, telephone and office addresses"
+        sections.append({"heading_path": ["Contact Us", heading], "blocks": contact_blocks})
+        text += "\n" + heading + "\n" + "\n".join(contact_blocks)
     content_hash = digest(
         json.dumps(
             {

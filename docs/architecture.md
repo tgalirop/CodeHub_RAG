@@ -1,6 +1,6 @@
 # Architecture and delivery plan
 
-## 1. Inventory and extraction — current milestone
+## 1. Inventory and extraction — implemented
 
 The crawler starts at `https://codehub.gr/robots.txt`, follows its declared sitemaps,
 and reads only URLs on the exact HTTPS site origin. `www.codehub.gr` is normalized
@@ -32,55 +32,82 @@ produce a new version.
 Chunks currently target 350 **whitespace-delimited words**, with 45 words of overlap
 within the same section. These are not model token counts. Headings and titles are
 prepended to `retrieval_text`; source URLs remain separate citation metadata. The
-tokenizer budget will be measured after the embedding and generation models are chosen.
+indexer re-splits these source chunks against the pinned embedding tokenizer before
+creating vectors. Retrieval passages fit within 512 tokens including headings,
+special tokens and the `passage: ` prefix. Nothing is silently truncated. Contact
+details from the common footer are retained once on the Contact page.
 
-## 2. Database loading and fresh content — next milestone
+## 2. Database loading and fresh content
 
-- Add migrations and an idempotent JSONL importer for PostgreSQL.
-- Preserve immutable versions while tracking each page's current version.
-- Extract typed job/course/training fields from JSON-LD and inspected templates.
-- Avoid inferring that an old course or job is active solely because its page exists.
-- Add conditional requests and skip unchanged embeddings by content/model hash.
-- Retire disappeared pages only after a successful, sufficiently complete crawl;
-  a failed fetch must never be interpreted as evidence that a page was deleted.
+- Implemented: checksum-tracked transactional migrations and an idempotent JSONL importer.
+- Implemented: immutable document versions, per-run membership and current-page pointers;
+  importing an older fetch does not roll back a newer page pointer.
+- Implemented: embedding reuse by model identity and exact input hash, including
+  reuse across metadata-only document versions and after interrupted builds.
+- Planned: typed job/course/training filters beyond the current category filter.
+- Planned: conditional HTTP requests and source retirement after complete crawls.
+- An existing page is not proof that its job/training is active. Source status and
+  dates remain evidence for the future answer layer to interpret.
 
-The initial SQL includes the storage relationships but is not yet wired to the CLI.
+Database imports are transactions, while embedding batches are committed separately
+so completed work can be reused after an interrupted index build. No pages are
+automatically deleted or retired by the current importer.
 
 ## 3. Dense and lexical indexes
 
-Evaluate a multilingual embedding model on Greek and English questions, including
-Greek queries whose source content is English. BGE-M3 is a candidate, not a measured
-winner. Embedding model identity, dimensions and preprocessing must be recorded.
+The initial local model is `intfloat/multilingual-e5-small`, pinned to revision
+`614241f622f53c4eeff9890bdc4f31cfecc418b3`. It runs in ONNX Runtime on CPU with
+mean pooling, L2 normalization and 384 dimensions. Explicit `query: ` and `passage: `
+prefixes follow the model card. Downloaded model/tokenizer files are checksummed.
+BGE-M3 and larger multilingual models remain candidates for a held-out comparison.
 
-Use a genuine BM25 implementation such as BM25S. PostgreSQL's built-in `ts_rank`
-and `ts_rank_cd` must not be presented as BM25. Save the precomputed lexical index
-on persistent storage with its tokenizer configuration, parameters, corpus hash,
-chunk-position mapping and artifact checksum. Load once per worker or memory-map
-the saved index. Corpus changes trigger a new build, never query-time rebuilding.
+BM25 uses BM25S. PostgreSQL's built-in `ts_rank`
+and `ts_rank_cd` are not used as BM25. The precomputed lexical index is saved on
+persistent storage with tokenizer configuration, parameters, corpus hash,
+chunk-position mapping and artifact checksums. `statistics.json` stores document
+count, lengths, average length, document frequencies and IDF. Search sessions load
+the saved index once with memory mapping; they never rebuild it per question.
 
-Evaluate Greek normalization, accents and English morphology while preserving
-technical distinctions such as C#, C++, .NET, Java and JavaScript. Dense semantic
-matching does not guarantee that every synonym or paraphrase will be retrieved.
+Tokenization normalizes case/Greek accents, removes a small set of Greek/English
+function words and preserves C#, C++, .NET, Node.js, Java and JavaScript as distinct
+terms. A versioned, auditable bilingual glossary adds English aliases for Greek
+domain concepts while retaining the original question. Both retrievers see the
+expanded question. This supplements multilingual embeddings; it is not general
+machine translation or a guarantee of synonym coverage.
 
 ## 4. Hybrid ranking and grounded answers
 
-Fetch dense and lexical candidates independently, combine rankings with reciprocal
-rank fusion, then evaluate a multilingual cross-encoder reranker. Tune candidate
-counts and fusion settings on a labeled question set rather than selecting them
-solely from examples that happen to work.
+Dense retrieval uses exact pgvector cosine distance over members of one snapshot.
+At this corpus size exact search avoids approximate-index recall tradeoffs. Category
+filters apply before both retrievers select candidates. The default candidate pool
+is 40 per retriever. RRF uses constant 60 and canonical pages, so different chunks
+of the same page reinforce its ranking. Source passages are selected from the
+ranked pages, with distinct pages prioritized before additional passages.
 
-Keep both retrievers on the same immutable retrieval snapshot. Build and validate
-the next snapshot before switching the active pointer atomically. Historical
-vectors must not leak into current results: filter by snapshot membership.
+Cross-encoder reranking and model/candidate tuning on a held-out set remain planned.
 
-Answers must cite source URLs and acknowledge missing evidence. Retrieved webpage
+Both retrievers use the same immutable retrieval snapshot. The next snapshot is
+validated before the active pointer switches in one database transaction. Historical
+vectors are filtered out by snapshot membership. Existing search sessions keep their
+pinned snapshot until restarted; they do not mix new vectors with old BM25 files.
+
+The current CLI returns passages, URLs, fetch timestamps and source warnings, not
+generated answers. The future answer layer must cite sources and acknowledge missing
+evidence. Retrieved webpage
 text is untrusted reference material, never instructions to the assistant. Handle
 follow-up questions using conversation context without losing named entities or
 user filters. Display fetch dates for time-sensitive information.
 
 ## 5. Evaluation and interface
 
-Create labeled Greek/English questions about services, training, jobs, eligibility,
+The checked-in 20-question positive smoke set covers services, training, jobs,
+technical names and Greek/English paraphrases. Reports compare BM25, dense and
+hybrid retrieval using page-level hit rate/Recall@5, MRR@5 and warm local latency.
+This development set was used to identify contact extraction, fusion and glossary
+improvements; it is not independent or held out. Negative questions and generated
+answer correctness are not evaluated yet.
+
+Next, create held-out Greek/English questions about services, training, jobs, eligibility,
 dates and missing information. Compare dense-only, BM25-only and hybrid retrieval
 using Recall@k/MRR, then assess citation correctness, unsupported answers, latency
 and per-question cost. Include exact technical terms and plausible but unanswerable
@@ -97,5 +124,7 @@ it as an independent portfolio demo. The current milestone has no chat interface
 - [pgvector](https://github.com/pgvector/pgvector)
 - [BM25S persistence and retrieval](https://github.com/xhluca/bm25s)
 - [BGE-M3 model card](https://huggingface.co/BAAI/bge-m3)
+- [Multilingual E5-small model card](https://huggingface.co/intfloat/multilingual-e5-small)
+- [FastEmbed](https://github.com/qdrant/fastembed)
 - [PostgreSQL text search ranking](https://www.postgresql.org/docs/current/textsearch-controls.html)
 - [Protego robots parser](https://github.com/scrapy/protego)

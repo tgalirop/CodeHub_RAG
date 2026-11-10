@@ -25,21 +25,34 @@ jobs:
 
   database:
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_DB: codehub_rag_test
+      POSTGRES_USER: codehub
+      POSTGRES_PASSWORD: ci-local-only
+      POSTGRES_HOST: 127.0.0.1
+      CODEHUB_TEST_DB: '1'
     services:
       postgres:
         image: pgvector/pgvector:pg17
         env:
-          POSTGRES_DB: codehub_rag
+          POSTGRES_DB: codehub_rag_test
           POSTGRES_USER: codehub
           POSTGRES_PASSWORD: ci-local-only
         options: >-
-          --health-cmd "pg_isready -U codehub -d codehub_rag"
+          --health-cmd "pg_isready -U codehub -d codehub_rag_test"
           --health-interval 5s --health-timeout 5s --health-retries 10
+        ports:
+          - 5432:5432
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Initialize schema
-        run: docker exec -i ${{ job.services.postgres.id }} psql -U codehub -d codehub_rag -v ON_ERROR_STOP=1 < db/001_initial.sql
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: '3.12'
+          version: '0.12.23'
+      - run: uv sync --locked
+      - run: uv run codehub-rag migrate
       - name: Check vector storage and snapshot constraints
-        run: docker exec -i ${{ job.services.postgres.id }} psql -U codehub -d codehub_rag -v ON_ERROR_STOP=1 < db/smoke.sql
+        run: docker exec -i ${{ job.services.postgres.id }} psql -U codehub -d codehub_rag_test -v ON_ERROR_STOP=1 < db/smoke.sql
+      - run: uv run pytest tests/test_database.py -q

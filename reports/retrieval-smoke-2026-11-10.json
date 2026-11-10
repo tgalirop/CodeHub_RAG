@@ -1,0 +1,1361 @@
+{
+  "created_at": "2026-11-10T12:26:11.595837+00:00",
+  "snapshot_id": "f9476637e7037d6abe7e0c7424e3e0d756708959c247390a4f486684f0c8523f",
+  "questions_sha256": "faf908b14de459c8584b09de9c425932b245f6d17b331a399e2361014f73729e",
+  "question_count": 20,
+  "scope": "Curated positive smoke set; not held out; no answer or abstention evaluation",
+  "settings": {
+    "unique_pages": 5,
+    "candidates_per_retriever": 40,
+    "rrf_constant": 60,
+    "fusion_unit": "canonical page",
+    "query_expansion": "el-en-domain-v1",
+    "latency": "Warm queries, excludes model and index loading; local CPU/PostgreSQL"
+  },
+  "summary": {
+    "bm25": {
+      "queries": 20,
+      "hit_rate_at_5": 0.95,
+      "mean_recall_at_5": 0.95,
+      "mrr_at_5": 0.8875,
+      "warm_latency_p50_ms": 1.821849960833788
+    },
+    "dense": {
+      "queries": 20,
+      "hit_rate_at_5": 1.0,
+      "mean_recall_at_5": 0.975,
+      "mrr_at_5": 0.8516666666666666,
+      "warm_latency_p50_ms": 17.1835501678288
+    },
+    "hybrid": {
+      "queries": 20,
+      "hit_rate_at_5": 0.95,
+      "mean_recall_at_5": 0.95,
+      "mrr_at_5": 0.8916666666666666,
+      "warm_latency_p50_ms": 17.3869498539716
+    }
+  },
+  "results": [
+    {
+      "case_id": "el_team_training",
+      "language": "el",
+      "query": "Θέλω να εκπαιδεύσω την ομάδα της εταιρείας μου",
+      "expanded_query": "Θέλω να εκπαιδεύσω την ομάδα της εταιρείας μου\ntraining education learning upskilling team employees workforce",
+      "mode": "bm25",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-rd-innovation-partnerships/generative-ai-skills-academy-genaisa-el/",
+        "https://codehub.gr/our-credentials/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-rd-innovation-partnerships/generative-ai-skills-academy-genaisa-en/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/"
+      ],
+      "elapsed_ms": 2.705399878323078,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 0.25
+    },
+    {
+      "case_id": "el_team_training",
+      "language": "el",
+      "query": "Θέλω να εκπαιδεύσω την ομάδα της εταιρείας μου",
+      "expanded_query": "Θέλω να εκπαιδεύσω την ομάδα της εταιρείας μου\ntraining education learning upskilling team employees workforce",
+      "mode": "dense",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/ai-competency-development-adoption-framework/building-ai-enabled-business-teams/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-rd-innovation-partnerships/generative-ai-skills-academy-genaisa-el/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/",
+        "https://codehub.gr/services/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/"
+      ],
+      "elapsed_ms": 17.63539994135499,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 0.3333333333333333
+    },
+    {
+      "case_id": "el_team_training",
+      "language": "el",
+      "query": "Θέλω να εκπαιδεύσω την ομάδα της εταιρείας μου",
+      "expanded_query": "Θέλω να εκπαιδεύσω την ομάδα της εταιρείας μου\ntraining education learning upskilling team employees workforce",
+      "mode": "hybrid",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-rd-innovation-partnerships/generative-ai-skills-academy-genaisa-el/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/ai-competency-development-adoption-framework/building-ai-enabled-business-teams/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/",
+        "https://codehub.gr/services/find-talent/tech-recruitment-academy/"
+      ],
+      "elapsed_ms": 13.558000326156616,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 0.3333333333333333
+    },
+    {
+      "case_id": "en_team_training",
+      "language": "en",
+      "query": "Corporate upskilling and tailored training delivery for our employees",
+      "expanded_query": "Corporate upskilling and tailored training delivery for our employees",
+      "mode": "bm25",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-csr-corporate-benefits-programs/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/ai-competency-development-adoption-framework/building-ai-enabled-business-teams/",
+        "https://codehub.gr/our-credentials/"
+      ],
+      "elapsed_ms": 0.5478998646140099,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_team_training",
+      "language": "en",
+      "query": "Corporate upskilling and tailored training delivery for our employees",
+      "expanded_query": "Corporate upskilling and tailored training delivery for our employees",
+      "mode": "dense",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/",
+        "https://codehub.gr/services/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/",
+        "https://codehub.gr/",
+        "https://codehub.gr/services/build-with-experts/"
+      ],
+      "elapsed_ms": 11.777899693697691,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_team_training",
+      "language": "en",
+      "query": "Corporate upskilling and tailored training delivery for our employees",
+      "expanded_query": "Corporate upskilling and tailored training delivery for our employees",
+      "mode": "hybrid",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/ai-competency-development-adoption-framework/building-ai-enabled-business-teams/",
+        "https://codehub.gr/services/build-with-experts/",
+        "https://codehub.gr/our-credentials/"
+      ],
+      "elapsed_ms": 12.234700378030539,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_payroll",
+      "language": "el",
+      "query": "Μπορείτε να αναλάβετε τη μισθοδοσία και τις εργασιακές υποχρεώσεις της ομάδας μας;",
+      "expanded_query": "Μπορείτε να αναλάβετε τη μισθοδοσία και τις εργασιακές υποχρεώσεις της ομάδας μας;\nteam employees workforce payroll payment employment compliance contracts",
+      "mode": "bm25",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/build-with-experts/paybridge/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/build-with-experts/paybridge/",
+        "https://codehub.gr/services/build-with-experts/",
+        "https://codehub.gr/services/build-with-experts/internship-management-solutions/",
+        "https://codehub.gr/job/po-887-payment-engineer/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-rd-innovation-partnerships/generative-ai-skills-academy-genaisa-el/"
+      ],
+      "elapsed_ms": 0.853399746119976,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_payroll",
+      "language": "el",
+      "query": "Μπορείτε να αναλάβετε τη μισθοδοσία και τις εργασιακές υποχρεώσεις της ομάδας μας;",
+      "expanded_query": "Μπορείτε να αναλάβετε τη μισθοδοσία και τις εργασιακές υποχρεώσεις της ομάδας μας;\nteam employees workforce payroll payment employment compliance contracts",
+      "mode": "dense",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/build-with-experts/paybridge/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/build-with-experts/paybridge/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/talent-onboarding-programs-bootcamps/scheduled-trainings-bootcamps-talent-onboarding-programs/",
+        "https://codehub.gr/privacy-policy/",
+        "https://codehub.gr/",
+        "https://codehub.gr/job/po-887-payment-engineer/"
+      ],
+      "elapsed_ms": 13.837800361216068,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_payroll",
+      "language": "el",
+      "query": "Μπορείτε να αναλάβετε τη μισθοδοσία και τις εργασιακές υποχρεώσεις της ομάδας μας;",
+      "expanded_query": "Μπορείτε να αναλάβετε τη μισθοδοσία και τις εργασιακές υποχρεώσεις της ομάδας μας;\nteam employees workforce payroll payment employment compliance contracts",
+      "mode": "hybrid",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/build-with-experts/paybridge/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/build-with-experts/paybridge/",
+        "https://codehub.gr/job/po-887-payment-engineer/",
+        "https://codehub.gr/services/build-with-experts/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/ai-competency-development-adoption-framework/building-ai-enabled-business-teams/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/talent-onboarding-programs-bootcamps/scheduled-trainings-bootcamps-talent-onboarding-programs/"
+      ],
+      "elapsed_ms": 16.343799885362387,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_paybridge",
+      "language": "en",
+      "query": "PayBridge payroll and compliance management",
+      "expanded_query": "PayBridge payroll and compliance management",
+      "mode": "bm25",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/build-with-experts/paybridge/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/build-with-experts/paybridge/",
+        "https://codehub.gr/services/build-with-experts/",
+        "https://codehub.gr/services/build-with-experts/internship-management-solutions/",
+        "https://codehub.gr/our-credentials/",
+        "https://codehub.gr/course/ai-system-architecture-on-azure/"
+      ],
+      "elapsed_ms": 0.49429992213845253,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_paybridge",
+      "language": "en",
+      "query": "PayBridge payroll and compliance management",
+      "expanded_query": "PayBridge payroll and compliance management",
+      "mode": "dense",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/build-with-experts/paybridge/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/build-with-experts/paybridge/",
+        "https://codehub.gr/services/build-with-experts/",
+        "https://codehub.gr/job/po-887-payment-engineer/",
+        "https://codehub.gr/job/po-922-data-governance-expert/",
+        "https://codehub.gr/job/po-915-data-insights-consultant/"
+      ],
+      "elapsed_ms": 11.108499951660633,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_paybridge",
+      "language": "en",
+      "query": "PayBridge payroll and compliance management",
+      "expanded_query": "PayBridge payroll and compliance management",
+      "mode": "hybrid",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/build-with-experts/paybridge/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/build-with-experts/paybridge/",
+        "https://codehub.gr/services/build-with-experts/",
+        "https://codehub.gr/job/po-884-grc-privacy-consultant/",
+        "https://codehub.gr/our-credentials/",
+        "https://codehub.gr/job/po-887-payment-engineer/"
+      ],
+      "elapsed_ms": 10.977699887007475,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_startup_hiring",
+      "language": "el",
+      "query": "Έχω μια startup και χρειάζομαι βοήθεια για να προσλάβω προγραμματιστές",
+      "expanded_query": "Έχω μια startup και χρειάζομαι βοήθεια για να προσλάβω προγραμματιστές\nrecruitment hiring",
+      "mode": "bm25",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/find-talent/recruitment-services/recruitment-for-startups/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/find-talent/recruitment-services/recruitment-for-startups/",
+        "https://codehub.gr/services/find-talent/recruitment-services/",
+        "https://codehub.gr/services/find-talent/",
+        "https://codehub.gr/services/find-talent/business-critical-recruitment/",
+        "https://codehub.gr/services/find-talent/tech-recruitment-mentoring-program/"
+      ],
+      "elapsed_ms": 0.7151998579502106,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_startup_hiring",
+      "language": "el",
+      "query": "Έχω μια startup και χρειάζομαι βοήθεια για να προσλάβω προγραμματιστές",
+      "expanded_query": "Έχω μια startup και χρειάζομαι βοήθεια για να προσλάβω προγραμματιστές\nrecruitment hiring",
+      "mode": "dense",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/find-talent/recruitment-services/recruitment-for-startups/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/",
+        "https://codehub.gr/services/find-talent/recruitment-services/recruitment-for-startups/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/talent-onboarding-programs-bootcamps/",
+        "https://codehub.gr/services/find-talent/recruitment-services/",
+        "https://codehub.gr/services/"
+      ],
+      "elapsed_ms": 12.718599755316973,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 0.5
+    },
+    {
+      "case_id": "el_startup_hiring",
+      "language": "el",
+      "query": "Έχω μια startup και χρειάζομαι βοήθεια για να προσλάβω προγραμματιστές",
+      "expanded_query": "Έχω μια startup και χρειάζομαι βοήθεια για να προσλάβω προγραμματιστές\nrecruitment hiring",
+      "mode": "hybrid",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/find-talent/recruitment-services/recruitment-for-startups/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/find-talent/recruitment-services/recruitment-for-startups/",
+        "https://codehub.gr/services/find-talent/recruitment-services/",
+        "https://codehub.gr/services/find-talent/",
+        "https://codehub.gr/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/talent-onboarding-programs-bootcamps/"
+      ],
+      "elapsed_ms": 12.410799972712994,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_executive_hiring",
+      "language": "el",
+      "query": "Αναζητούμε CTO και διευθυντικά στελέχη τεχνολογίας",
+      "expanded_query": "Αναζητούμε CTO και διευθυντικά στελέχη τεχνολογίας\nexecutive leadership",
+      "mode": "bm25",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/find-talent/c-suite-recruitment/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/find-talent/",
+        "https://codehub.gr/services/find-talent/c-suite-recruitment/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-rd-innovation-partnerships/generative-ai-skills-academy-genaisa-el/",
+        "https://codehub.gr/job/po-925-director-of-application-cloud-security/",
+        "https://codehub.gr/job/po-942-project-manager-crm/"
+      ],
+      "elapsed_ms": 0.7223999127745628,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 0.5
+    },
+    {
+      "case_id": "el_executive_hiring",
+      "language": "el",
+      "query": "Αναζητούμε CTO και διευθυντικά στελέχη τεχνολογίας",
+      "expanded_query": "Αναζητούμε CTO και διευθυντικά στελέχη τεχνολογίας\nexecutive leadership",
+      "mode": "dense",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/find-talent/c-suite-recruitment/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/find-talent/",
+        "https://codehub.gr/services/find-talent/c-suite-recruitment/",
+        "https://codehub.gr/open-job-opportunities/",
+        "https://codehub.gr/job/po-932-tech-leader/",
+        "https://codehub.gr/"
+      ],
+      "elapsed_ms": 19.892700016498566,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 0.5
+    },
+    {
+      "case_id": "el_executive_hiring",
+      "language": "el",
+      "query": "Αναζητούμε CTO και διευθυντικά στελέχη τεχνολογίας",
+      "expanded_query": "Αναζητούμε CTO και διευθυντικά στελέχη τεχνολογίας\nexecutive leadership",
+      "mode": "hybrid",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/find-talent/c-suite-recruitment/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/find-talent/",
+        "https://codehub.gr/services/find-talent/c-suite-recruitment/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-rd-innovation-partnerships/generative-ai-skills-academy-genaisa-el/",
+        "https://codehub.gr/job/po-932-tech-leader/",
+        "https://codehub.gr/open-job-opportunities/"
+      ],
+      "elapsed_ms": 19.840099848806858,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 0.5
+    },
+    {
+      "case_id": "el_agentic_spring",
+      "language": "el",
+      "query": "Μάθημα για αυτόνομους AI agents με Java και Spring AI",
+      "expanded_query": "Μάθημα για αυτόνομους AI agents με Java και Spring AI\ntraining education learning upskilling",
+      "mode": "bm25",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/agentic-ai-with-spring-ai-embabel/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/agentic-ai-with-spring-ai-embabel/",
+        "https://codehub.gr/course/building-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/spring-testing-with-ai-assisted-workflows/",
+        "https://codehub.gr/course/operating-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/spring-boot-development-using-ai-coding-assistant/"
+      ],
+      "elapsed_ms": 2.313100267201662,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_agentic_spring",
+      "language": "el",
+      "query": "Μάθημα για αυτόνομους AI agents με Java και Spring AI",
+      "expanded_query": "Μάθημα για αυτόνομους AI agents με Java και Spring AI\ntraining education learning upskilling",
+      "mode": "dense",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/agentic-ai-with-spring-ai-embabel/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/building-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/agentic-ai-with-spring-ai-embabel/",
+        "https://codehub.gr/course/operating-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/spring-testing-with-ai-assisted-workflows/",
+        "https://codehub.gr/course/ai-assisted-microservices-with-spring-cloud/"
+      ],
+      "elapsed_ms": 18.325900193303823,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 0.5
+    },
+    {
+      "case_id": "el_agentic_spring",
+      "language": "el",
+      "query": "Μάθημα για αυτόνομους AI agents με Java και Spring AI",
+      "expanded_query": "Μάθημα για αυτόνομους AI agents με Java και Spring AI\ntraining education learning upskilling",
+      "mode": "hybrid",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/agentic-ai-with-spring-ai-embabel/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/agentic-ai-with-spring-ai-embabel/",
+        "https://codehub.gr/course/building-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/operating-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/spring-testing-with-ai-assisted-workflows/",
+        "https://codehub.gr/course/spring-boot-development-using-ai-coding-assistant/"
+      ],
+      "elapsed_ms": 18.008800223469734,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_agentic_spring",
+      "language": "en",
+      "query": "Agentic AI with Spring AI and Embabel",
+      "expanded_query": "Agentic AI with Spring AI and Embabel",
+      "mode": "bm25",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/agentic-ai-with-spring-ai-embabel/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/agentic-ai-with-spring-ai-embabel/",
+        "https://codehub.gr/course/building-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/operating-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/spring-boot-development-using-ai-coding-assistant/",
+        "https://codehub.gr/course/spring-testing-with-ai-assisted-workflows/"
+      ],
+      "elapsed_ms": 1.9037001766264439,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_agentic_spring",
+      "language": "en",
+      "query": "Agentic AI with Spring AI and Embabel",
+      "expanded_query": "Agentic AI with Spring AI and Embabel",
+      "mode": "dense",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/agentic-ai-with-spring-ai-embabel/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/agentic-ai-with-spring-ai-embabel/",
+        "https://codehub.gr/course/building-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/operating-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/spring-testing-with-ai-assisted-workflows/",
+        "https://codehub.gr/course/ai-assisted-microservices-with-spring-cloud/"
+      ],
+      "elapsed_ms": 16.48409990593791,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_agentic_spring",
+      "language": "en",
+      "query": "Agentic AI with Spring AI and Embabel",
+      "expanded_query": "Agentic AI with Spring AI and Embabel",
+      "mode": "hybrid",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/agentic-ai-with-spring-ai-embabel/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/agentic-ai-with-spring-ai-embabel/",
+        "https://codehub.gr/course/building-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/operating-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/spring-testing-with-ai-assisted-workflows/",
+        "https://codehub.gr/course/spring-boot-development-using-ai-coding-assistant/"
+      ],
+      "elapsed_ms": 16.808500047773123,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_rag_course",
+      "language": "el",
+      "query": "Θέλω να μάθω να φτιάχνω RAG με vector databases και αξιολόγηση αναζήτησης",
+      "expanded_query": "Θέλω να μάθω να φτιάχνω RAG με vector databases και αξιολόγηση αναζήτησης\ntraining education learning upskilling",
+      "mode": "bm25",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/",
+        "https://codehub.gr/course/ai-engineering-for-intelligent-net-systems-rag-agents-enterprise-integration/",
+        "https://codehub.gr/course/operating-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/ai-enhanced-development-in-net-with-semantic-kernel/",
+        "https://codehub.gr/course/ai-native-microservices-architecture-with-net-containers/"
+      ],
+      "elapsed_ms": 2.081099897623062,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_rag_course",
+      "language": "el",
+      "query": "Θέλω να μάθω να φτιάχνω RAG με vector databases και αξιολόγηση αναζήτησης",
+      "expanded_query": "Θέλω να μάθω να φτιάχνω RAG με vector databases και αξιολόγηση αναζήτησης\ntraining education learning upskilling",
+      "mode": "dense",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/",
+        "https://codehub.gr/course/relational-databases-postgresql-ai-assistants/",
+        "https://codehub.gr/course/intro-to-ai-assisted-technical-business-analysis/",
+        "https://codehub.gr/course/aws-skills-hub/",
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/"
+      ],
+      "elapsed_ms": 18.227499909698963,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_rag_course",
+      "language": "el",
+      "query": "Θέλω να μάθω να φτιάχνω RAG με vector databases και αξιολόγηση αναζήτησης",
+      "expanded_query": "Θέλω να μάθω να φτιάχνω RAG με vector databases και αξιολόγηση αναζήτησης\ntraining education learning upskilling",
+      "mode": "hybrid",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/",
+        "https://codehub.gr/course/ai-engineering-for-intelligent-net-systems-rag-agents-enterprise-integration/",
+        "https://codehub.gr/course/relational-databases-postgresql-ai-assistants/",
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+        "https://codehub.gr/course/ai-enhanced-development-in-net-with-semantic-kernel/"
+      ],
+      "elapsed_ms": 18.502799794077873,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_rag_course",
+      "language": "en",
+      "query": "Retrieval augmented generation systems engineering",
+      "expanded_query": "Retrieval augmented generation systems engineering",
+      "mode": "bm25",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/",
+        "https://codehub.gr/course/ai-augmented-sdlc-for-net-systems-with-measurable-outcomes/",
+        "https://codehub.gr/course/ai-augmented-development-with-github-copilot/",
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+        "https://codehub.gr/course/architecting-on-aws/"
+      ],
+      "elapsed_ms": 1.83450011536479,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_rag_course",
+      "language": "en",
+      "query": "Retrieval augmented generation systems engineering",
+      "expanded_query": "Retrieval augmented generation systems engineering",
+      "mode": "dense",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/",
+        "https://codehub.gr/course/architecting-on-aws/",
+        "https://codehub.gr/course/cybersecurity-awareness-essentials/",
+        "https://codehub.gr/course/aws-skills-hub/",
+        "https://codehub.gr/course/software-architecture-with-ai-assistance/"
+      ],
+      "elapsed_ms": 16.71329978853464,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_rag_course",
+      "language": "en",
+      "query": "Retrieval augmented generation systems engineering",
+      "expanded_query": "Retrieval augmented generation systems engineering",
+      "mode": "hybrid",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/",
+        "https://codehub.gr/course/architecting-on-aws/",
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+        "https://codehub.gr/course/cybersecurity-awareness-essentials/",
+        "https://codehub.gr/course/building-ai-agents/"
+      ],
+      "elapsed_ms": 16.946399584412575,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_python_llms",
+      "language": "el",
+      "query": "Θέλω να δουλέψω με μεγάλα γλωσσικά μοντέλα χρησιμοποιώντας Python",
+      "expanded_query": "Θέλω να δουλέψω με μεγάλα γλωσσικά μοντέλα χρησιμοποιώντας Python",
+      "mode": "bm25",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/working-with-llms-in-python/",
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/working-with-llms-in-python/",
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+        "https://codehub.gr/course/python-i-ai-powered-blueprint/",
+        "https://codehub.gr/course/python-ii-ai-powered-deep-dive/"
+      ],
+      "elapsed_ms": 1.8132999539375305,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_python_llms",
+      "language": "el",
+      "query": "Θέλω να δουλέψω με μεγάλα γλωσσικά μοντέλα χρησιμοποιώντας Python",
+      "expanded_query": "Θέλω να δουλέψω με μεγάλα γλωσσικά μοντέλα χρησιμοποιώντας Python",
+      "mode": "dense",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/working-with-llms-in-python/",
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/working-with-llms-in-python/",
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+        "https://codehub.gr/course/python-i-ai-powered-blueprint/",
+        "https://codehub.gr/course/python-ii-ai-powered-deep-dive/",
+        "https://codehub.gr/course/net-developer-productivity-with-ai-copilots-automation-and-intelligent-workflows/"
+      ],
+      "elapsed_ms": 17.00770016759634,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_python_llms",
+      "language": "el",
+      "query": "Θέλω να δουλέψω με μεγάλα γλωσσικά μοντέλα χρησιμοποιώντας Python",
+      "expanded_query": "Θέλω να δουλέψω με μεγάλα γλωσσικά μοντέλα χρησιμοποιώντας Python",
+      "mode": "hybrid",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/working-with-llms-in-python/",
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/working-with-llms-in-python/",
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+        "https://codehub.gr/course/python-i-ai-powered-blueprint/",
+        "https://codehub.gr/course/python-ii-ai-powered-deep-dive/",
+        "https://codehub.gr/course/net-developer-productivity-with-ai-copilots-automation-and-intelligent-workflows/"
+      ],
+      "elapsed_ms": 17.26329978555441,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_langchain",
+      "language": "en",
+      "query": "AI Engineering Python LangChain",
+      "expanded_query": "AI Engineering Python LangChain",
+      "mode": "bm25",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+        "https://codehub.gr/course/python-i-ai-powered-blueprint/",
+        "https://codehub.gr/course/python-ii-ai-powered-deep-dive/",
+        "https://codehub.gr/course/working-with-llms-in-python/"
+      ],
+      "elapsed_ms": 1.8303999677300453,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_langchain",
+      "language": "en",
+      "query": "AI Engineering Python LangChain",
+      "expanded_query": "AI Engineering Python LangChain",
+      "mode": "dense",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+        "https://codehub.gr/course/python-i-ai-powered-blueprint/",
+        "https://codehub.gr/course/working-with-llms-in-python/",
+        "https://codehub.gr/course/python-ii-ai-powered-deep-dive/",
+        "https://codehub.gr/course/building-ai-agents/"
+      ],
+      "elapsed_ms": 15.779099892824888,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_langchain",
+      "language": "en",
+      "query": "AI Engineering Python LangChain",
+      "expanded_query": "AI Engineering Python LangChain",
+      "mode": "hybrid",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+        "https://codehub.gr/course/python-i-ai-powered-blueprint/",
+        "https://codehub.gr/course/python-ii-ai-powered-deep-dive/",
+        "https://codehub.gr/course/working-with-llms-in-python/",
+        "https://codehub.gr/course/building-ai-agents/"
+      ],
+      "elapsed_ms": 15.80579997971654,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_mcp_dotnet",
+      "language": "en",
+      "query": "MCP Development in .NET building tool integrated AI systems",
+      "expanded_query": "MCP Development in .NET building tool integrated AI systems",
+      "mode": "bm25",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/mcp-development-in-net-building-tool-integrated-ai-systems/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/mcp-development-in-net-building-tool-integrated-ai-systems/",
+        "https://codehub.gr/course/building-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/agentic-ai-with-spring-ai-embabel/",
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+        "https://codehub.gr/course/intelligent-design-patterns-for-ai-driven-net-systems/"
+      ],
+      "elapsed_ms": 1.9157002680003643,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_mcp_dotnet",
+      "language": "en",
+      "query": "MCP Development in .NET building tool integrated AI systems",
+      "expanded_query": "MCP Development in .NET building tool integrated AI systems",
+      "mode": "dense",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/mcp-development-in-net-building-tool-integrated-ai-systems/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/mcp-development-in-net-building-tool-integrated-ai-systems/",
+        "https://codehub.gr/course/building-ai-agents/",
+        "https://codehub.gr/course/ai-native-microservices-architecture-with-net-containers/",
+        "https://codehub.gr/course/net-developer-productivity-with-ai-copilots-automation-and-intelligent-workflows/",
+        "https://codehub.gr/course/building-ai-systems-with-spring-ai/"
+      ],
+      "elapsed_ms": 16.996399965137243,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_mcp_dotnet",
+      "language": "en",
+      "query": "MCP Development in .NET building tool integrated AI systems",
+      "expanded_query": "MCP Development in .NET building tool integrated AI systems",
+      "mode": "hybrid",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/mcp-development-in-net-building-tool-integrated-ai-systems/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/mcp-development-in-net-building-tool-integrated-ai-systems/",
+        "https://codehub.gr/course/building-ai-systems-with-spring-ai/",
+        "https://codehub.gr/course/building-ai-agents/",
+        "https://codehub.gr/course/intelligent-design-patterns-for-ai-driven-net-systems/",
+        "https://codehub.gr/course/ai-native-microservices-architecture-with-net-containers/"
+      ],
+      "elapsed_ms": 17.510599922388792,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_csharp",
+      "language": "el",
+      "query": "Εκπαίδευση σε C# και ASP.NET Core με βοηθό τεχνητής νοημοσύνης",
+      "expanded_query": "Εκπαίδευση σε C# και ASP.NET Core με βοηθό τεχνητής νοημοσύνης\ntraining education learning upskilling artificial intelligence AI",
+      "mode": "bm25",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/c-and-asp-net-core-using-ai-coding-assistant/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/c-and-asp-net-core-using-ai-coding-assistant/",
+        "https://codehub.gr/course/ai-native-microservices-architecture-with-net-containers/",
+        "https://codehub.gr/course/ai-augmented-sdlc-for-net-systems-with-measurable-outcomes/",
+        "https://codehub.gr/course/ai-engineering-for-intelligent-net-systems-rag-agents-enterprise-integration/",
+        "https://codehub.gr/course/ai-augmented-full-stack-net-code-development/"
+      ],
+      "elapsed_ms": 2.1505001932382584,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_csharp",
+      "language": "el",
+      "query": "Εκπαίδευση σε C# και ASP.NET Core με βοηθό τεχνητής νοημοσύνης",
+      "expanded_query": "Εκπαίδευση σε C# και ASP.NET Core με βοηθό τεχνητής νοημοσύνης\ntraining education learning upskilling artificial intelligence AI",
+      "mode": "dense",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/c-and-asp-net-core-using-ai-coding-assistant/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/c-and-asp-net-core-using-ai-coding-assistant/",
+        "https://codehub.gr/course/ai-native-microservices-architecture-with-net-containers/",
+        "https://codehub.gr/course/ai-governance-operations-in-net/",
+        "https://codehub.gr/course/net-developer-productivity-with-ai-copilots-automation-and-intelligent-workflows/",
+        "https://codehub.gr/course/ai-enhanced-development-in-net-with-semantic-kernel/"
+      ],
+      "elapsed_ms": 18.995400052517653,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_csharp",
+      "language": "el",
+      "query": "Εκπαίδευση σε C# και ASP.NET Core με βοηθό τεχνητής νοημοσύνης",
+      "expanded_query": "Εκπαίδευση σε C# και ASP.NET Core με βοηθό τεχνητής νοημοσύνης\ntraining education learning upskilling artificial intelligence AI",
+      "mode": "hybrid",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/c-and-asp-net-core-using-ai-coding-assistant/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/c-and-asp-net-core-using-ai-coding-assistant/",
+        "https://codehub.gr/course/ai-native-microservices-architecture-with-net-containers/",
+        "https://codehub.gr/course/ai-engineering-for-intelligent-net-systems-rag-agents-enterprise-integration/",
+        "https://codehub.gr/course/ai-enhanced-development-in-net-with-semantic-kernel/",
+        "https://codehub.gr/course/ai-augmented-full-stack-net-code-development/"
+      ],
+      "elapsed_ms": 18.75569997355342,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_csharp",
+      "language": "en",
+      "query": "C# ASP.NET Core using AI coding assistant",
+      "expanded_query": "C# ASP.NET Core using AI coding assistant",
+      "mode": "bm25",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/c-and-asp-net-core-using-ai-coding-assistant/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/c-and-asp-net-core-using-ai-coding-assistant/",
+        "https://codehub.gr/course/spring-boot-development-using-ai-coding-assistant/",
+        "https://codehub.gr/course/ai-native-microservices-architecture-with-net-containers/",
+        "https://codehub.gr/course/net-developer-productivity-with-ai-copilots-automation-and-intelligent-workflows/",
+        "https://codehub.gr/course/ai-augmented-sdlc-for-net-systems-with-measurable-outcomes/"
+      ],
+      "elapsed_ms": 1.7534000799059868,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_csharp",
+      "language": "en",
+      "query": "C# ASP.NET Core using AI coding assistant",
+      "expanded_query": "C# ASP.NET Core using AI coding assistant",
+      "mode": "dense",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/c-and-asp-net-core-using-ai-coding-assistant/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/c-and-asp-net-core-using-ai-coding-assistant/",
+        "https://codehub.gr/course/ai-engineering-for-intelligent-net-systems-rag-agents-enterprise-integration/",
+        "https://codehub.gr/course/net-developer-productivity-with-ai-copilots-automation-and-intelligent-workflows/",
+        "https://codehub.gr/course/ai-augmented-full-stack-net-code-development/",
+        "https://codehub.gr/course/ai-enhanced-development-in-net-with-semantic-kernel/"
+      ],
+      "elapsed_ms": 17.453599721193314,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_csharp",
+      "language": "en",
+      "query": "C# ASP.NET Core using AI coding assistant",
+      "expanded_query": "C# ASP.NET Core using AI coding assistant",
+      "mode": "hybrid",
+      "kind": "course",
+      "expected_urls": [
+        "https://codehub.gr/course/c-and-asp-net-core-using-ai-coding-assistant/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/course/c-and-asp-net-core-using-ai-coding-assistant/",
+        "https://codehub.gr/course/net-developer-productivity-with-ai-copilots-automation-and-intelligent-workflows/",
+        "https://codehub.gr/course/ai-native-microservices-architecture-with-net-containers/",
+        "https://codehub.gr/course/ai-augmented-sdlc-for-net-systems-with-measurable-outcomes/",
+        "https://codehub.gr/course/ai-engineering-for-intelligent-net-systems-rag-agents-enterprise-integration/"
+      ],
+      "elapsed_ms": 18.267699982970953,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_contact",
+      "language": "el",
+      "query": "Πώς μπορώ να επικοινωνήσω με την Code.Hub;",
+      "expanded_query": "Πώς μπορώ να επικοινωνήσω με την Code.Hub;\ncontact email phone",
+      "mode": "bm25",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/contact/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/contact/",
+        "https://codehub.gr/terms-and-conditions/",
+        "https://codehub.gr/cookie-policy-eu/",
+        "https://codehub.gr/privacy-policy/",
+        "https://codehub.gr/course/cybersecurity-awareness-essentials/"
+      ],
+      "elapsed_ms": 0.7738000713288784,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_contact",
+      "language": "el",
+      "query": "Πώς μπορώ να επικοινωνήσω με την Code.Hub;",
+      "expanded_query": "Πώς μπορώ να επικοινωνήσω με την Code.Hub;\ncontact email phone",
+      "mode": "dense",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/contact/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/contact/",
+        "https://codehub.gr/terms-and-conditions/",
+        "https://codehub.gr/our-credentials/",
+        "https://codehub.gr/privacy-policy/",
+        "https://codehub.gr/about-codehub/"
+      ],
+      "elapsed_ms": 22.016699891537428,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_contact",
+      "language": "el",
+      "query": "Πώς μπορώ να επικοινωνήσω με την Code.Hub;",
+      "expanded_query": "Πώς μπορώ να επικοινωνήσω με την Code.Hub;\ncontact email phone",
+      "mode": "hybrid",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/contact/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/contact/",
+        "https://codehub.gr/terms-and-conditions/",
+        "https://codehub.gr/privacy-policy/",
+        "https://codehub.gr/cookie-policy-eu/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-rd-innovation-partnerships/"
+      ],
+      "elapsed_ms": 20.51799977198243,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_contact",
+      "language": "en",
+      "query": "Contact Code.Hub email phone office address",
+      "expanded_query": "Contact Code.Hub email phone office address",
+      "mode": "bm25",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/contact/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/contact/",
+        "https://codehub.gr/privacy-policy/",
+        "https://codehub.gr/cookie-policy-eu/",
+        "https://codehub.gr/terms-and-conditions/",
+        "https://codehub.gr/course/cybersecurity-awareness-essentials/"
+      ],
+      "elapsed_ms": 0.4640999250113964,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_contact",
+      "language": "en",
+      "query": "Contact Code.Hub email phone office address",
+      "expanded_query": "Contact Code.Hub email phone office address",
+      "mode": "dense",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/contact/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/contact/",
+        "https://codehub.gr/terms-and-conditions/",
+        "https://codehub.gr/privacy-policy/",
+        "https://codehub.gr/",
+        "https://codehub.gr/our-credentials/"
+      ],
+      "elapsed_ms": 19.279399886727333,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_contact",
+      "language": "en",
+      "query": "Contact Code.Hub email phone office address",
+      "expanded_query": "Contact Code.Hub email phone office address",
+      "mode": "hybrid",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/contact/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/contact/",
+        "https://codehub.gr/privacy-policy/",
+        "https://codehub.gr/terms-and-conditions/",
+        "https://codehub.gr/professional-learning-programs/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/"
+      ],
+      "elapsed_ms": 19.817400258034468,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_ml_job",
+      "language": "en",
+      "query": "Lead ML Engineer",
+      "expanded_query": "Lead ML Engineer",
+      "mode": "bm25",
+      "kind": "job",
+      "expected_urls": [
+        "https://codehub.gr/job/po-525-lead-ml-engineer/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/job/po-525-lead-ml-engineer/",
+        "https://codehub.gr/job/po-763-head-of-data-ai/",
+        "https://codehub.gr/job/po-935-react-engineer/",
+        "https://codehub.gr/job/po-887-payment-engineer/",
+        "https://codehub.gr/job/po-778-ios-engineer/"
+      ],
+      "elapsed_ms": 2.0095002837479115,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_ml_job",
+      "language": "en",
+      "query": "Lead ML Engineer",
+      "expanded_query": "Lead ML Engineer",
+      "mode": "dense",
+      "kind": "job",
+      "expected_urls": [
+        "https://codehub.gr/job/po-525-lead-ml-engineer/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/job/po-525-lead-ml-engineer/",
+        "https://codehub.gr/job/po-934-lead-angular-developer/",
+        "https://codehub.gr/job/po-918-lead-operation-manager/",
+        "https://codehub.gr/job/po-858-lead-analyst-cyber-threat-intelligence/",
+        "https://codehub.gr/job/po-627-software-development-lead/"
+      ],
+      "elapsed_ms": 17.359400168061256,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_ml_job",
+      "language": "en",
+      "query": "Lead ML Engineer",
+      "expanded_query": "Lead ML Engineer",
+      "mode": "hybrid",
+      "kind": "job",
+      "expected_urls": [
+        "https://codehub.gr/job/po-525-lead-ml-engineer/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/job/po-525-lead-ml-engineer/",
+        "https://codehub.gr/job/po-935-react-engineer/",
+        "https://codehub.gr/job/po-934-lead-angular-developer/",
+        "https://codehub.gr/job/po-929-data-engineer/",
+        "https://codehub.gr/job/po-627-software-development-lead/"
+      ],
+      "elapsed_ms": 18.341599963605404,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_aws_event",
+      "language": "en",
+      "query": "AWS Discovery Day Cloud Practitioner Essentials",
+      "expanded_query": "AWS Discovery Day Cloud Practitioner Essentials",
+      "mode": "bm25",
+      "kind": "training",
+      "expected_urls": [
+        "https://codehub.gr/training/aws-discovery-day-cloud-practitioner/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/training/aws-discovery-day-cloud-practitioner/",
+        "https://codehub.gr/training/project-future-13/"
+      ],
+      "elapsed_ms": 1.981500070542097,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_aws_event",
+      "language": "en",
+      "query": "AWS Discovery Day Cloud Practitioner Essentials",
+      "expanded_query": "AWS Discovery Day Cloud Practitioner Essentials",
+      "mode": "dense",
+      "kind": "training",
+      "expected_urls": [
+        "https://codehub.gr/training/aws-discovery-day-cloud-practitioner/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/training/aws-discovery-day-cloud-practitioner/",
+        "https://codehub.gr/training/project-future-13/"
+      ],
+      "elapsed_ms": 13.296300079673529,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "en_aws_event",
+      "language": "en",
+      "query": "AWS Discovery Day Cloud Practitioner Essentials",
+      "expanded_query": "AWS Discovery Day Cloud Practitioner Essentials",
+      "mode": "hybrid",
+      "kind": "training",
+      "expected_urls": [
+        "https://codehub.gr/training/aws-discovery-day-cloud-practitioner/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/training/aws-discovery-day-cloud-practitioner/",
+        "https://codehub.gr/training/project-future-13/"
+      ],
+      "elapsed_ms": 12.940200045704842,
+      "hit_at_5": true,
+      "recall_at_5": 1.0,
+      "reciprocal_rank_at_5": 1.0
+    },
+    {
+      "case_id": "el_tom",
+      "language": "el",
+      "query": "Υπάρχει πλατφόρμα για να οργανώνω και να διαχειρίζομαι εκπαιδευτικά προγράμματα;",
+      "expanded_query": "Υπάρχει πλατφόρμα για να οργανώνω και να διαχειρίζομαι εκπαιδευτικά προγράμματα;\ntraining education learning upskilling",
+      "mode": "bm25",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-technologies-tom/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-technologies-tom/code-hubs-tom-training-operations-manager/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/our-credentials/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-rd-innovation-partnerships/generative-ai-skills-academy-genaisa-el/",
+        "https://codehub.gr/services/find-talent/tech-recruitment-academy/"
+      ],
+      "elapsed_ms": 0.676299910992384,
+      "hit_at_5": false,
+      "recall_at_5": 0.0,
+      "reciprocal_rank_at_5": 0
+    },
+    {
+      "case_id": "el_tom",
+      "language": "el",
+      "query": "Υπάρχει πλατφόρμα για να οργανώνω και να διαχειρίζομαι εκπαιδευτικά προγράμματα;",
+      "expanded_query": "Υπάρχει πλατφόρμα για να οργανώνω και να διαχειρίζομαι εκπαιδευτικά προγράμματα;\ntraining education learning upskilling",
+      "mode": "dense",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-technologies-tom/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-technologies-tom/code-hubs-tom-training-operations-manager/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-rd-innovation-partnerships/generative-ai-skills-academy-genaisa-el/",
+        "https://codehub.gr/professional-learning-programs/scheduled-trainings-bootcamps-skilling-programs/",
+        "https://codehub.gr/academies-skilling-programs/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-technologies-tom/"
+      ],
+      "elapsed_ms": 21.719899959862232,
+      "hit_at_5": true,
+      "recall_at_5": 0.5,
+      "reciprocal_rank_at_5": 0.2
+    },
+    {
+      "case_id": "el_tom",
+      "language": "el",
+      "query": "Υπάρχει πλατφόρμα για να οργανώνω και να διαχειρίζομαι εκπαιδευτικά προγράμματα;",
+      "expanded_query": "Υπάρχει πλατφόρμα για να οργανώνω και να διαχειρίζομαι εκπαιδευτικά προγράμματα;\ntraining education learning upskilling",
+      "mode": "hybrid",
+      "kind": null,
+      "expected_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-technologies-tom/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-technologies-tom/code-hubs-tom-training-operations-manager/"
+      ],
+      "ranked_urls": [
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-rd-innovation-partnerships/generative-ai-skills-academy-genaisa-el/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/",
+        "https://codehub.gr/services/enterprise-learning-academy-solutions/learning-rd-innovation-partnerships/generative-ai-skills-academy-genaisa-en/",
+        "https://codehub.gr/"
+      ],
+      "elapsed_ms": 21.26470021903515,
+      "hit_at_5": false,
+      "recall_at_5": 0.0,
+      "reciprocal_rank_at_5": 0
+    }
+  ]
+}

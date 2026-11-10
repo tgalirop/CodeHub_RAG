@@ -135,6 +135,21 @@ def test_html_comments_are_not_visible_source_content():
     assert "HIDDEN NOTE" not in extract(resource(html), ["page"])["text"]
 
 
+def test_contact_footer_details_are_retained_only_on_contact_page():
+    html = """<main><h1>Contact Us</h1><p>Talk to our team.</p></main>
+    <footer><a href="mailto:info@codehub.gr">Email</a>
+    <a href="tel:+302114117481">Phone</a>
+    <a href="https://www.google.com/maps/place/office">Athens office</a>
+    <nav>UNRELATED FOOTER NAVIGATION</nav></footer>"""
+    contact = Resource("https://codehub.gr/contact/", 200, html.encode(), "text/html", {})
+    doc = extract(contact, ["page"])
+    assert "info@codehub.gr" in doc["text"]
+    assert "+302114117481" in doc["text"]
+    assert "Athens office" in doc["text"]
+    assert "UNRELATED FOOTER NAVIGATION" not in doc["text"]
+    assert "info@codehub.gr" not in extract(resource(html), ["page"])["text"]
+
+
 def test_retry_is_bounded_and_response_size_is_enforced(monkeypatch):
     monkeypatch.setattr("codehub_rag.web.time.sleep", lambda _: None)
     requested = []

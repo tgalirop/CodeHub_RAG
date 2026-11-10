@@ -1,5 +1,8 @@
 # Local validation — 2026-11-10
 
+Historical record for the ingestion milestone. For the current implemented
+database/index/search checks, see [retrieval validation](../reports/retrieval-validation-2026-11-10.md).
+
 This records checks actually run for the first ingestion milestone. It does not
 claim that the planned chatbot or hybrid retrieval is implemented.
 
