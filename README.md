@@ -213,7 +213,7 @@ uv run ruff check .
 uv run ruff format --check .
 ```
 
-Default tests use mock HTTP and no model downloads or paid APIs. Five database
+Default tests use mock HTTP and no model downloads or paid APIs. Six database
 integration tests are opt-in and require a dedicated database whose name ends in `_test`:
 
 ```powershell

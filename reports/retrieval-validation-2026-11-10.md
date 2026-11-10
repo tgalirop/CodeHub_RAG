@@ -25,7 +25,7 @@ versions, metadata-only changes reusing embeddings, snapshot isolation, and fail
 or incomplete builds leaving the active snapshot unchanged. Unit tests reject
 corrupt BM25 artifacts and forbid BM25 rebuilding during search.
 
-Local checks passed: **33 unit tests and 5 PostgreSQL integration tests**, Ruff lint
+Local checks passed: **33 unit tests and 6 PostgreSQL integration tests**, Ruff lint
 and formatting, compilation, and a wheel build. The built wheel includes all three
 numbered migrations and excludes local data, model weights and credentials.
 The SQL vector/snapshot smoke test passed against the populated local database,

@@ -220,6 +220,8 @@ class SearchEngine:
             raise ValueError("No ready retrieval snapshot. Run index first.")
         if row["embedding_model"] != embedder.model_key:
             raise ValueError("Query model differs from snapshot model")
+        if row["manifest"].get("model_config") != embedder.config:
+            raise ValueError("Query model configuration differs from snapshot configuration")
         self.snapshot_id = row["id"]
         self.lexical = LexicalIndex(Path(row["bm25_artifact_path"]), row["bm25_artifact_sha256"])
         if (

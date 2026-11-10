@@ -149,3 +149,13 @@ def test_metadata_only_versions_reuse_embedding_inputs(database, tmp_path):
     assert result["embeddings_created"] == 0
     assert result["embeddings_reused"] == 2
     assert embedder.document_calls == 2
+
+
+def test_query_model_configuration_must_match_index(database, tmp_path):
+    run = make_run(tmp_path / "model-config")
+    embedder = FakeEmbedder()
+    build_index(database, run, embedder, tmp_path / "indexes")
+    incompatible = FakeEmbedder()
+    incompatible.config = {"backend": "different-preprocessing"}
+    with pytest.raises(ValueError, match="model configuration differs"):
+        SearchEngine(database, incompatible)
