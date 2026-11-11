@@ -1,31 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { isCatalogueCount, catalogueAnswer } from "../lib/catalogue.js";
+import { catalogueAnswer } from "../lib/catalogue.js";
 import { createCloudHandler } from "../lib/cloud.js";
 
-test("general Trainings counts mean the course catalogue, not scheduled events", () => {
-  for (const question of [
-    "πόσα trainings υπάρχουν;",
-    "Πόσα courses έχετε;",
-    "Πόσα μαθήματα υπάρχουν συνολικά;",
-    "How many trainings are there?",
-    "How many training programmes does Code.Hub offer?",
-    "What is the total number of courses?",
-  ])
-    assert.equal(isCatalogueCount(question), true, question);
-  for (const question of [
-    "Πόσα trainings για Python υπάρχουν;",
-    "How many AWS courses are there?",
-    "How many open trainings are there?",
-    "Πόσα προγραμματισμένα trainings υπάρχουν;",
-    "Πόσα trainings έγιναν το 2024;",
-    "How many jobs are there?",
-    "Tell me about training",
-  ])
-    assert.equal(isCatalogueCount(question), false, question);
-});
-
-test("course count comes from catalogue data and does not trigger paid provider calls", async () => {
+test("after semantic planning, course counts use catalogue data without embeddings or generation", async () => {
   for (const total of [46, 47]) {
     let called = false;
     const source = {
@@ -36,6 +14,14 @@ test("course count comes from catalogue data and does not trigger paid provider 
     };
     const handler = createCloudHandler({
       env: { OPENAI_API_KEY: "test-only" },
+      planQuery: async () => ({
+        operation: "count",
+        collection: "course",
+        constrained: false,
+        query: "total course catalogue",
+        next_page: false,
+        language: "el",
+      }),
       getStore: () => ({
         snapshot: async () => ({ id: "snapshot" }),
         reserve: async () => true,

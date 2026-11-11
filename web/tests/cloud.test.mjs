@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createCloudHandler, validate } from "../lib/cloud.js";
+import { createCloudHandler as createHandler, validate } from "../lib/cloud.js";
 import {
   tokens,
   expandQuery,
@@ -8,6 +8,20 @@ import {
   diverseChunks,
 } from "../lib/lexical.js";
 import { readEvents } from "../lib/provider.js";
+
+// Provider/stream tests isolate query planning; planner tests cover the real protocol.
+const createCloudHandler = (options) =>
+  createHandler({
+    planQuery: async (payload) => ({
+      operation: "search",
+      collection: null,
+      constrained: false,
+      query: payload.messages.at(-1).content,
+      next_page: false,
+      language: "el",
+    }),
+    ...options,
+  });
 
 const source = {
   id: 1,

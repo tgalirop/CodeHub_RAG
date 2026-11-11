@@ -8,6 +8,7 @@ for (const path of [
   "public/brand/codehub.svg",
   "api/[route].js",
   "lib/cloud.js",
+  "lib/planner.js",
   "lib/search-config.json",
   "lib/chat-config.json",
 ]) {

@@ -1,0 +1,36 @@
+{"id":"jobs_regression","messages":[{"role":"user","content":"ποιες ειναι οι καριερες;"}],"expected":{"operation":"list","collection":"job","language":"el"}}
+{"id":"jobs_typo","messages":[{"role":"user","content":"ποιες εναι οι καριερες?"}],"expected":{"operation":"list","collection":"job","language":"el"}}
+{"id":"jobs_greeklish","messages":[{"role":"user","content":"poies einai oi karieres?"}],"expected":{"operation":"list","collection":"job","language":"el"}}
+{"id":"jobs_informal","messages":[{"role":"user","content":"Τι δουλειές παίζουν στην Code.Hub;"}],"expected":{"operation":"list","collection":"job","language":"el"}}
+{"id":"jobs_paraphrase","messages":[{"role":"user","content":"Θα ήθελα να δω τις επαγγελματικές ευκαιρίες που έχετε αναρτήσει."}],"expected":{"operation":"list","collection":"job","language":"el"}}
+{"id":"jobs_en_browse","messages":[{"role":"user","content":"Can you browse your vacancies with me?"}],"expected":{"operation":"list","collection":"job","language":"en"}}
+{"id":"jobs_ads","messages":[{"role":"user","content":"Δείξε μου τις αγγελίες σας."}],"expected":{"operation":"list","collection":"job","language":"el"}}
+{"id":"jobs_en_short","messages":[{"role":"user","content":"Any job openings?"}],"expected":{"operation":"list","collection":"job","language":"en"}}
+{"id":"course_count_regression","messages":[{"role":"user","content":"πόσα trainings υπάρχουν;"}],"expected":{"operation":"count","collection":"course","language":"el"}}
+{"id":"course_count_greeklish","messages":[{"role":"user","content":"posa seminaria exete synolika?"}],"expected":{"operation":"count","collection":"course","language":"el"}}
+{"id":"course_count_paraphrase","messages":[{"role":"user","content":"Ποιος είναι ο συνολικός αριθμός των μαθημάτων στον κατάλογό σας;"}],"expected":{"operation":"count","collection":"course","language":"el"}}
+{"id":"course_count_en_size","messages":[{"role":"user","content":"How large is the training catalogue?"}],"expected":{"operation":"count","collection":"course","language":"en"}}
+{"id":"course_list_el","messages":[{"role":"user","content":"Θέλω να δω όλα τα μαθήματα."}],"expected":{"operation":"list","collection":"course","language":"el"}}
+{"id":"course_list_greeklish","messages":[{"role":"user","content":"Deikse mou ton katalogo mathimaton."}],"expected":{"operation":"list","collection":"course","language":"el"}}
+{"id":"course_list_en","messages":[{"role":"user","content":"What courses can I take?"}],"expected":{"operation":"list","collection":"course","language":"en"}}
+{"id":"job_count_el","messages":[{"role":"user","content":"Πόσες αγγελίες υπάρχουν στον κατάλογο;"}],"expected":{"operation":"count","collection":"job","language":"el"}}
+{"id":"job_count_en","messages":[{"role":"user","content":"How many job listings do you have?"}],"expected":{"operation":"count","collection":"job","language":"en"}}
+{"id":"job_constraints_el","messages":[{"role":"user","content":"Ποιες θέσεις έχουν Python στην Αθήνα;"}],"expected":{"operation":"search","collection":"job","constrained":true},"required_terms":[["Python"],["Athens","Αθήνα","Athina"]]}
+{"id":"job_remote_devops","messages":[{"role":"user","content":"Any remote DevOps roles?"}],"expected":{"operation":"search","collection":"job","constrained":true},"required_terms":[["DevOps"],["remote","εξ αποστάσεως"]]}
+{"id":"course_filtered_count","messages":[{"role":"user","content":"Πόσα AWS courses έχετε;"}],"expected":{"operation":"search","collection":"course","constrained":true},"required_terms":[["AWS"]]}
+{"id":"course_javascript_beginner","messages":[{"role":"user","content":"Courses for beginners in JavaScript"}],"expected":{"operation":"search","collection":"course","constrained":true},"required_terms":[["JavaScript"],["beginner","introductory","αρχαρι"]]}
+{"id":"scheduled_events","messages":[{"role":"user","content":"Ποια training είναι ανοιχτά για εγγραφή τον Δεκέμβριο;"}],"expected":{"operation":"search","collection":"training","constrained":true},"required_terms":[["December","Δεκέμβριο"]]}
+{"id":"jobs_salary","messages":[{"role":"user","content":"Δείξε δουλειές με μισθό πάνω από 3000 ευρώ."}],"expected":{"operation":"search","collection":"job","constrained":true},"required_terms":[["3000"]]}
+{"id":"course_exact_names","messages":[{"role":"user","content":"I want a C# course, not C++."}],"expected":{"operation":"search","collection":"course","constrained":true},"required_terms":[["C#"],["C++"]]}
+{"id":"contact_el","messages":[{"role":"user","content":"Πώς επικοινωνώ μαζί σας;"}],"expected":{"operation":"search","collection":"page"}}
+{"id":"career_advice","messages":[{"role":"user","content":"Πώς μπορώ να αλλάξω καριέρα;"}],"expected":{"operation":"search"}}
+{"id":"company_about","messages":[{"role":"user","content":"Τι είναι η Code.Hub;"}],"expected":{"operation":"search","collection":"page"}}
+{"id":"company_ceo","messages":[{"role":"user","content":"Who is the CEO?"}],"expected":{"operation":"search","collection":"page"}}
+{"id":"unrelated","messages":[{"role":"user","content":"What is the capital of France?"}],"expected":{"operation":"search"}}
+{"id":"jobs_followup_el","messages":[{"role":"user","content":"Ποιες είναι οι θέσεις εργασίας;"},{"role":"assistant","content":"Θέσεις **1–10** από **61**: πρώτες αγγελίες."},{"role":"user","content":"και οι υπόλοιπες;"}],"expected":{"operation":"list","collection":"job","next_page":true}}
+{"id":"course_change_subject","messages":[{"role":"user","content":"Courses for Python"},{"role":"assistant","content":"Some Python courses."},{"role":"user","content":"Και για Java;"}],"expected":{"operation":"search","collection":"course","constrained":true},"required_terms":[["Java"]]}
+{"id":"jobs_followup_en","messages":[{"role":"user","content":"Job listings"},{"role":"assistant","content":"Roles **1–10** of **61**: first jobs."},{"role":"user","content":"Anything else?"}],"expected":{"operation":"list","collection":"job","next_page":true}}
+{"id":"courses_followup_greeklish","messages":[{"role":"user","content":"All courses"},{"role":"assistant","content":"Courses **1–10** of **46**."},{"role":"user","content":"ki alla?"}],"expected":{"operation":"list","collection":"course","next_page":true,"language":"el"}}
+{"id":"explicit_topic_switch","kind":"job","messages":[{"role":"user","content":"Πόσα μαθήματα έχετε;"}],"expected":{"operation":"count","collection":"course"}}
+{"id":"contact_overrides_hint","kind":"course","messages":[{"role":"user","content":"What is the company's phone number?"}],"expected":{"operation":"search","collection":"page"}}
+{"id":"course_deadline","messages":[{"role":"user","content":"Can you tell me the registration deadline for the RAG course?"}],"expected":{"operation":"search","collection":"course","constrained":true},"required_terms":[["RAG"],["deadline","registration"]]}

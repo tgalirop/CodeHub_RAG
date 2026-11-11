@@ -1,9 +1,9 @@
 import { createHmac } from "node:crypto";
 import { database, createStore } from "./store.js";
-import { contextualQuery, expandQuery } from "./lexical.js";
+import { expandQuery } from "./lexical.js";
 import { embed, answer, ProviderError } from "./provider.js";
-import { isCatalogueCount, catalogueAnswer } from "./catalogue.js";
-import { jobListIntent, jobListAnswer } from "./jobs.js";
+import { catalogueAnswer, catalogueListAnswer } from "./catalogue.js";
+import { semanticPlan, validatePlan, nextOffset } from "./planner.js";
 
 const HEADERS = {
   "Cache-Control": "no-store, no-transform",
@@ -43,7 +43,7 @@ export function validate(payload) {
   if (payload.listing !== undefined && payload.listing !== null) {
     const value = payload.listing;
     if (
-      value.kind !== "job" ||
+      !["job", "course"].includes(value.kind) ||
       !Number.isInteger(value.offset) ||
       value.offset < 0 ||
       value.offset > 10000 ||
@@ -52,7 +52,7 @@ export function validate(payload) {
     )
       throw new Error("invalid_listing");
     listing = {
-      kind: "job",
+      kind: value.kind,
       offset: value.offset,
       ...(value.snapshot_id ? { snapshot_id: value.snapshot_id } : {}),
     };
@@ -99,6 +99,7 @@ export function createCloudHandler({
   env = process.env,
   fetcher = fetch,
   getStore = () => createStore(database(env)),
+  planQuery = semanticPlan,
 } = {}) {
   return async (request) => {
     const route = new URL(request.url).pathname.split("/").pop();
@@ -185,10 +186,22 @@ export function createCloudHandler({
       AbortSignal.timeout(90000),
     ]);
     let cancelled = false;
+    let planningUsage = null;
     const encoder = new TextEncoder();
     const body = new ReadableStream({
       async start(controller) {
         const emit = (event, data) => {
+          if (event === "done" && planningUsage)
+            data = {
+              ...data,
+              usage: {
+                input_tokens:
+                  (data.usage?.input_tokens || 0) + planningUsage.input_tokens,
+                output_tokens:
+                  (data.usage?.output_tokens || 0) +
+                  planningUsage.output_tokens,
+              },
+            };
           if (!cancelled)
             controller.enqueue(
               encoder.encode(
@@ -200,35 +213,69 @@ export function createCloudHandler({
           emit("stage", { stage: "searching" });
           const start = performance.now();
           const question = parsed.payload.messages.at(-1).content;
-          const listing =
-            parsed.payload.listing || jobListIntent(parsed.payload.messages);
-          if (listing) {
-            const result = await store.listJobs(snapshot, listing.offset);
+          const listing = parsed.payload.listing;
+          const resolved = listing
+            ? {
+                operation: "list",
+                collection: listing.kind,
+                constrained: false,
+                next_page: false,
+                query: question,
+                language: /[\u0370-\u03ff]/u.test(question) ? "el" : "en",
+              }
+            : await planQuery(parsed.payload, env, signal, fetcher);
+          const plan = validatePlan(resolved);
+          planningUsage = resolved.usage || null;
+          if (plan.operation === "list") {
+            const offset =
+              listing?.offset ??
+              (plan.next_page
+                ? nextOffset(parsed.payload.messages, plan.collection)
+                : 0);
+            const result = await store.listCatalogue(
+              snapshot,
+              plan.collection,
+              offset,
+            );
             signal.throwIfAborted();
             emit("sources", {
               sources: result.sources,
               retrieval_ms: Math.round(performance.now() - start),
             });
-            emit("delta", { text: jobListAnswer(result, question) });
+            emit("delta", {
+              text: catalogueListAnswer(result, plan.collection, plan.language),
+            });
             emit("done", {
-              mode: "job-list",
+              mode: plan.collection === "job" ? "job-list" : "course-list",
               usage: null,
               next_listing: result.next,
             });
             return;
           }
-          if (isCatalogueCount(question)) {
-            const summary = await store.catalogueCount(snapshot);
+          if (plan.operation === "count") {
+            const summary = await store.catalogueCount(
+              snapshot,
+              plan.collection,
+            );
             signal.throwIfAborted();
             emit("sources", {
               sources: summary ? [summary.source] : [],
               retrieval_ms: Math.round(performance.now() - start),
             });
-            emit("delta", { text: catalogueAnswer(summary, question) });
+            emit("delta", {
+              text: catalogueAnswer(
+                summary,
+                question,
+                plan.collection,
+                plan.language,
+              ),
+            });
             emit("done", { mode: "catalogue", usage: null });
             return;
           }
-          const query = expandQuery(contextualQuery(parsed.payload.messages));
+          const query = expandQuery(
+            [...new Set([question, plan.query])].join("\n"),
+          );
           const vector = await embed(
             query,
             env.OPENAI_API_KEY,
@@ -240,7 +287,9 @@ export function createCloudHandler({
             snapshot,
             query,
             vector,
-            parsed.payload.kind,
+            parsed.payload.kind === plan.collection
+              ? parsed.payload.kind
+              : null,
           );
           signal.throwIfAborted();
           emit("sources", {
@@ -255,7 +304,7 @@ export function createCloudHandler({
           } else {
             emit("stage", { stage: "answering" });
             for await (const [event, data] of answer(
-              parsed.payload,
+              { ...parsed.payload, queryPlan: plan },
               sources,
               env,
               signal,

@@ -371,11 +371,18 @@ function renderMessages() {
     }
     if (footerChanged && !m.pending) {
       if (m.nextListing) {
-        const more = el("button", "next-jobs", "Περισσότερες θέσεις");
+        const jobs = m.nextListing.kind === "job";
+        const more = el(
+          "button",
+          "next-jobs",
+          jobs ? "Περισσότερες θέσεις" : "Περισσότερα μαθήματα",
+        );
         more.onclick = () => {
           if (!busy)
             return send(
-              "Δείξε τις επόμενες θέσεις εργασίας.",
+              jobs
+                ? "Δείξε τις επόμενες θέσεις εργασίας."
+                : "Δείξε τα επόμενα μαθήματα.",
               false,
               m.nextListing,
             );
@@ -615,7 +622,7 @@ async function send(question, retry = false, listing = null) {
           responseMessage.mode = data.mode;
           const next = data.next_listing;
           responseMessage.nextListing =
-            next?.kind === "job" &&
+            ["job", "course"].includes(next?.kind) &&
             Number.isInteger(next.offset) &&
             next.offset >= 0 &&
             next.offset <= 10000 &&

@@ -57,16 +57,26 @@ export function createStore(sql) {
           await tx`SELECT rag_cloud.reserve_request(${clientHash},${daily},${hourly}) AS allowed`;
         return row.allowed;
       }),
-    catalogueCount: (snapshot) =>
+    catalogueCount: (snapshot, collection = "course") =>
       transaction(async (tx) => {
+        if (!["course", "job"].includes(collection))
+          throw new Error("invalid_collection");
+        const catalogueUrl =
+          collection === "course"
+            ? "https://codehub.gr/training-programs/"
+            : "https://codehub.gr/open-job-opportunities/";
         const [count] = await tx`SELECT count(DISTINCT url)::integer AS total
-        FROM rag_cloud.chunks WHERE snapshot_id=${snapshot.id} AND 'course'=ANY(categories)`;
+        FROM rag_cloud.chunks WHERE snapshot_id=${snapshot.id} AND ${collection}=ANY(categories)`;
         const rows =
           await tx`SELECT url,title,body AS text,heading_path,categories,warnings,fetched_at
         FROM rag_cloud.chunks WHERE snapshot_id=${snapshot.id}
-        AND url='https://codehub.gr/training-programs/' ORDER BY id`;
+        AND url=${catalogueUrl} ORDER BY id`;
+        const pattern =
+          collection === "course"
+            ? /\b(\d+)\s+courses?\b/gi
+            : /\b(\d+)\s+open\s+roles?\b/gi;
         const matches = rows.flatMap((row) =>
-          [...row.text.matchAll(/\b(\d+)\s+courses?\b/gi)].map((match) => ({
+          [...row.text.matchAll(pattern)].map((match) => ({
             total: Number(match[1]),
             row,
           })),
@@ -78,20 +88,23 @@ export function createStore(sql) {
         return {
           total,
           indexed_courses: count.total,
+          indexed_entries: count.total,
           source: { ...row, id: 1 },
         };
       }),
-    listJobs: (snapshot, requestedOffset = 0) =>
+    listCatalogue: (snapshot, collection, requestedOffset = 0) =>
       transaction(async (tx) => {
+        if (!["course", "job"].includes(collection))
+          throw new Error("invalid_collection");
         const [count] = await tx`SELECT count(DISTINCT url)::integer AS total
-        FROM rag_cloud.chunks WHERE snapshot_id=${snapshot.id} AND 'job'=ANY(categories)`;
+        FROM rag_cloud.chunks WHERE snapshot_id=${snapshot.id} AND ${collection}=ANY(categories)`;
         const offset = Math.min(
           requestedOffset,
           Math.max(0, Math.floor((count.total - 1) / 10) * 10),
         );
         const rows = await tx`WITH jobs AS (
         SELECT DISTINCT ON(url) url,title,body AS text,heading_path,categories,warnings,fetched_at
-        FROM rag_cloud.chunks WHERE snapshot_id=${snapshot.id} AND 'job'=ANY(categories)
+        FROM rag_cloud.chunks WHERE snapshot_id=${snapshot.id} AND ${collection}=ANY(categories)
         ORDER BY url,length(body) DESC,id)
         SELECT * FROM jobs ORDER BY lower(title),url LIMIT 10 OFFSET ${offset}`;
         return {
@@ -101,7 +114,7 @@ export function createStore(sql) {
           next:
             offset + rows.length < count.total
               ? {
-                  kind: "job",
+                  kind: collection,
                   offset: offset + rows.length,
                   snapshot_id: snapshot.id,
                 }

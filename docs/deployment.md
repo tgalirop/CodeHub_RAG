@@ -14,7 +14,7 @@ Browser -> Vercel /api/chat -> OpenAI query embedding
 ```
 
 Hosting can stay within the providers' Free/Hobby quotas for a personal demo.
-OpenAI embeddings, evidence checks and answers are metered separately, including the initial corpus
+OpenAI query planning, embeddings, evidence checks and answers are metered separately, including the initial corpus
 embedding run. Free hosting is not a guarantee of unlimited usage or availability.
 Vercel Hobby is for personal, non-commercial use. Review the current
 [Vercel Hobby terms](https://vercel.com/docs/plans/hobby) and
@@ -70,7 +70,13 @@ local E5 database tables are untouched. Repeating publication is idempotent.
 
 The application reads saved BM25 weights; it does not retokenize the corpus,
 rebuild BM25 statistics, download models or crawl pages per user question.
-Only question tokenization, query embedding, candidate search, fusion and answer
+New free-text questions first use a structured model query plan for semantic intent
+and contextual rewriting. Greeklish/typos/paraphrases do not select tools through
+word whitelists. Whole-catalogue counts/lists use read-only SQL; scoped questions
+use hybrid retrieval. This adds one metered planning call per free-text question.
+Validated next-page button actions do not need another planning call.
+
+Question tokenization, query embedding, candidate search, fusion and answer
 generation run online. Before generating a free-form answer, a structured Responses
 check must identify supporting source IDs for a Code.Hub question. Unsupported
 questions receive a fixed localized response, with irrelevant source cards cleared.

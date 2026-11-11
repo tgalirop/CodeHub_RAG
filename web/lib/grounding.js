@@ -4,7 +4,9 @@ import { contextualQuery } from "./lexical.js";
 export function evidenceInput(payload, sources) {
   return {
     question: payload.messages.at(-1).content,
-    contextual_question: contextualQuery(payload.messages),
+    contextual_question:
+      payload.queryPlan?.query || contextualQuery(payload.messages),
+    query_intent: payload.queryPlan || null,
     today_utc: new Date().toISOString().slice(0, 10),
     WEBSITE_EVIDENCE: sources.map((s) => ({
       source: s.id,

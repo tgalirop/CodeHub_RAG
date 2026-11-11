@@ -145,25 +145,33 @@ The cloud answer path first checks answerability with a strict structured verdic
 and validates its source IDs. Unsupported questions receive fixed text; the free-form
 answer generator sees only approved passages. The check adds an API call and can
 still make mistakes, so generated answers require evaluation against the source.
-General questions asking how many trainings/courses exist use a separate catalogue
-count path. The site's generic Trainings navigation refers to the Training Programs
-course catalogue; scheduled training events are a separate listing. The API counts
-distinct course URLs in the pinned snapshot and reads the published catalogue total
-from its stored source text. The catalogue's explicit number is authoritative if
-indexed page coverage differs. The cited answer is formatted without paid model
-calls. Qualified questions about subjects, dates or registration status are excluded
-from this whole-catalogue shortcut. Retrieval prompts also prohibit estimating total
-counts from a limited set of passages or source IDs.
+Free-text questions first pass through a model-based query planner with a strict
+JSON schema (`web/lib/planner.js`). It interprets Greek, English, Greeklish, typos,
+paraphrases and history, then returns search/list/count, a collection, a standalone
+query, whether constraints exist, continuation intent and response language. No
+phrase whitelist, edit-distance router or generated SQL is used. The model chooses
+only bounded read-only application functions. Invalid/incomplete plans fail closed.
 
-Broad careers/job-list questions use distinct job URLs from the pinned snapshot,
-ordered by title and URL, with ten listings per response. Each role has its own
-source citation and its posting reference when present in the URL. The next-page
-button carries a bounded offset and snapshot ID, so publication of a newer snapshot
-does not mix pages during browsing. Retrying a next-page request reuses its cursor.
-Natural-language requests for more jobs also recognize the previous page range.
-Specific job questions about technologies, cities or requirements retain hybrid
-retrieval. Listing the inventory does not call paid model APIs and describes the
-scope as recorded job pages, without asserting that every posting remains active.
+The server forces constrained or unsupported collection operations into retrieval,
+so a filtered count cannot silently become the total for the whole catalogue.
+Retrieval combines the original current question and the resolved query, retaining
+technical names/negations while allowing the planner to resolve previous context.
+The inferred collection is navigation context, not a blind exclusive search filter;
+an explicit matching UI filter is honored. The evidence check sees the query plan
+as context, never as factual evidence. Planning adds one metered model call per new
+free-text question; validated next-page button actions bypass it. Token usage includes
+the planner, evidence check and answer generation, but not query embeddings.
+
+Unconstrained job/course counts use the stored catalogue's explicit total plus a
+distinct-page SQL count. Generic Trainings refers to Training Programs courses;
+scheduled events are distinct. Listings use unique URLs, sorted by title and URL,
+ten per response, each with its own citation. Jobs also show posting references.
+The bounded next-page offset and snapshot ID pin browsing to one version. Natural
+language continuations use semantic intent and parse only the generated page range.
+SQL counts/lists add no embedding or answer-generation calls after planning.
+Qualified questions preserve technologies, cities, dates/status and other conditions
+in retrieval; exact filtered totals are not inferred by counting the retrieved subset.
+Job listings describe recorded pages without asserting current availability.
 
 See deployment instructions for the provisioning steps and verification limits.
 

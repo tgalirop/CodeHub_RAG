@@ -1,0 +1,1164 @@
+{
+  "label": "Query-understanding development smoke set; one run, not an independent guarantee",
+  "model": "gpt-6-luna",
+  "total": 36,
+  "passed": 31,
+  "input_tokens": 16842,
+  "output_tokens": 2183,
+  "rows": [
+    {
+      "id": "jobs_regression",
+      "question": "ποιες ειναι οι καριερες;",
+      "expected": {
+        "operation": "list",
+        "collection": "job",
+        "language": "el"
+      },
+      "plan": {
+        "operation": "list",
+        "collection": "job",
+        "constrained": false,
+        "query": "Διαθέσιμες θέσεις εργασίας και ευκαιρίες καριέρας",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 466,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 82,
+          "output_tokens_details": {
+            "reasoning_tokens": 27
+          },
+          "total_tokens": 548
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 4159
+    },
+    {
+      "id": "jobs_typo",
+      "question": "ποιες εναι οι καριερες?",
+      "expected": {
+        "operation": "list",
+        "collection": "job",
+        "language": "el"
+      },
+      "plan": {
+        "operation": "list",
+        "collection": "job",
+        "constrained": false,
+        "query": "Διαθέσιμες θέσεις εργασίας",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 465,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 99,
+          "output_tokens_details": {
+            "reasoning_tokens": 52
+          },
+          "total_tokens": 564
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 4050
+    },
+    {
+      "id": "jobs_greeklish",
+      "question": "poies einai oi karieres?",
+      "expected": {
+        "operation": "list",
+        "collection": "job",
+        "language": "el"
+      },
+      "plan": {
+        "operation": "list",
+        "collection": "job",
+        "constrained": false,
+        "query": "Careers and job opportunities at Code.Hub",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 463,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 44,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 507
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 3534
+    },
+    {
+      "id": "jobs_informal",
+      "question": "Τι δουλειές παίζουν στην Code.Hub;",
+      "expected": {
+        "operation": "list",
+        "collection": "job",
+        "language": "el"
+      },
+      "plan": {
+        "operation": "list",
+        "collection": "job",
+        "constrained": false,
+        "query": "Διαθέσιμες θέσεις εργασίας στην Code.Hub",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 467,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 49,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 516
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 2116
+    },
+    {
+      "id": "jobs_paraphrase",
+      "question": "Θα ήθελα να δω τις επαγγελματικές ευκαιρίες που έχετε αναρτήσει.",
+      "expected": {
+        "operation": "list",
+        "collection": "job",
+        "language": "el"
+      },
+      "plan": {
+        "operation": "list",
+        "collection": "job",
+        "constrained": false,
+        "query": "Επαγγελματικές ευκαιρίες και θέσεις εργασίας που έχουν αναρτηθεί",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 476,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 54,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 530
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1468
+    },
+    {
+      "id": "jobs_en_browse",
+      "question": "Can you browse your vacancies with me?",
+      "expected": {
+        "operation": "list",
+        "collection": "job",
+        "language": "en"
+      },
+      "plan": {
+        "operation": "list",
+        "collection": "job",
+        "constrained": false,
+        "query": "Job vacancies",
+        "next_page": false,
+        "language": "en",
+        "usage": {
+          "input_tokens": 463,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 62,
+          "output_tokens_details": {
+            "reasoning_tokens": 23
+          },
+          "total_tokens": 525
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1781
+    },
+    {
+      "id": "jobs_ads",
+      "question": "Δείξε μου τις αγγελίες σας.",
+      "expected": {
+        "operation": "list",
+        "collection": "job",
+        "language": "el"
+      },
+      "plan": {
+        "operation": "list",
+        "collection": "job",
+        "constrained": false,
+        "query": "αγγελίες εργασίας",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 465,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 41,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 506
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1160
+    },
+    {
+      "id": "jobs_en_short",
+      "question": "Any job openings?",
+      "expected": {
+        "operation": "list",
+        "collection": "job",
+        "language": "en"
+      },
+      "plan": {
+        "operation": "list",
+        "collection": "job",
+        "constrained": false,
+        "query": "available job openings",
+        "next_page": false,
+        "language": "en",
+        "usage": {
+          "input_tokens": 459,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 60,
+          "output_tokens_details": {
+            "reasoning_tokens": 20
+          },
+          "total_tokens": 519
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1661
+    },
+    {
+      "id": "course_count_regression",
+      "question": "πόσα trainings υπάρχουν;",
+      "expected": {
+        "operation": "count",
+        "collection": "course",
+        "language": "el"
+      },
+      "plan": {
+        "operation": "count",
+        "collection": "course",
+        "constrained": false,
+        "query": "Training Programs",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 460,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 99,
+          "output_tokens_details": {
+            "reasoning_tokens": 60
+          },
+          "total_tokens": 559
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 2047
+    },
+    {
+      "id": "course_count_greeklish",
+      "question": "posa seminaria exete synolika?",
+      "expected": {
+        "operation": "count",
+        "collection": "course",
+        "language": "el"
+      },
+      "plan": {
+        "operation": "count",
+        "collection": "course",
+        "constrained": false,
+        "query": "Συνολικός αριθμός σεμιναρίων / εκπαιδευτικών προγραμμάτων",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 464,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 121,
+          "output_tokens_details": {
+            "reasoning_tokens": 63
+          },
+          "total_tokens": 585
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 2058
+    },
+    {
+      "id": "course_count_paraphrase",
+      "question": "Ποιος είναι ο συνολικός αριθμός των μαθημάτων στον κατάλογό σας;",
+      "expected": {
+        "operation": "count",
+        "collection": "course",
+        "language": "el"
+      },
+      "plan": {
+        "operation": "count",
+        "collection": "course",
+        "constrained": false,
+        "query": "Συνολικός αριθμός μαθημάτων στον κατάλογο μαθημάτων",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 474,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 50,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 524
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1129
+    },
+    {
+      "id": "course_count_en_size",
+      "question": "How large is the training catalogue?",
+      "expected": {
+        "operation": "count",
+        "collection": "course",
+        "language": "en"
+      },
+      "plan": {
+        "operation": "count",
+        "collection": "course",
+        "constrained": false,
+        "query": "Training Programs course catalogue",
+        "next_page": false,
+        "language": "en",
+        "usage": {
+          "input_tokens": 462,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 134,
+          "output_tokens_details": {
+            "reasoning_tokens": 93
+          },
+          "total_tokens": 596
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 2251
+    },
+    {
+      "id": "course_list_el",
+      "question": "Θέλω να δω όλα τα μαθήματα.",
+      "expected": {
+        "operation": "list",
+        "collection": "course",
+        "language": "el"
+      },
+      "plan": {
+        "operation": "list",
+        "collection": "course",
+        "constrained": false,
+        "query": "Όλα τα μαθήματα",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 465,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 41,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 506
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1056
+    },
+    {
+      "id": "course_list_greeklish",
+      "question": "Deikse mou ton katalogo mathimaton.",
+      "expected": {
+        "operation": "list",
+        "collection": "course",
+        "language": "el"
+      },
+      "plan": {
+        "operation": "list",
+        "collection": "course",
+        "constrained": false,
+        "query": "Κατάλογος μαθημάτων",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 465,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 41,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 506
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1381
+    },
+    {
+      "id": "course_list_en",
+      "question": "What courses can I take?",
+      "expected": {
+        "operation": "list",
+        "collection": "course",
+        "language": "en"
+      },
+      "plan": {
+        "operation": "list",
+        "collection": "course",
+        "constrained": false,
+        "query": "Course catalogue",
+        "next_page": false,
+        "language": "en",
+        "usage": {
+          "input_tokens": 461,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 37,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 498
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1301
+    },
+    {
+      "id": "job_count_el",
+      "question": "Πόσες αγγελίες υπάρχουν στον κατάλογο;",
+      "expected": {
+        "operation": "count",
+        "collection": "job",
+        "language": "el"
+      },
+      "plan": {
+        "operation": "count",
+        "collection": "job",
+        "constrained": false,
+        "query": "Πλήθος αγγελιών εργασίας στον κατάλογο",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 469,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 67,
+          "output_tokens_details": {
+            "reasoning_tokens": 17
+          },
+          "total_tokens": 536
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1568
+    },
+    {
+      "id": "job_count_en",
+      "question": "How many job listings do you have?",
+      "expected": {
+        "operation": "count",
+        "collection": "job",
+        "language": "en"
+      },
+      "plan": {
+        "operation": "count",
+        "collection": "job",
+        "constrained": false,
+        "query": "job listings",
+        "next_page": false,
+        "language": "en",
+        "usage": {
+          "input_tokens": 463,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 37,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 500
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1185
+    },
+    {
+      "id": "job_constraints_el",
+      "question": "Ποιες θέσεις έχουν Python στην Αθήνα;",
+      "expected": {
+        "operation": "search",
+        "collection": "job",
+        "constrained": true
+      },
+      "plan": {
+        "operation": "search",
+        "collection": "job",
+        "constrained": true,
+        "query": "Θέσεις εργασίας που απαιτούν Python στην Αθήνα",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 466,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 47,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 513
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1357
+    },
+    {
+      "id": "job_remote_devops",
+      "question": "Any remote DevOps roles?",
+      "expected": {
+        "operation": "search",
+        "collection": "job",
+        "constrained": true
+      },
+      "plan": {
+        "operation": "search",
+        "collection": "job",
+        "constrained": true,
+        "query": "Remote DevOps roles",
+        "next_page": false,
+        "language": "en",
+        "usage": {
+          "input_tokens": 461,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 55,
+          "output_tokens_details": {
+            "reasoning_tokens": 14
+          },
+          "total_tokens": 516
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1666
+    },
+    {
+      "id": "course_filtered_count",
+      "question": "Πόσα AWS courses έχετε;",
+      "expected": {
+        "operation": "search",
+        "collection": "course",
+        "constrained": true
+      },
+      "plan": {
+        "operation": "search",
+        "collection": "course",
+        "constrained": true,
+        "query": "courses σχετικά με AWS",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 463,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 39,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 502
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1426
+    },
+    {
+      "id": "course_javascript_beginner",
+      "question": "Courses for beginners in JavaScript",
+      "expected": {
+        "operation": "search",
+        "collection": "course",
+        "constrained": true
+      },
+      "plan": {
+        "operation": "search",
+        "collection": "course",
+        "constrained": true,
+        "query": "Beginner JavaScript courses",
+        "next_page": false,
+        "language": "en",
+        "usage": {
+          "input_tokens": 461,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 40,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 501
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1716
+    },
+    {
+      "id": "scheduled_events",
+      "question": "Ποια training είναι ανοιχτά για εγγραφή τον Δεκέμβριο;",
+      "expected": {
+        "operation": "search",
+        "collection": "training",
+        "constrained": true
+      },
+      "plan": {
+        "operation": "search",
+        "collection": "training",
+        "constrained": true,
+        "query": "Training programs ανοιχτά για εγγραφή τον Δεκέμβριο· βρες τα προγράμματα με ημερομηνίες εγγραφών τον Δεκέμβριο και κατάσταση εγγραφών ανοιχτή.",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 474,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 82,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 556
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1602
+    },
+    {
+      "id": "jobs_salary",
+      "question": "Δείξε δουλειές με μισθό πάνω από 3000 ευρώ.",
+      "expected": {
+        "operation": "search",
+        "collection": "job",
+        "constrained": true
+      },
+      "plan": {
+        "operation": "search",
+        "collection": "job",
+        "constrained": true,
+        "query": "Δουλειές με μισθό πάνω από 3000 ευρώ",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 472,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 50,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 522
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1211
+    },
+    {
+      "id": "course_exact_names",
+      "question": "I want a C# course, not C++.",
+      "expected": {
+        "operation": "search",
+        "collection": "course",
+        "constrained": true
+      },
+      "plan": {
+        "operation": "search",
+        "collection": "course",
+        "constrained": true,
+        "query": "C# course",
+        "next_page": false,
+        "language": "en",
+        "usage": {
+          "input_tokens": 465,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 38,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 503
+        }
+      },
+      "passed": false,
+      "errors": [
+        "query_missing:C++"
+      ],
+      "latency_ms": 1914
+    },
+    {
+      "id": "contact_el",
+      "question": "Πώς επικοινωνώ μαζί σας;",
+      "expected": {
+        "operation": "search",
+        "collection": "page"
+      },
+      "plan": {
+        "operation": "search",
+        "collection": null,
+        "constrained": false,
+        "query": "Στοιχεία επικοινωνίας με την Code.Hub και τρόποι επικοινωνίας",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 463,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 69,
+          "output_tokens_details": {
+            "reasoning_tokens": 15
+          },
+          "total_tokens": 532
+        }
+      },
+      "passed": false,
+      "errors": [
+        "collection"
+      ],
+      "latency_ms": 2577
+    },
+    {
+      "id": "career_advice",
+      "question": "Πώς μπορώ να αλλάξω καριέρα;",
+      "expected": {
+        "operation": "search"
+      },
+      "plan": {
+        "operation": "search",
+        "collection": null,
+        "constrained": true,
+        "query": "Πώς μπορώ να αλλάξω καριέρα;",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 467,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 70,
+          "output_tokens_details": {
+            "reasoning_tokens": 21
+          },
+          "total_tokens": 537
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 3040
+    },
+    {
+      "id": "company_about",
+      "question": "Τι είναι η Code.Hub;",
+      "expected": {
+        "operation": "search",
+        "collection": "page"
+      },
+      "plan": {
+        "operation": "search",
+        "collection": "page",
+        "constrained": true,
+        "query": "Τι είναι η Code.Hub;",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 463,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 43,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 506
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 2156
+    },
+    {
+      "id": "company_ceo",
+      "question": "Who is the CEO?",
+      "expected": {
+        "operation": "search",
+        "collection": "page"
+      },
+      "plan": {
+        "operation": "search",
+        "collection": "page",
+        "constrained": true,
+        "query": "Who is the CEO of Code.Hub?",
+        "next_page": false,
+        "language": "en",
+        "usage": {
+          "input_tokens": 460,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 73,
+          "output_tokens_details": {
+            "reasoning_tokens": 27
+          },
+          "total_tokens": 533
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 2071
+    },
+    {
+      "id": "unrelated",
+      "question": "What is the capital of France?",
+      "expected": {
+        "operation": "search"
+      },
+      "plan": {
+        "operation": "search",
+        "collection": null,
+        "constrained": true,
+        "query": "capital of France",
+        "next_page": false,
+        "language": "en",
+        "usage": {
+          "input_tokens": 462,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 38,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 500
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 2205
+    },
+    {
+      "id": "jobs_followup_el",
+      "question": "και οι υπόλοιπες;",
+      "expected": {
+        "operation": "list",
+        "collection": "job",
+        "next_page": true
+      },
+      "plan": {
+        "operation": "list",
+        "collection": "job",
+        "constrained": false,
+        "query": "Επόμενες θέσεις εργασίας μετά τις πρώτες 10 από τις 61 αγγελίες",
+        "next_page": true,
+        "language": "el",
+        "usage": {
+          "input_tokens": 507,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 100,
+          "output_tokens_details": {
+            "reasoning_tokens": 41
+          },
+          "total_tokens": 607
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1894
+    },
+    {
+      "id": "course_change_subject",
+      "question": "Και για Java;",
+      "expected": {
+        "operation": "search",
+        "collection": "course",
+        "constrained": true
+      },
+      "plan": {
+        "operation": "search",
+        "collection": "course",
+        "constrained": true,
+        "query": "Java courses",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 482,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 37,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 519
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 2145
+    },
+    {
+      "id": "jobs_followup_en",
+      "question": "Anything else?",
+      "expected": {
+        "operation": "list",
+        "collection": "job",
+        "next_page": true
+      },
+      "plan": {
+        "operation": "list",
+        "collection": "job",
+        "constrained": false,
+        "query": "Job listings",
+        "next_page": true,
+        "language": "en",
+        "usage": {
+          "input_tokens": 489,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 72,
+          "output_tokens_details": {
+            "reasoning_tokens": 33
+          },
+          "total_tokens": 561
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1649
+    },
+    {
+      "id": "courses_followup_greeklish",
+      "question": "ki alla?",
+      "expected": {
+        "operation": "list",
+        "collection": "course",
+        "next_page": true,
+        "language": "el"
+      },
+      "plan": {
+        "operation": "list",
+        "collection": "course",
+        "constrained": false,
+        "query": "courses",
+        "next_page": true,
+        "language": "en",
+        "usage": {
+          "input_tokens": 486,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 36,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 522
+        }
+      },
+      "passed": false,
+      "errors": [
+        "language"
+      ],
+      "latency_ms": 1317
+    },
+    {
+      "id": "explicit_topic_switch",
+      "question": "Πόσα μαθήματα έχετε;",
+      "expected": {
+        "operation": "count",
+        "collection": "course"
+      },
+      "plan": {
+        "operation": "count",
+        "collection": "course",
+        "constrained": false,
+        "query": "Συνολικός αριθμός μαθημάτων",
+        "next_page": false,
+        "language": "el",
+        "usage": {
+          "input_tokens": 464,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 44,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 508
+        }
+      },
+      "passed": true,
+      "errors": [],
+      "latency_ms": 1460
+    },
+    {
+      "id": "contact_overrides_hint",
+      "question": "What is the company's phone number?",
+      "expected": {
+        "operation": "search",
+        "collection": "page"
+      },
+      "plan": {
+        "operation": "search",
+        "collection": null,
+        "constrained": true,
+        "query": "Code.Hub company phone number contact information",
+        "next_page": false,
+        "language": "en",
+        "usage": {
+          "input_tokens": 462,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 43,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 505
+        }
+      },
+      "passed": false,
+      "errors": [
+        "collection"
+      ],
+      "latency_ms": 1260
+    },
+    {
+      "id": "course_deadline",
+      "question": "Can you tell me the registration deadline for the RAG course?",
+      "expected": {
+        "operation": "search",
+        "collection": "course",
+        "constrained": true
+      },
+      "plan": {
+        "operation": "search",
+        "collection": "training",
+        "constrained": true,
+        "query": "Registration deadline for the RAG course",
+        "next_page": false,
+        "language": "en",
+        "usage": {
+          "input_tokens": 468,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 89,
+          "output_tokens_details": {
+            "reasoning_tokens": 45
+          },
+          "total_tokens": 557
+        }
+      },
+      "passed": false,
+      "errors": [
+        "collection"
+      ],
+      "latency_ms": 1612
+    }
+  ]
+}
