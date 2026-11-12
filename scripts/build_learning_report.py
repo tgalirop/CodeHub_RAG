@@ -128,7 +128,8 @@ def main():
                 )
             parts.append("</ul></details>")
     parts.append("</html>")
-    args.output.with_suffix(".html").write_text("\n".join(parts), encoding="utf-8")
+    rendered = "\n".join(line.rstrip() for line in "\n".join(parts).splitlines()) + "\n"
+    args.output.with_suffix(".html").write_text(rendered, encoding="utf-8")
     print(json.dumps({"batches": len(batches), "report": str(args.output)}))
 
 
