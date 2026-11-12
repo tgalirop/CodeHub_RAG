@@ -136,6 +136,7 @@ function setKind(kind) {
   document
     .querySelectorAll(".topic")
     .forEach((b) => b.classList.toggle("active", b.dataset.kind === kind));
+  renderLearningContext();
 }
 function renderRecent() {
   const root = $("#recent-list");
@@ -207,12 +208,16 @@ function showSources(sources, id) {
 }
 function inline(parent, text, sources) {
   const pattern =
-    /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]\n]+\]\(https?:\/\/[^\s)]+\)|\[\d+\])/g;
+    /(\*\*[^*]+\*\*|(?<!\w)_[^_\n]+_(?!\w)|`[^`]+`|\[[^\]\n]+\]\(https?:\/\/[^\s)]+\)|\[\d+\])/g;
   let cursor = 0;
   for (const match of text.matchAll(pattern)) {
     parent.append(document.createTextNode(text.slice(cursor, match.index)));
     const v = match[0];
-    if (v.startsWith("**")) parent.append(el("strong", "", v.slice(2, -2)));
+    if (v.startsWith("**")) {
+      const strong = el("strong");
+      inline(strong, v.slice(2, -2), sources);
+      parent.append(strong);
+    } else if (v.startsWith("_")) parent.append(el("em", "", v.slice(1, -1)));
     else if (v.startsWith("`")) parent.append(el("code", "", v.slice(1, -1)));
     else if (v.includes("](")) {
       const link = v.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
@@ -317,8 +322,9 @@ function createMessageView(m) {
     actions = el("div", "answer-actions");
   for (let n = 0; n < 3; n++) dots.append(el("i"));
   status.append(dots, stage);
-  box.append(header, body, status, error, chips, actions);
-  return { box, body, status, stage, mode, error, chips, actions };
+  const learning = el("div", "learning-results");
+  box.append(header, body, status, error, learning, chips, actions);
+  return { box, body, status, stage, mode, error, chips, actions, learning };
 }
 function renderMessages() {
   const root = $("#messages");
@@ -348,6 +354,7 @@ function renderMessages() {
       view.pending !== m.pending ||
       view.last !== last ||
       view.nextListing !== m.nextListing ||
+      view.learningData !== m.learning ||
       view.failure !== m.error;
     view.box.classList.toggle("pending", !!m.pending);
     view.mode.hidden = m.mode !== "sources" || !!m.pending;
@@ -365,6 +372,7 @@ function renderMessages() {
     if (view.failure !== m.error) view.error.textContent = m.error || "";
     view.chips.hidden = !!m.pending || !m.sources?.length;
     view.actions.hidden = !!m.pending;
+    if (footerChanged) renderLearning(view.learning, m);
     if (footerChanged) {
       view.chips.replaceChildren();
       view.actions.replaceChildren();
@@ -422,7 +430,7 @@ function renderMessages() {
         retry.onclick = () => {
           if (busy) return;
           current.messages.pop();
-          send(null, true, m.requestListing);
+          send(null, true, m.requestListing, m.requestExplore);
         };
         view.actions.append(retry);
       }
@@ -434,6 +442,7 @@ function renderMessages() {
       failure: m.error,
       last,
       nextListing: m.nextListing,
+      learningData: m.learning,
     });
   }
 }
@@ -510,6 +519,10 @@ function controls() {
     busy ? "Διακοπή απάντησης" : "Αποστολή ερώτησης",
   );
   b.replaceChildren(icon(busy ? "stop" : "arrow-up"));
+  document.querySelectorAll("[data-learning-action]").forEach((button) => {
+    button.disabled = busy;
+  });
+  renderLearningContext();
 }
 function historyPayload(messages) {
   let items = messages
@@ -536,7 +549,7 @@ function updateCitedSources(message, candidates) {
   message.sources = selected;
   return true;
 }
-async function send(question, retry = false, listing = null) {
+async function send(question, retry = false, listing = null, explore = null) {
   if (busy) {
     controller?.abort();
     return;
@@ -555,6 +568,8 @@ async function send(question, retry = false, listing = null) {
     messages: historyPayload(current.messages),
     kind: current.kind || null,
     ...(listing ? { listing } : {}),
+    ...(explore ? { explore } : {}),
+    ...(current.advisor ? { advisor: current.advisor } : {}),
   };
   const responseMessage = {
     role: "assistant",
@@ -564,6 +579,7 @@ async function send(question, retry = false, listing = null) {
     stage: "searching",
     mode: null,
     requestListing: listing,
+    requestExplore: explore,
   };
   current.messages.push(responseMessage);
   const target = current;
@@ -629,6 +645,8 @@ async function send(question, retry = false, listing = null) {
         } else if (name === "delta" && typeof data.text === "string") {
           responseMessage.content += data.text;
           sourcesChanged = updateCitedSources(responseMessage, candidates);
+        } else if (name === "learning") {
+          responseMessage.learning = data;
         } else if (name === "done") {
           responseMessage.mode = data.mode;
           const next = data.next_listing;
@@ -678,11 +696,305 @@ async function send(question, retry = false, listing = null) {
     refreshStatus();
   }
 }
+function learningButton(label, action, cls = "") {
+  const button = el("button", cls, label);
+  button.type = "button";
+  button.dataset.learningAction = "true";
+  button.disabled = busy;
+  button.onclick = () => {
+    if (!busy) action();
+  };
+  return button;
+}
+function renderLearningContext() {
+  const context = $("#learning-context"),
+    tray = $("#compare-tray");
+  if (!context || !tray) return;
+  context.replaceChildren();
+  context.hidden = !current.advisor;
+  if (current.advisor) {
+    const label = el("span", "", "Ο στόχος σου: " + current.advisor.goal);
+    label.title = current.advisor.goal;
+    context.append(
+      label,
+      learningButton("Αλλαγή", openAdvisor),
+      learningButton("Αφαίρεση", () => {
+        current.advisor = null;
+        save();
+        renderLearningContext();
+      }),
+    );
+  }
+  const selected = current.compared || [];
+  tray.replaceChildren();
+  tray.hidden = !selected.length;
+  if (selected.length) {
+    tray.append(el("strong", "", `Σύγκριση ${selected.length}/2`));
+    for (const course of selected)
+      tray.append(
+        learningButton(
+          "× " + course.title,
+          () => selectCourse(course, course.snapshot_id),
+          "compare-remove",
+        ),
+      );
+    const compare = learningButton(
+      "Σύγκρινε τα μαθήματα →",
+      () => {
+        const urls = selected.map((c) => c.url);
+        send(
+          `Σύγκρινε τα μαθήματα «${selected[0].title}» και «${selected[1].title}»: διάρκεια, περιεχόμενο, προαπαιτούμενα και ποιο ταιριάζει στον στόχο μου.`,
+          false,
+          null,
+          { type: "compare", urls, snapshot_id: selected[0].snapshot_id },
+        );
+      },
+      "learning-primary",
+    );
+    compare.disabled = busy || selected.length !== 2;
+    tray.append(compare);
+  }
+  document.querySelectorAll("[data-course-select]").forEach((button) => {
+    const chosen = selected.some((c) => c.url === button.dataset.courseSelect);
+    button.setAttribute("aria-pressed", String(chosen));
+    button.textContent = chosen ? "✓ Στη σύγκριση" : "+ Σύγκριση";
+  });
+}
+function selectCourse(course, snapshotId) {
+  let selected = current.compared || [];
+  if (selected.some((c) => c.snapshot_id !== snapshotId)) selected = [];
+  if (selected.some((c) => c.url === course.url))
+    selected = selected.filter((c) => c.url !== course.url);
+  else if (selected.length < 2)
+    selected.push({ ...course, snapshot_id: snapshotId });
+  else {
+    toast("Επίλεξε έως δύο μαθήματα. Αφαίρεσε πρώτα ένα από τη σύγκριση.");
+    return;
+  }
+  current.compared = selected;
+  save();
+  renderLearningContext();
+}
+function renderLearning(root, message) {
+  root.replaceChildren();
+  if (message.pending || message.error || !message.learning) return;
+  const data = message.learning;
+  if (!/^[a-f0-9]{64}$/.test(data.snapshot_id)) return;
+  const valid = (c) =>
+    c &&
+    safeUrl(c.url) &&
+    new URL(c.url).pathname.startsWith("/course/") &&
+    typeof c.title === "string";
+  const hours = (c) =>
+    Number.isFinite(c.hours) && c.hours > 0
+      ? `${c.hours} ώρες`
+      : "Δεν τεκμηριώνεται";
+  if (
+    Array.isArray(data.comparison) &&
+    data.comparison.length === 2 &&
+    data.comparison.every(valid)
+  ) {
+    const wrap = el("div", "comparison-scroll"),
+      table = el("table", "course-comparison");
+    table.append(el("caption", "", "Δίπλα δίπλα · δημοσιευμένα στοιχεία"));
+    const head = el("thead"),
+      tr = el("tr");
+    tr.append(el("th", "", ""));
+    for (const c of data.comparison) {
+      const th = el("th", "", c.title);
+      th.scope = "col";
+      tr.append(th);
+    }
+    head.append(tr);
+    table.append(head);
+    const body = el("tbody");
+    for (const [label, value] of [
+      ["Διάρκεια", hours],
+      ["Επίπεδο", (c) => c.level || "Δεν τεκμηριώνεται"],
+      ["Κοινό", (c) => c.audience || "Δεν τεκμηριώνεται"],
+      [
+        "Προαπαιτούμενα (πηγή)",
+        (c) =>
+          c.required_prerequisites
+            ? `Βασική απαίτηση: ${c.required_prerequisites}\nΩφέλιμα, όχι υποχρεωτικά: ${c.beneficial_prerequisites}`
+            : c.prerequisites || "Δεν τεκμηριώνεται στο διαθέσιμο απόσπασμα",
+      ],
+    ]) {
+      const row = el("tr"),
+        title = el("th", "", label);
+      title.scope = "row";
+      row.append(title);
+      for (const c of data.comparison) row.append(el("td", "", value(c)));
+      body.append(row);
+    }
+    table.append(body);
+    wrap.append(table);
+    root.append(wrap);
+  }
+  const cards = Array.isArray(data.cards)
+    ? data.cards.filter(valid).slice(0, 5)
+    : [];
+  if (cards.length) {
+    root.append(el("p", "learning-section-label", "ΕΞΕΡΕΥΝΗΣΕ ΤΑ ΜΑΘΗΜΑΤΑ"));
+    const grid = el("div", "course-grid");
+    for (const course of cards) {
+      const card = el("article", "course-card");
+      card.append(el("h3", "", course.title));
+      const facts = el("div", "course-facts");
+      facts.append(
+        el("span", "", hours(course)),
+        el("span", "", course.level || "Επίπεδο μη διαθέσιμο"),
+      );
+      card.append(facts);
+      const actions = el("div", "course-actions");
+      const select = learningButton("+ Σύγκριση", () =>
+        selectCourse(course, data.snapshot_id),
+      );
+      select.dataset.courseSelect = course.url;
+      actions.append(
+        select,
+        learningButton("Προαπαιτούμενα & καταλληλότητα", () =>
+          send(
+            `Ποια είναι τα προαπαιτούμενα του «${course.title}»; Με βάση όσα σου έχω δηλώσει, τι καλύπτω ήδη και τι χρειάζεται διευκρίνιση;`,
+            false,
+            null,
+            {
+              type: "details",
+              urls: [course.url],
+              snapshot_id: data.snapshot_id,
+            },
+          ),
+        ),
+      );
+      const link = el("a", "course-page-link", "Δες το μάθημα ↗");
+      link.href = safeUrl(course.url);
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      card.append(actions, link);
+      grid.append(card);
+    }
+    root.append(grid);
+  }
+  if (data.trace) {
+    const trace = data.trace,
+      details = el("details", "evidence-story");
+    details.append(el("summary", "", "Πώς προέκυψε αυτή η απάντηση;"));
+    if (typeof trace.query === "string")
+      details.append(
+        el("p", "", "Ερώτημα αναζήτησης: " + trace.query.slice(0, 1500)),
+      );
+    if (trace.max_hours != null)
+      details.append(
+        el(
+          "p",
+          "",
+          `Φίλτρο: έως ${trace.max_hours} συνολικές ώρες ανά μάθημα. Μαθήματα χωρίς γνωστή διάρκεια εξαιρούνται από αυτό το φίλτρο.`,
+        ),
+      );
+    details.append(
+      el(
+        "p",
+        "",
+        `${trace.consulted} σελίδες εξετάστηκαν · ${trace.cited} πηγές στην απάντηση.`,
+      ),
+    );
+    const dates = [
+      ...new Set(
+        (message.sources || [])
+          .map((s) => s.fetched_at)
+          .filter(Boolean)
+          .map((s) => new Date(s))
+          .filter((d) => !Number.isNaN(d.getTime()))
+          .map((d) => d.toLocaleDateString("el-GR")),
+      ),
+    ];
+    if (dates.length)
+      details.append(
+        el(
+          "p",
+          "",
+          "Συλλογή πηγών: " +
+            dates.join(", ") +
+            ". Οι τιμές, ημερομηνίες και διαθεσιμότητα επιβεβαιώνονται στη σελίδα του οργανισμού.",
+        ),
+      );
+    if (Number.isFinite(trace.total_ms))
+      details.append(
+        el(
+          "p",
+          "",
+          `Χρόνος απάντησης: ${(trace.total_ms / 1000).toFixed(1)} δευτ. Οι κάρτες παρουσιάζουν δημοσιευμένα στοιχεία· η πρόταση καταλληλότητας είναι εκτίμηση του βοηθού.`,
+        ),
+      );
+    const button = learningButton("Δες τα αποσπάσματα των πηγών", () =>
+      showSources(displayAnswer(message).sources),
+    );
+    details.append(button);
+    root.append(details);
+  }
+  renderLearningContext();
+}
+function advisorStep(profile) {
+  $("#advisor-step-goal").hidden = profile;
+  $("#advisor-step-profile").hidden = !profile;
+  $("#advisor-progress").textContent = profile
+    ? "02 / Η ΑΦΕΤΗΡΙΑ ΣΟΥ"
+    : "01 / Ο ΣΤΟΧΟΣ ΣΟΥ";
+  $(profile ? "#advisor-background" : "#advisor-goal").focus();
+}
+function openAdvisor() {
+  if (busy) {
+    toast("Περίμενε να ολοκληρωθεί η απάντηση ή πάτησε διακοπή.");
+    return;
+  }
+  const p = current.advisor;
+  $("#advisor-goal").value = p?.goal || "";
+  $("#advisor-background").value = p?.background || "";
+  $("#advisor-hours").value = p?.max_hours == null ? "" : String(p.max_hours);
+  $("#advisor-dialog").showModal();
+  advisorStep(false);
+  closeNav();
+}
+$("#advisor-open").onclick = openAdvisor;
+$("#advisor-start").onclick = openAdvisor;
+$("#advisor-close").onclick = () => $("#advisor-dialog").close();
+$("#advisor-next").onclick = () => {
+  if ($("#advisor-goal").value.trim()) advisorStep(true);
+  else $("#advisor-goal").reportValidity();
+};
+$("#advisor-back").onclick = () => advisorStep(false);
+document.querySelectorAll("[data-goal]").forEach(
+  (button) =>
+    (button.onclick = () => {
+      $("#advisor-goal").value = button.dataset.goal;
+      advisorStep(true);
+    }),
+);
+$("#advisor-form").onsubmit = (event) => {
+  event.preventDefault();
+  if (busy || !$("#advisor-goal").value.trim()) return;
+  const advisor = {
+    goal: $("#advisor-goal").value.trim().slice(0, 500),
+    background: $("#advisor-background").value.trim().slice(0, 500),
+    max_hours: $("#advisor-hours").value
+      ? Number($("#advisor-hours").value)
+      : null,
+  };
+  current = { ...fresh(), advisor };
+  setKind("course");
+  $("#advisor-dialog").close();
+  send(
+    `Θέλω προτάσεις μαθημάτων. Στόχος: ${advisor.goal}\nΓνώσεις που δηλώνω: ${advisor.background || "Δεν έχω περιγράψει ακόμη το υπόβαθρό μου."}\n${advisor.max_hours ? `Διάρκεια κάθε μαθήματος έως ${advisor.max_hours} ώρες.` : "Δεν έχω όριο διάρκειας."}\nΠρότεινε έως 3 επιλογές, εξήγησε γιατί ταιριάζουν και ποια προαπαιτούμενα χρειάζονται. Αν χρειάζεσαι διευκρίνιση, κάνε μία συγκεκριμένη ερώτηση.`,
+  );
+};
 async function refreshStatus() {
   try {
     const r = await fetch("/api/status", { cache: "no-store" });
     if (!r.ok) throw new Error();
     const s = await r.json();
+    const learningAvailable = s.features?.includes("learning-advisor");
+    $("#advisor-open").hidden = !learningAvailable;
+    $("#advisor-start").hidden = !learningAvailable;
     const status = $("#status");
     status.className = "status " + (s.ready ? "ready" : "error");
     status.querySelector("span").textContent = s.ready

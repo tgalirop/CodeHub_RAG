@@ -1,12 +1,16 @@
 import config from "./chat-config.json" with { type: "json" };
 import { contextualQuery } from "./lexical.js";
+import { courseFacts } from "./learning.js";
 
 export function evidenceInput(payload, sources) {
+  const characterLimit = payload.explore ? 32000 : 16000;
   return {
     question: payload.messages.at(-1).content,
     contextual_question:
       payload.queryPlan?.query || contextualQuery(payload.messages),
     query_intent: payload.queryPlan || null,
+    visitor_profile: payload.advisor || null,
+    selected_courses: payload.explore || null,
     today_utc: new Date().toISOString().slice(0, 10),
     WEBSITE_EVIDENCE: sources.map((s) => ({
       source: s.id,
@@ -14,8 +18,11 @@ export function evidenceInput(payload, sources) {
       title: s.title,
       fetched_at: s.fetched_at,
       warnings: s.warnings,
-      truncated: Boolean(s.truncated || s.text.length > 16000),
-      text: s.text.slice(0, 16000),
+      truncated: Boolean(s.truncated || s.text.length > characterLimit),
+      text: s.text.slice(0, characterLimit),
+      published_course_facts: s.categories?.includes("course")
+        ? courseFacts(s)
+        : null,
     })),
   };
 }

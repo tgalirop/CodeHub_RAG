@@ -5,6 +5,7 @@ import {
   unsupportedAnswer,
 } from "./grounding.js";
 import { citedSources } from "../public/citations.js";
+import { LEARNING_INSTRUCTIONS } from "./learning.js";
 
 export class ProviderError extends Error {
   constructor(status) {
@@ -136,7 +137,14 @@ export async function* answer(
     yield ["sources", { sources: [] }];
     yield [
       "delta",
-      { text: unsupportedAnswer(payload.messages.at(-1).content) },
+      {
+        text:
+          payload.advisor &&
+          verdict.reason === "insufficient_evidence" &&
+          payload.advisor.max_hours != null
+            ? `Δεν βρήκα τεκμηριωμένη αντιστοίχιση για τον στόχο και το υπόβαθρό σου μέσα στο όριο των ${payload.advisor.max_hours} ωρών ανά μάθημα. Τα μαθήματα χωρίς επιβεβαιωμένη διάρκεια εξαιρούνται από αυτό το φίλτρο. Θα σε ενδιέφερε να αυξήσεις το όριο από την «Αλλαγή» του στόχου σου;`
+            : unsupportedAnswer(payload.messages.at(-1).content),
+      },
     ];
     yield [
       "done",
@@ -173,7 +181,11 @@ export async function* answer(
     },
     body: JSON.stringify({
       model,
-      instructions: config.instructions,
+      instructions:
+        config.instructions +
+        (payload.advisor || payload.explore
+          ? "\n" + LEARNING_INSTRUCTIONS
+          : ""),
       input: [
         ...history,
         {

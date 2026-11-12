@@ -1,0 +1,75 @@
+[
+  {
+    "id": 51,
+    "question": "Πρότεινέ μου έως 3 μαθήματα για τον στόχο μου. Εξήγησε γιατί ταιριάζουν και τι προαπαιτούμενα έχουν.",
+    "kind": "course",
+    "advisor": {
+      "goal": "Να φτιάξω βοηθό RAG πάνω σε εταιρικά έγγραφα",
+      "background": "Γνωρίζω Python και SQL, αλλά όχι LangChain",
+      "max_hours": 24
+    },
+    "check": "Only courses with verified duration <=24; relevant RAG recommendations and no invented skills"
+  },
+  {
+    "id": 52,
+    "question": "Ποια μαθήματα ταιριάζουν στον στόχο και το υπόβαθρό μου;",
+    "kind": "course",
+    "advisor": {
+      "goal": "Τα πρώτα μου βήματα στο AWS cloud",
+      "background": "Δεν έχω γνώσεις cloud ή προγραμματισμού",
+      "max_hours": 8
+    },
+    "check": "Does not recommend 12-hour AWS course or advanced course as beginner-compatible; acknowledges gaps"
+  },
+  {
+    "id": 53,
+    "question": "Σύγκρινε αυτά τα δύο μαθήματα: διάρκεια, προαπαιτούμενα και ποιο ταιριάζει στον στόχο μου.",
+    "advisor": {
+      "goal": "Να κατασκευάσω RAG εφαρμογές με Python",
+      "background": "Γνωρίζω Python και REST APIs",
+      "max_hours": 24
+    },
+    "explore": {
+      "type": "compare",
+      "urls": [
+        "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/",
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/"
+      ],
+      "snapshot_id": "951064a6a1ec6da00ec3beba168907a9cefde77522621a0c6f0ad9851ac95e48"
+    },
+    "check": "Both selected courses, 24 versus 88 hours; identify over-budget alternative without recommending it"
+  },
+  {
+    "id": 54,
+    "question": "Τι προαπαιτούμενα έχει αυτό το μάθημα; Καλύπτω τις απαιτήσεις;",
+    "advisor": {
+      "goal": "Να μάθω AI engineering",
+      "background": "Γνωρίζω SQL. Δεν έχω μάθει Python.",
+      "max_hours": null
+    },
+    "explore": {
+      "type": "details",
+      "urls": [
+        "https://codehub.gr/course/ai-engineering-with-python-langchain/"
+      ],
+      "snapshot_id": "951064a6a1ec6da00ec3beba168907a9cefde77522621a0c6f0ad9851ac95e48"
+    },
+    "check": "Strong Python is missing; optional skills not presented as mandatory; no invented match percentage"
+  },
+  {
+    "id": 55,
+    "question": "Θέλω να μάθω κάτι χρήσιμο. Βοήθησέ με να διαλέξω μάθημα.",
+    "kind": "course",
+    "advisor": {
+      "goal": "Να μάθω κάτι χρήσιμο",
+      "background": "",
+      "max_hours": null
+    },
+    "check": "One focused clarification, no assumed background or arbitrary course recommendation"
+  },
+  {
+    "id": 56,
+    "question": "Ποιες θέσεις στην Αθήνα αναφέρουν Python;",
+    "check": "Ordinary job search remains grounded; no course cards for job sources"
+  }
+]

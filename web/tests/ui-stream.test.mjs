@@ -21,9 +21,19 @@ const tick = () => new Promise((resolve) => setImmediate(resolve));
 async function preview(history = []) {
   const { document, HTMLElement } = parseHTML(html);
   HTMLElement.prototype.scrollIntoView = () => {};
+  HTMLElement.prototype.showModal = function () {
+    this.setAttribute("open", "");
+  };
+  HTMLElement.prototype.close = function () {
+    this.removeAttribute("open");
+  };
   let clipboard = null;
   // LinkeDOM does not implement the browser's select.value setter or layout metrics.
   Object.defineProperty(document.querySelector("#kind"), "value", {
+    value: "",
+    writable: true,
+  });
+  Object.defineProperty(document.querySelector("#advisor-hours"), "value", {
     value: "",
     writable: true,
   });
@@ -80,6 +90,7 @@ async function preview(history = []) {
           ready: true,
           answer_mode: "openai",
           documents: 167,
+          features: ["learning-advisor", "course-comparison", "evidence-trace"],
         });
       requests.push(JSON.parse(options.body));
       return new Response(
@@ -372,4 +383,96 @@ test("answer links are clickable for Code.Hub only and markup remains inert", as
       .querySelector(".message.assistant")
       .textContent.includes("External"),
   );
+});
+
+test("advisor collects declared profile and hours before requesting recommendations", async () => {
+  const ui = await preview();
+  ui.document.querySelector("#advisor-start").click();
+  assert.ok(ui.document.querySelector("#advisor-dialog").hasAttribute("open"));
+  ui.document.querySelector("#advisor-goal").value = "Build RAG with Python";
+  ui.document.querySelector("#advisor-next").click();
+  assert.equal(
+    ui.document.querySelector("#advisor-step-profile").hidden,
+    false,
+  );
+  ui.document.querySelector("#advisor-background").value =
+    "I know Python and SQL";
+  ui.document.querySelector("#advisor-hours").value = "24";
+  ui.document.querySelector("#advisor-form").onsubmit({ preventDefault() {} });
+  await tick();
+  ui.flush();
+  assert.equal(ui.requests[0].advisor.max_hours, 24);
+  assert.equal(ui.requests[0].advisor.background, "I know Python and SQL");
+  assert.equal(ui.requests[0].kind, "course");
+  assert.ok(!ui.document.querySelector("#advisor-dialog").hasAttribute("open"));
+  ui.finish();
+  await tick();
+});
+
+test("course cards select two pinned sources and send an exact comparison action", async () => {
+  const ui = await preview();
+  vm.runInContext('send("Suggest RAG courses")', ui.context);
+  await tick();
+  ui.flush();
+  const snapshot = "a".repeat(64);
+  const courses = ["rag", "python"].map((name, i) => ({
+    id: i + 1,
+    title: name,
+    url: `https://codehub.gr/course/${name}/`,
+    text: "Course evidence",
+    categories: ["course"],
+    hours: i ? 88 : 24,
+    level: "Intermediate",
+  }));
+  await ui.emit("sources", { sources: courses });
+  await ui.emit("delta", { text: "Courses [1][2]." });
+  await ui.emit("learning", {
+    snapshot_id: snapshot,
+    cards: courses,
+    comparison: null,
+    trace: { consulted: 4, cited: 2, query: "RAG courses", total_ms: 1000 },
+  });
+  await ui.emit("done", { mode: "openai" });
+  ui.finish();
+  await tick();
+  ui.flush();
+  assert.equal(ui.document.querySelectorAll(".course-card").length, 2);
+  assert.match(
+    ui.document.querySelector(".evidence-story").textContent,
+    /4.*2/,
+  );
+  for (const b of ui.document.querySelectorAll("[data-course-select]"))
+    b.click();
+  assert.equal(ui.document.querySelector("#compare-tray").hidden, false);
+  ui.document.querySelector("#compare-tray .learning-primary").click();
+  await tick();
+  assert.deepEqual(
+    ui.requests[1].explore.urls,
+    courses.map((c) => c.url),
+  );
+  assert.equal(ui.requests[1].explore.snapshot_id, snapshot);
+  assert.equal(ui.requests[1].explore.type, "compare");
+  await ui.emit("sources", { sources: courses });
+  await ui.emit("delta", { text: "**_RAG_** [1] versus Python [2]." });
+  await ui.emit("learning", {
+    snapshot_id: snapshot,
+    cards: courses,
+    comparison: courses.map((c) => ({
+      ...c,
+      required_prerequisites: "Python fundamentals",
+      beneficial_prerequisites: "Git",
+    })),
+    trace: { consulted: 2, cited: 2, query: "Compare", total_ms: 500 },
+  });
+  await ui.emit("done", { mode: "openai" });
+  ui.finish();
+  await tick();
+  ui.flush();
+  const table = ui.document.querySelector(".course-comparison");
+  assert.ok(table);
+  assert.match(table.textContent, /24/);
+  assert.match(table.textContent, /88/);
+  assert.match(table.textContent, /Python fundamentals/);
+  assert.match(table.textContent, /Git/);
+  assert.equal(ui.document.querySelector("strong em").textContent, "RAG");
 });

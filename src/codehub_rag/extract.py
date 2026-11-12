@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup, Comment, NavigableString, Tag
 
 from .web import Resource, site_url
 
-EXTRACTOR_VERSION = "html-v4"
+EXTRACTOR_VERSION = "html-v5"
 CHUNKER_VERSION = "sections-v2"
 BLOCK_TAGS = {"h1", "h2", "h3", "h4", "h5", "h6", "p", "li", "tr", "blockquote", "pre", "dt", "dd"}
 UI_TEXT = re.compile(
@@ -185,6 +185,15 @@ def extract(resource: Resource, categories: list[str]) -> dict:
         title = clean(primary.get_text(" ", strip=True)) or title
     if urlsplit(canonical).path.startswith(("/job/", "/course/", "/training/")):
         trim_recommendations(root)
+    # Preserve accessible tab labels as section headings beside their own content.
+    for tab in list(root.select('[role="tab"][aria-controls]')):
+        panel = root.find(id=tab.get("aria-controls"))
+        label = clean(tab.get_text(" ", strip=True))
+        if panel and label:
+            heading = soup.new_tag("h2")
+            heading.string = label
+            panel.insert(0, heading)
+            tab.decompose()
     used_fallback = root.name not in {"main", "article"}
     for element in root.select(
         "script, style, nav, footer, aside, form, noscript, template, "

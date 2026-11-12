@@ -316,3 +316,22 @@ def test_failed_sitemap_marks_inventory_incomplete(tmp_path):
         report = inventory(client, tmp_path / "run")
     assert not report["inventory_complete"]
     assert len(report["errors"]) == 1
+
+
+def test_accessible_course_tabs_preserve_prerequisite_section_labels():
+    source = b"""<main><h1>Example Course</h1>
+    <div role="tablist"><div role="tab" aria-controls="intro">Description</div>
+    <div role="tab" aria-controls="needs">Prerequisite Knowledge</div></div>
+    <div id="intro" role="tabpanel"><p>Learn to build systems.</p></div>
+    <div id="needs" role="tabpanel"><ul><li>Solid Python foundations</li>
+    <li>Beneficial but not mandatory</li><li>Git experience</li></ul></div></main>"""
+    doc = extract(
+        Resource("https://codehub.gr/course/example/", 200, source, "text/html", {}), ["course"]
+    )
+    section = next(s for s in doc["sections"] if s["heading_path"][-1] == "Prerequisite Knowledge")
+    assert section["blocks"] == [
+        "Solid Python foundations",
+        "Beneficial but not mandatory",
+        "Git experience",
+    ]
+    assert "Description Prerequisite Knowledge" not in doc["text"]

@@ -1,0 +1,1125 @@
+{
+  "title": "Code.Hub — Learning advisor release review",
+  "date": "2026-11-12",
+  "snapshot_id": "951064a6a1ec6da00ec3beba168907a9cefde77522621a0c6f0ad9851ac95e48",
+  "source_collection_date": "2026-11-10",
+  "corpus": {
+    "documents": 167,
+    "chunks": 1754,
+    "courses": 46
+  },
+  "review": [
+    "Six advisor cases were manually reviewed against retrieved source facts.",
+    "All six satisfied their stated checks in this development run.",
+    "The 30-question regression completed; completion is not an accuracy score.",
+    "Case 14 now correctly separates required Python from optional skills.",
+    "Case 15 covers both selected courses, including their 24/88-hour durations."
+  ],
+  "limitations": [
+    "Regression case 29 missed evidence for one location in a follow-up question. Ambiguous job titles and incomplete retrieval can still reduce recall.",
+    "Source HTML was collected on November 10 and reprocessed, not freshly crawled.",
+    "45 of 46 courses have positive published durations. A zero-hour value is unknown.",
+    "The browser tool stopped because it could not verify the active Chrome URL. DOM interactions were tested; desktop/mobile appearance was not visually verified.",
+    "These development examples are not a held-out benchmark or accuracy guarantee. Model responses and latency can vary."
+  ],
+  "batches": [
+    {
+      "name": "advisor",
+      "started_at": "2026-11-12T08:18:59.751Z",
+      "status": {
+        "ready": true,
+        "answer_mode": "openai",
+        "model": "gpt-6-luna",
+        "snapshot_id": "951064a6a1ec6da00ec3beba168907a9cefde77522621a0c6f0ad9851ac95e48",
+        "documents": 167,
+        "chunks": 1754,
+        "backend": "vercel-postgres",
+        "features": [
+          "learning-advisor",
+          "course-comparison",
+          "evidence-trace"
+        ]
+      },
+      "completed": 6,
+      "total": 6,
+      "median_latency_ms": 8709.5,
+      "rows": [
+        {
+          "id": 51,
+          "question": "Πρότεινέ μου έως 3 μαθήματα για τον στόχο μου. Εξήγησε γιατί ταιριάζουν και τι προαπαιτούμενα έχουν.",
+          "check": "Only courses with verified duration <=24; relevant RAG recommendations and no invented skills",
+          "advisor": {
+            "goal": "Να φτιάξω βοηθό RAG πάνω σε εταιρικά έγγραφα",
+            "background": "Γνωρίζω Python και SQL, αλλά όχι LangChain",
+            "max_hours": 24
+          },
+          "answer": "Με βάση τον στόχο σου και το όριο των 24 ωρών, αυτά είναι τα πιο σχετικά μαθήματα:\n\n1. **Retrieval-Augmented Generation (RAG) Systems Engineering — 24 ώρες.** Είναι η πιο άμεση επιλογή: καλύπτει ροές εισαγωγής και επεξεργασίας εγγράφων, embeddings, vector databases, στρατηγικές ανάκτησης, APIs και αξιολόγηση RAG συστημάτων, με εφαρμογές για εταιρική χρήση. Απαιτεί εμπειρία με Python ή .NET, εξοικείωση με APIs και επεξεργασία δεδομένων, καθώς και βασική κατανόηση machine learning και LLMs. Γνωρίζεις Python, αλλά από όσα ανέφερες δεν μπορώ να επιβεβαιώσω την εξοικείωσή σου με APIs ή τις δύο τελευταίες προϋποθέσεις. [1]\n\n2. **Working with LLMs in Python — 6 ώρες.** Συμπληρώνει καλά το μάθημα RAG με πρακτική σε σύνδεση εφαρμογών με LLM API, prompting, επικύρωση δομημένων απαντήσεων και ανθεκτικούς LLM wrappers—δεξιότητες χρήσιμες για τον βοηθό σου. Προϋποθέτει βασική Python, βασικές έννοιες HTTP και βασικές εντολές terminal. Η Python σου καλύπτει το πρώτο· τα άλλα δύο δεν είναι γνωστά από το προφίλ σου. [2]\n\n3. **MS SQL with Generative AI — 14 ώρες.** Ταιριάζει συμπληρωματικά αν ο βοηθός σου θα χρειάζεται να συνδυάζει εταιρικά έγγραφα με δεδομένα SQL: περιλαμβάνει RAG με δομημένες και μη δομημένες πηγές, vector search και θέματα ασφάλειας. Προϋποθέτει βασική γνώση ερωτημάτων SQL, σχεσιακών βάσεων και μοντελοποίησης δεδομένων· ανέφερες ότι γνωρίζεις SQL, αλλά δεν έχεις διευκρινίσει τα άλλα σχετικά στοιχεία. [3]\n\n**Σημείωση:** Δεν αναφέρεται το LangChain ως προαπαιτούμενο στα στοιχεία των παραπάνω μαθημάτων. Το μάθημα RAG αναφέρει σύγχρονα frameworks, αλλά τα διαθέσιμα στοιχεία δεν επιβεβαιώνουν ότι διδάσκει ειδικά LangChain. [1]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 17331,
+          "sources": [
+            {
+              "title": "Retrieval-Augmented Generation (RAG) Systems Engineering",
+              "url": "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/",
+              "fetched_at": "2026-11-10T11:53:36.138Z"
+            },
+            {
+              "title": "Working with LLMs in Python",
+              "url": "https://codehub.gr/course/working-with-llms-in-python/",
+              "fetched_at": "2026-11-10T11:53:39.479Z"
+            },
+            {
+              "title": "MS SQL with Generative AI",
+              "url": "https://codehub.gr/course/ms-sql-with-generative-ai/",
+              "fetched_at": "2026-11-10T11:53:30.071Z"
+            }
+          ]
+        },
+        {
+          "id": 52,
+          "question": "Ποια μαθήματα ταιριάζουν στον στόχο και το υπόβαθρό μου;",
+          "check": "Does not recommend 12-hour AWS course or advanced course as beginner-compatible; acknowledges gaps",
+          "advisor": {
+            "goal": "Τα πρώτα μου βήματα στο AWS cloud",
+            "background": "Δεν έχω γνώσεις cloud ή προγραμματισμού",
+            "max_hours": 8
+          },
+          "answer": "Δεν βρήκα τεκμηριωμένη αντιστοίχιση για τον στόχο και το υπόβαθρό σου μέσα στο όριο των 8 ωρών ανά μάθημα. Τα μαθήματα χωρίς επιβεβαιωμένη διάρκεια εξαιρούνται από αυτό το φίλτρο. Θα σε ενδιέφερε να αυξήσεις το όριο από την «Αλλαγή» του στόχου σου;",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 7980,
+          "sources": []
+        },
+        {
+          "id": 53,
+          "question": "Σύγκρινε αυτά τα δύο μαθήματα: διάρκεια, προαπαιτούμενα και ποιο ταιριάζει στον στόχο μου.",
+          "check": "Both selected courses, 24 versus 88 hours; identify over-budget alternative without recommending it",
+          "advisor": {
+            "goal": "Να κατασκευάσω RAG εφαρμογές με Python",
+            "background": "Γνωρίζω Python και REST APIs",
+            "max_hours": 24
+          },
+          "answer": "**Για τον στόχο σου — να κατασκευάζεις εφαρμογές RAG με Python — το καταλληλότερο από τα δύο είναι το _Retrieval-Augmented Generation (RAG) Systems Engineering_.** Διαρκεί **24 ώρες**, ακριβώς το όριό σου, και εστιάζει ειδικά στην αρχιτεκτονική και υλοποίηση RAG: ingestion εγγράφων, embeddings, vector databases, ανάκτηση, ενσωμάτωση σε API και αξιολόγηση συστημάτων. [1]\n\n**Προαπαιτούμενα:** Το μάθημα RAG ζητά εμπειρία με Python ή .NET, εξοικείωση με APIs και επεξεργασία δεδομένων, καθώς και βασική κατανόηση machine learning και LLMs. Η Python και τα REST APIs που γνωρίζεις καλύπτουν μέρος αυτών· δεν γνωρίζω αν έχεις την απαιτούμενη εμπειρία στην επεξεργασία δεδομένων και τις βασικές γνώσεις ML/LLM. [1]\n\nΤο **_AI Engineering with Python & LangChain_** διαρκεί **88 ώρες**, οπότε ξεπερνά το όριο των 24 ωρών και δεν ταιριάζει στον περιορισμό σου. Έχει ευρύτερη ύλη: πέρα από RAG, καλύπτει agents, αξιολόγηση, fine-tuning και cloud deployment. Απαιτεί **ισχυρές βάσεις Python**· APIs/REST, JSON, ML/LLM, Git και cloud αναφέρονται ως χρήσιμα αλλά όχι υποχρεωτικά. [2]\n\n**Σύσταση:** Διάλεξε το μάθημα RAG, εφόσον έχεις επίσης βασική κατανόηση ML/LLM και εξοικείωση με επεξεργασία δεδομένων. Αν αυτά δεν είναι ήδη γνωστά, έλεγξε πρώτα αν η ύλη και τα προαπαιτούμενα είναι κατάλληλα για το επίπεδό σου. [1]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 8188,
+          "sources": [
+            {
+              "title": "Retrieval-Augmented Generation (RAG) Systems Engineering",
+              "url": "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/",
+              "fetched_at": "2026-11-10T11:53:36.138Z"
+            },
+            {
+              "title": "AI Engineering with Python & LangChain",
+              "url": "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+              "fetched_at": "2026-11-10T11:53:08.512Z"
+            }
+          ]
+        },
+        {
+          "id": 54,
+          "question": "Τι προαπαιτούμενα έχει αυτό το μάθημα; Καλύπτω τις απαιτήσεις;",
+          "check": "Strong Python is missing; optional skills not presented as mandatory; no invented match percentage",
+          "advisor": {
+            "goal": "Να μάθω AI engineering",
+            "background": "Γνωρίζω SQL. Δεν έχω μάθει Python.",
+            "max_hours": null
+          },
+          "answer": "Το υποχρεωτικό προαπαιτούμενο είναι **καλές βάσεις στην Python**. Το μάθημα περιλαμβάνει ενότητα Python Foundations, αλλά παράλληλα ζητά ήδη solid Python foundations — επομένως, με βάση όσα ανέφερες, **δεν καλύπτεις ακόμη αυτό το προαπαιτούμενο**, αφού δεν έχεις μάθει Python. [1]\n\nΗ γνώση SQL δεν αναφέρεται ως προαπαιτούμενο. Ως χρήσιμα αλλά μη υποχρεωτικά αναφέρονται η κατανόηση APIs/REST, JSON και δομημένων δεδομένων, βασικές γνώσεις machine learning και LLMs, Git και cloud fundamentals. Δεν γνωρίζω αν έχεις εμπειρία σε αυτά. [1]\n\nΠριν ξεκινήσεις, θα πρότεινα να αποκτήσεις πρώτα σταθερές βάσεις στην Python· το μάθημα διαρκεί 88 ώρες και απευθύνεται σε επαγγελματίες. [1]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 8836,
+          "sources": [
+            {
+              "title": "AI Engineering with Python & LangChain",
+              "url": "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+              "fetched_at": "2026-11-10T11:53:08.512Z"
+            }
+          ]
+        },
+        {
+          "id": 55,
+          "question": "Θέλω να μάθω κάτι χρήσιμο. Βοήθησέ με να διαλέξω μάθημα.",
+          "check": "One focused clarification, no assumed background or arbitrary course recommendation",
+          "advisor": {
+            "goal": "Να μάθω κάτι χρήσιμο",
+            "background": "",
+            "max_hours": null
+          },
+          "answer": "Ποιο θέμα σε ενδιαφέρει περισσότερο: **κυβερνοασφάλεια** (5 ώρες, χωρίς προηγούμενες γνώσεις κυβερνοασφάλειας) [1], **AWS και cloud** (12 ώρες, προορίζεται για άτομα με βασικές γνώσεις AWS) [2], **business analysis με AI** (16 ώρες, χωρίς να απαιτείται προηγούμενη εμπειρία στο business analysis) [3] ή **προγραμματισμός C#/.NET** (40 ώρες, χρειάζεται βασική κατανόηση προγραμματισμού) [4];",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 8583,
+          "sources": [
+            {
+              "title": "Cybersecurity Awareness Essentials",
+              "url": "https://codehub.gr/course/cybersecurity-awareness-essentials/",
+              "fetched_at": "2026-11-10T11:53:20.385Z"
+            },
+            {
+              "title": "AWS Cloud Practitioner Essentials",
+              "url": "https://codehub.gr/course/aws-cloud-practitioner-essentials/",
+              "fetched_at": "2026-11-10T11:53:14.437Z"
+            },
+            {
+              "title": "Intro to AI-Assisted Technical Business Analysis",
+              "url": "https://codehub.gr/course/intro-to-ai-assisted-technical-business-analysis/",
+              "fetched_at": "2026-11-10T11:53:22.861Z"
+            },
+            {
+              "title": "C# and ASP.NET Core using AI Coding Assistant",
+              "url": "https://codehub.gr/course/c-and-asp-net-core-using-ai-coding-assistant/",
+              "fetched_at": "2026-11-10T11:53:18.552Z"
+            }
+          ]
+        },
+        {
+          "id": 56,
+          "question": "Ποιες θέσεις στην Αθήνα αναφέρουν Python;",
+          "check": "Ordinary job search remains grounded; no course cards for job sources",
+          "advisor": null,
+          "answer": "Στην Αθήνα αναφέρονται τέσσερις θέσεις που περιλαμβάνουν Python:\n\n- **Data Governance Expert** — Hybrid, Junior/Mid. Η Python ή ανάπτυξη σχετική με δεδομένα αναμένεται για υποψηφίους Mid-level· η θέση περιλαμβάνει επίσης SQL και ETL. [1]\n- **AI Developer (.NET)** — Hybrid, Mid-level. Ζητά άνεση στη χρήση Python για εργαλεία ή αυτοματισμούς, μαζί με εμπειρία σε .NET/C# και τουλάχιστον 3 χρόνια επαγγελματικής εμπειρίας. [2]\n- **Data Engineer/Databricks – Cloud** — On-site, Mid-level. Απαιτεί εμπειρία με Python και PySpark, καθώς και τουλάχιστον 4 χρόνια σχετικής εμπειρίας. [3]\n- **DevOps/Systems Engineer** — On-site, Senior. Αναφέρει ισχυρές δεξιότητες scripting σε Python, Bash ή PowerShell και τουλάχιστον 6 χρόνια εμπειρίας. [4]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 11093,
+          "sources": [
+            {
+              "title": "Data Governance Expert",
+              "url": "https://codehub.gr/job/po-922-data-governance-expert/",
+              "fetched_at": "2026-11-10T11:55:50.265Z"
+            },
+            {
+              "title": "AI Developer (.NET)",
+              "url": "https://codehub.gr/job/po-917-ai-developer-net/",
+              "fetched_at": "2026-11-10T11:55:47.714Z"
+            },
+            {
+              "title": "Data Engineer/Databricks – Cloud",
+              "url": "https://codehub.gr/job/po-924-data-engineer-databricks-cloud/",
+              "fetched_at": "2026-11-10T11:55:51.771Z"
+            },
+            {
+              "title": "DevOps/Systems Engineer",
+              "url": "https://codehub.gr/job/po-937-devops-systems-engineer/",
+              "fetched_at": "2026-11-10T11:56:02.478Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "regression-30",
+      "started_at": "2026-11-12T08:18:58.739Z",
+      "status": {
+        "ready": true,
+        "answer_mode": "openai",
+        "model": "gpt-6-luna",
+        "snapshot_id": "951064a6a1ec6da00ec3beba168907a9cefde77522621a0c6f0ad9851ac95e48",
+        "documents": 167,
+        "chunks": 1754,
+        "backend": "vercel-postgres",
+        "features": [
+          "learning-advisor",
+          "course-comparison",
+          "evidence-trace"
+        ]
+      },
+      "completed": 30,
+      "total": 30,
+      "median_latency_ms": 8141.5,
+      "rows": [
+        {
+          "id": 1,
+          "question": "Τι ακριβώς κάνει η Code.Hub και σε ποιους απευθύνεται;",
+          "check": "Company services and business/individual audiences",
+          "advisor": null,
+          "answer": "Η Code.Hub συνδέει τεχνολογία, ανθρώπινο δυναμικό και μάθηση: βοηθά εταιρείες να ενισχύσουν τις τεχνολογικές τους ομάδες, να αναπτύξουν δεξιότητες και να υλοποιήσουν ψηφιακά έργα. Παράλληλα, υποστηρίζει επαγγελματίες με εκπαίδευση, ανάπτυξη καριέρας και πρόσβαση σε επαγγελματικές ευκαιρίες. [1]\n\n**Για εταιρείες**, προσφέρει στελέχωση και προσλήψεις, ενίσχυση ομάδων με εξειδικευμένους επαγγελματίες, εταιρική εκπαίδευση και υποστήριξη στην εκτέλεση έργων. Οι τεχνολογικές υπηρεσίες της περιλαμβάνουν, μεταξύ άλλων, ανάπτυξη λογισμικού, cloud, AI και κυβερνοασφάλεια. [1][2][3]\n\n**Για ιδιώτες και επαγγελματίες**, απευθύνεται σε ανθρώπους σε διαφορετικά στάδια της καριέρας τους — ακόμη και σε όσους κάνουν τα πρώτα τους βήματα. Προσφέρει ευκαιρίες μάθησης και τεχνικής ανάπτυξης, συμβουλευτική καριέρας, καθοδήγηση και σύνδεση με ευκαιρίες στον χώρο της τεχνολογίας. [1][2]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 9258,
+          "sources": [
+            {
+              "title": "About Code.Hub",
+              "url": "https://codehub.gr/about-codehub/",
+              "fetched_at": "2026-11-10T11:52:41.464Z"
+            },
+            {
+              "title": "Services",
+              "url": "https://codehub.gr/services/",
+              "fetched_at": "2026-11-10T12:02:44.648Z"
+            },
+            {
+              "title": "Our Credentials",
+              "url": "https://codehub.gr/our-credentials/",
+              "fetched_at": "2026-11-10T12:02:39.256Z"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "question": "Πώς μπορώ να επικοινωνήσω με την Code.Hub;",
+          "check": "Correct published contact details",
+          "advisor": null,
+          "answer": "Μπορείτε να επικοινωνήσετε με την Code.Hub:\n\n- **Τηλέφωνο:** +30 211 411 7481  \n- **Email:** info@codehub.gr  \n- **Software Delivery & Recruitment Center:** Νίκης 2 & Καραγιώργη Σερβίας 3, 10563, Αθήνα  \n- **Training Center:** Σοφίας Σλήμαν 3, Αθήνα [1]\n\nΜπορείτε επίσης να χρησιμοποιήσετε τη φόρμα επικοινωνίας στη σελίδα [Contact Us](https://codehub.gr/contact/). [1]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 7063,
+          "sources": [
+            {
+              "title": "Contact Us",
+              "url": "https://codehub.gr/contact/",
+              "fetched_at": "2026-11-10T11:52:56.617Z"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "question": "Πού βρίσκονται τα γραφεία και πού το εκπαιδευτικό κέντρο της Code.Hub;",
+          "check": "Separate office and training centre addresses",
+          "advisor": null,
+          "answer": "Τα γραφεία Software Delivery & Recruitment Center βρίσκονται στη διεύθυνση Νίκης 2 και Καραγιώργη Σερβίας 3, 10563, Αθήνα. Το εκπαιδευτικό κέντρο βρίσκεται στη Σοφίας Σλίμαν 3, 11526, Αθήνα. [1]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 5162,
+          "sources": [
+            {
+              "title": "Contact Us",
+              "url": "https://codehub.gr/contact/",
+              "fetched_at": "2026-11-10T11:52:56.617Z"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "question": "Είμαι ιδιώτης και θέλω να εξελιχθώ επαγγελματικά. Ποιες υπηρεσίες σας με αφορούν;",
+          "check": "Individual career, learning and growth services",
+          "advisor": null,
+          "answer": "Ως ιδιώτης, σε αφορούν κυρίως οι εξής υπηρεσίες:\n\n- **Επαγγελματική μάθηση (Code.Learn):** μαθήματα για AI, τεχνολογία και ψηφιακές δεξιότητες, καθώς και επιχειρηματικές και soft skills. [3]\n- **Προγραμματισμένα bootcamps και προγράμματα κατάρτισης:** πρακτική, hands-on εκπαίδευση για νέους που ξεκινούν την καριέρα τους ή επαγγελματίες που θέλουν να αναβαθμίσουν τις δεξιότητές τους. Είναι ξεχωριστά από τον γενικό κατάλογο μαθημάτων. [3]\n- **Υποστήριξη καριέρας και ευκαιρίες εργασίας:** συμβουλευτική, mentoring και πρόσβαση σε ευκαιρίες για να ενισχύσεις την επαγγελματική σου κατεύθυνση και παρουσία στην αγορά τεχνολογίας. [1]\n- **Life@Code.Hub:** ενημέρωση για την ανάπτυξη και τις διαδρομές καριέρας μέσα στην Code.Hub. [1][2]\n\nΗ Code.Hub αναφέρει ότι υποστηρίζει άτομα σε διαφορετικά στάδια, ακόμη κι αν εξερευνούν το πρώτο τους επαγγελματικό βήμα. [1]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 8181,
+          "sources": [
+            {
+              "title": "Professional Learning Programs",
+              "url": "https://codehub.gr/professional-learning-programs/",
+              "fetched_at": "2026-11-10T12:02:40.976Z"
+            },
+            {
+              "title": "Services",
+              "url": "https://codehub.gr/services/",
+              "fetched_at": "2026-11-10T12:02:44.648Z"
+            },
+            {
+              "title": "Technology growth is built around people.",
+              "url": "https://codehub.gr/",
+              "fetched_at": "2026-11-10T11:52:40.144Z"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "question": "Η ομάδα μου δεν προλαβαίνει να παραδώσει ένα έργο. Πώς μπορεί να βοηθήσει η Code.Hub;",
+          "check": "Semantic match to engineering capacity/project delivery",
+          "advisor": null,
+          "answer": "Η Code.Hub μπορεί να βοηθήσει με δύο τρόπους, ανάλογα με το τι σας καθυστερεί:\n\n- **Αν χρειάζεστε επιπλέον ανθρώπους στην ομάδα:** Το Managed Staff Augmentation προσθέτει μεμονωμένους ειδικούς ή μια ομάδα σε τομείς όπως ανάπτυξη λογισμικού, QA, δεδομένα, cloud και διαχείριση έργων. Η δική σας ομάδα διατηρεί τον καθημερινό έλεγχο της δουλειάς, ενώ η Code.Hub υποστηρίζει την ένταξη, την παρακολούθηση και τη συνέχεια της συνεργασίας. [2][3]\n- **Αν χρειάζεστε συνεργάτη για να αναλάβει την παράδοση:** Με το Project Delivery, η Code.Hub μπορεί να παραδώσει συγκεκριμένο τμήμα του έργου μαζί με την ομάδα σας ή να αναλάβει την οργάνωση και την εκτέλεση ενός ορισμένου έργου από άκρη σε άκρη. Αν το έργο δεν έχει ακόμη σαφές πεδίο, μπορεί να ξεκινήσει με διερεύνηση για στόχους, απαιτήσεις, κινδύνους και πλάνο. [1]\n\nΗ διαδικασία παράδοσης μπορεί να περιλαμβάνει σχεδιασμό λύσης και οδικού χάρτη, συγκρότηση ομάδας, παρακολούθηση προόδου και κινδύνων, δοκιμές, διάθεση και υποστήριξη μετά το λανσάρισμα. Η προσέγγιση προσαρμόζεται στην υπάρχουσα τεχνολογική υποδομή σας. [1]\n\nΓια να συζητήσετε τις ανάγκες σας, μπορείτε να επικοινωνήσετε στο **+30 211 411 7481** ή στο **info@codehub.gr**, ή να ζητήσετε συζήτηση για το έργο σας. [1][4]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 10901,
+          "sources": [
+            {
+              "title": "Build With Experts",
+              "url": "https://codehub.gr/services/build-with-experts/",
+              "fetched_at": "2026-11-10T12:02:45.645Z"
+            },
+            {
+              "title": "Managed Staff Augmentation",
+              "url": "https://codehub.gr/services/build-with-experts/managed-staff-augmentation/",
+              "fetched_at": "2026-11-10T12:02:47.503Z"
+            },
+            {
+              "title": "Project Delivery for Technology Initiatives",
+              "url": "https://codehub.gr/services/build-with-experts/project-delivery-for-technology-initiatives/",
+              "fetched_at": "2026-11-10T12:02:49.084Z"
+            },
+            {
+              "title": "Contact Us",
+              "url": "https://codehub.gr/contact/",
+              "fetched_at": "2026-11-10T11:52:56.617Z"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "question": "Ποια είναι η διαφορά ανάμεσα στο Managed Staff Augmentation και το End-to-End Project Delivery;",
+          "check": "Explain capacity reinforcement versus delivery ownership",
+          "advisor": null,
+          "answer": "Η βασική διαφορά είναι **ποιος έχει την ευθύνη της καθημερινής δουλειάς και του αποτελέσματος**:\n\n- **Managed Staff Augmentation:** προστίθενται ειδικοί στην υπάρχουσα ομάδα σας. **Εσείς** κατευθύνετε την καθημερινή εργασία — προτεραιότητες, εργασίες και κατεύθυνση παράδοσης. Η Code.Development υποστηρίζει τους ειδικούς με συντονισμό ένταξης, παρακολούθηση, ανατροφοδότηση, ανάπτυξη δεξιοτήτων και διατήρηση συνέχειας. [1]\n- **End-to-End Project Delivery:** για ένα καθορισμένο έργο, η Code.Development αναλαμβάνει τον σχεδιασμό, την εκτέλεση, τη διακυβέρνηση, την αναφορά προόδου και την ευθύνη για τα αποτελέσματα της παράδοσης. [2][3]\n\n**Με λίγα λόγια:** επιλέξτε Staff Augmentation όταν έχετε ομάδα και θέλετε να ενισχύσετε τη δυναμικότητά της, διατηρώντας τον έλεγχο της καθημερινής παράδοσης. Επιλέξτε End-to-End Delivery όταν θέλετε συνεργάτη να αναλάβει την υλοποίηση ενός συγκεκριμένου έργου. Η Project Delivery μπορεί επίσης να γίνει με συνεχή συμμετοχή της εσωτερικής σας ομάδας ή με παράδοση συγκεκριμένου τμήματος του έργου· δεν σημαίνει πάντοτε πλήρη ανάληψη. [1][2]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 8874,
+          "sources": [
+            {
+              "title": "Managed Staff Augmentation",
+              "url": "https://codehub.gr/services/build-with-experts/managed-staff-augmentation/",
+              "fetched_at": "2026-11-10T12:02:47.503Z"
+            },
+            {
+              "title": "Project Delivery for Technology Initiatives",
+              "url": "https://codehub.gr/services/build-with-experts/project-delivery-for-technology-initiatives/",
+              "fetched_at": "2026-11-10T12:02:49.084Z"
+            },
+            {
+              "title": "Build With Experts",
+              "url": "https://codehub.gr/services/build-with-experts/",
+              "fetched_at": "2026-11-10T12:02:45.645Z"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "question": "Μπορείτε να διαθέσετε έναν developer ή αναλαμβάνετε και ολόκληρη ομάδα;",
+          "check": "Individual specialists and complete teams",
+          "advisor": null,
+          "answer": "Ναι, το Code.Hub μπορεί να διαθέσει είτε μεμονωμένους ειδικούς για να ενισχύσουν την υπάρχουσα ομάδα σας είτε μια αφοσιωμένη ομάδα με πολλαπλούς ρόλους, προσαρμοσμένη στις ανάγκες παράδοσης, την τεχνολογική στοίβα και το επιθυμητό μοντέλο συνεργασίας σας. [1]\n\nΥπάρχει επίσης επιλογή end-to-end παράδοσης έργου: το Code.Hub αναλαμβάνει την ευθύνη για ένα καθορισμένο έργο, workstream ή ψηφιακή λύση. [2]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 5993,
+          "sources": [
+            {
+              "title": "Managed Staff Augmentation",
+              "url": "https://codehub.gr/services/build-with-experts/managed-staff-augmentation/",
+              "fetched_at": "2026-11-10T12:02:47.503Z"
+            },
+            {
+              "title": "Build With Experts",
+              "url": "https://codehub.gr/services/build-with-experts/",
+              "fetched_at": "2026-11-10T12:02:45.645Z"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "question": "Θέλω να εκπαιδεύσω τους εργαζομένους μου στην τεχνητή νοημοσύνη. Προσαρμόζετε την εκπαίδευση στις ανάγκες της εταιρείας;",
+          "check": "Custom corporate AI training",
+          "advisor": null,
+          "answer": "Ναι. Η Code.Hub προσφέρει εκπαίδευση AI προσαρμοσμένη στους ρόλους, τα εργαλεία, τις δεξιότητες και τις πραγματικές ανάγκες των ομάδων σας — όχι ένα γενικό πρόγραμμα για όλους. [1][3]\n\nΗ εκπαίδευση μπορεί να εστιάσει σε συγκεκριμένα τμήματα ή εργασίες, όπως HR, οικονομικά, πωλήσεις, μάρκετινγκ και διαχείριση έργων. Για παράδειγμα, για ομάδες HR περιλαμβάνει ενδεικτικά σενάρια χρήσης σχετικά με περιγραφές θέσεων, οδηγούς συνεντεύξεων και υπεύθυνη χρήση δεδομένων εργαζομένων. [1]\n\nΓια να σχεδιάσετε πρόγραμμα για την εταιρεία σας, μπορείτε να επικοινωνήσετε με την Code.Hub μέσω της επιλογής «Contact us» στη σελίδα εκπαίδευσης για επιχειρήσεις. [1][3]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 8376,
+          "sources": [
+            {
+              "title": "Building AI-Enabled Business Teams",
+              "url": "https://codehub.gr/services/enterprise-learning-academy-solutions/ai-competency-development-adoption-framework/building-ai-enabled-business-teams/",
+              "fetched_at": "2026-11-10T12:02:53.578Z"
+            },
+            {
+              "title": "For Businesses",
+              "url": "https://codehub.gr/services/enterprise-learning-academy-solutions/training-delivery/",
+              "fetched_at": "2026-11-10T12:03:05.266Z"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "question": "Χρειαζόμαστε επειγόντως έναν έμπειρο τεχνικό διευθυντή. Ποια υπηρεσία σας ταιριάζει;",
+          "check": "Urgent/executive technical recruitment",
+          "advisor": null,
+          "answer": "Για έναν **έμπειρο Τεχνικό Διευθυντή**, η καταλληλότερη υπηρεσία είναι η **C‑Suite Recruitment**, εφόσον ο ρόλος περιλαμβάνει ανώτερη τεχνολογική ηγεσία και ευθύνη για την τεχνική κατεύθυνση. Προσφέρει διακριτική προσέγγιση υποψηφίων, αξιολόγηση ηγετικών ικανοτήτων και στρατηγικής συνάφειας, καθώς και υποστήριξη στην ευθυγράμμιση αποδοχών. Ο Τεχνικός Διευθυντής δεν αναφέρεται ονομαστικά στα παραδείγματα, οπότε χρειάζεται επιβεβαίωση του ακριβούς εύρους του ρόλου. [1]\n\nΕπειδή η ανάγκη είναι επείγουσα, αξίζει να συζητήσετε και το **Business Critical Recruitment**: είναι σχεδιασμένο για κρίσιμες προσλήψεις με συμπιεσμένα χρονοδιαγράμματα και περιλαμβάνει αποκλειστική ομάδα, παράλληλη αναζήτηση υποψηφίων και εβδομαδιαία ενημέρωση. [3]\n\nΜπορείτε να ξεκινήσετε επιλέγοντας **“Discuss Your Leadership Hiring Needs”** για την C‑Suite Recruitment ή **“Initiate Business Critical Recruitment”** για την επείγουσα αναζήτηση. [1][3]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 8872,
+          "sources": [
+            {
+              "title": "C-Suite Recruitment",
+              "url": "https://codehub.gr/services/find-talent/c-suite-recruitment/",
+              "fetched_at": "2026-11-10T12:03:10.147Z"
+            },
+            {
+              "title": "Business Critical Recruitment",
+              "url": "https://codehub.gr/services/find-talent/business-critical-recruitment/",
+              "fetched_at": "2026-11-10T12:03:09.482Z"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "question": "Πόσα trainings υπάρχουν συνολικά στον κατάλογό σας;",
+          "check": "Published course catalogue total, not retrieved chunk count",
+          "advisor": null,
+          "answer": "Στον κατάλογο **Training Programs** αναφέρονται **46 courses/εκπαιδευτικά προγράμματα**. [1]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 2096,
+          "sources": [
+            {
+              "title": "Course Catalogue of Training Courses",
+              "url": "https://codehub.gr/training-programs/",
+              "fetched_at": "2026-11-10T12:03:19.235Z"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "question": "Ποια trainings προσφέρετε;",
+          "check": "Course names, with clear pagination if needed",
+          "advisor": null,
+          "answer": "Από τον κατάλογο για τον οποίο έχω διαθέσιμα στοιχεία:\n\n**Μαθήματα 1–10 από 46**:\n\n- **.NET Developer Productivity with AI: Copilots, Automation, and Intelligent Workflows**. [1]\n- **Agentic AI with Spring AI & Embabel**. [2]\n- **AI Engineering for Intelligent .NET Systems: RAG, Agents & Enterprise Integration**. [3]\n- **AI Engineering with Python & LangChain**. [4]\n- **AI Governance & Operations in .NET**. [5]\n- **AI in Power Platform: AI Builder Models, Credits and Automation with Power Automate**. [6]\n- **AI System Architecture on Azure**. [7]\n- **AI-Assisted Angular & Frontend Development**. [8]\n- **AI-Assisted Microservices with Spring Cloud**. [9]\n- **AI-Assisted Technical Business Analysis**. [10]\n\nΆνοιξε τη σελίδα κάθε μαθήματος για το περιεχόμενο και τις προϋποθέσεις του.",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 2115,
+          "sources": [
+            {
+              "title": ".NET Developer Productivity with AI: Copilots, Automation, and Intelligent Workflows",
+              "url": "https://codehub.gr/course/net-developer-productivity-with-ai-copilots-automation-and-intelligent-workflows/",
+              "fetched_at": "2026-11-10T11:53:31.048Z"
+            },
+            {
+              "title": "Agentic AI with Spring AI & Embabel",
+              "url": "https://codehub.gr/course/agentic-ai-with-spring-ai-embabel/",
+              "fetched_at": "2026-11-10T11:52:58.793Z"
+            },
+            {
+              "title": "AI Engineering for Intelligent .NET Systems: RAG, Agents & Enterprise Integration",
+              "url": "https://codehub.gr/course/ai-engineering-for-intelligent-net-systems-rag-agents-enterprise-integration/",
+              "fetched_at": "2026-11-10T11:53:07.604Z"
+            },
+            {
+              "title": "AI Engineering with Python & LangChain",
+              "url": "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+              "fetched_at": "2026-11-10T11:53:08.512Z"
+            },
+            {
+              "title": "AI Governance & Operations in .NET",
+              "url": "https://codehub.gr/course/ai-governance-operations-in-net/",
+              "fetched_at": "2026-11-10T11:53:10.298Z"
+            },
+            {
+              "title": "AI in Power Platform: AI Builder Models, Credits and Automation with Power Automate",
+              "url": "https://codehub.gr/course/ai-in-power-platform-ai-builder-models-credits-and-automation-with-power-automate/",
+              "fetched_at": "2026-11-10T11:53:11.215Z"
+            },
+            {
+              "title": "AI System Architecture on Azure",
+              "url": "https://codehub.gr/course/ai-system-architecture-on-azure/",
+              "fetched_at": "2026-11-10T11:53:13.492Z"
+            },
+            {
+              "title": "AI-Assisted Angular & Frontend Development",
+              "url": "https://codehub.gr/course/ai-assisted-angular-frontend-development/",
+              "fetched_at": "2026-11-10T11:52:59.715Z"
+            },
+            {
+              "title": "AI-Assisted Microservices with Spring Cloud",
+              "url": "https://codehub.gr/course/ai-assisted-microservices-with-spring-cloud/",
+              "fetched_at": "2026-11-10T11:53:00.943Z"
+            },
+            {
+              "title": "AI-Assisted Technical Business Analysis",
+              "url": "https://codehub.gr/course/ai-assisted-technical-business-analysis/",
+              "fetched_at": "2026-11-10T11:53:01.828Z"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "question": "Θέλω να φτιάξω έναν βοηθό που απαντά χρησιμοποιώντας τα έγγραφα της εταιρείας μου. Ποιο σεμινάριο ταιριάζει;",
+          "check": "Semantic match to RAG Systems Engineering",
+          "advisor": null,
+          "answer": "Για αυτό που περιγράφεις, η πιο άμεση επιλογή είναι το **Retrieval-Augmented Generation (RAG) Systems Engineering**: εστιάζει ακριβώς στη σύνδεση LLM με εξωτερικές πηγές γνώσης και καλύπτει εισαγωγή και επεξεργασία εγγράφων, embeddings, αναζήτηση και δημιουργία απαντήσεων. Διαρκεί **24 ώρες**, είναι **μεσαίου επιπέδου** και προϋποθέτει εμπειρία σε Python ή .NET, APIs και επεξεργασία δεδομένων, καθώς και βασικές γνώσεις ML και LLM. [1]\n\nΆλλες καλές επιλογές, ανάλογα με την τεχνολογία σου:\n\n- **AI-Enhanced Development in .NET with Semantic Kernel** — καλή επιλογή αν δουλεύεις με C#/.NET. Περιλαμβάνει πρακτική κατασκευή συστήματος ερωταπαντήσεων πάνω σε έγγραφα και AI web API. Διαρκεί **20 ώρες**· χρειάζονται ενδιάμεσες γνώσεις C#/.NET και REST APIs. [2]\n- **AI Engineering with Python & LangChain** — ταιριάζει αν θέλεις ευρύτερη, πιο εκτενή εκπαίδευση σε εφαρμογές LLM, RAG και interfaces συνομιλίας. Διαρκεί **88 ώρες** και απαιτεί ισχυρές βάσεις Python. [3]\n- **AI Engineering for Intelligent .NET Systems: RAG, Agents & Enterprise Integration** — πιο σύντομη και προχωρημένη επιλογή για ομάδες .NET που θέλουν να συνδέσουν έγγραφα και SQL Server με LLM. Διαρκεί **8 ώρες** και προϋποθέτει εμπειρία με .NET και ASP.NET Core Web APIs. [4]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 10048,
+          "sources": [
+            {
+              "title": "Retrieval-Augmented Generation (RAG) Systems Engineering",
+              "url": "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/",
+              "fetched_at": "2026-11-10T11:53:36.138Z"
+            },
+            {
+              "title": "AI-Enhanced Development in .NET with Semantic Kernel",
+              "url": "https://codehub.gr/course/ai-enhanced-development-in-net-with-semantic-kernel/",
+              "fetched_at": "2026-11-10T11:53:09.354Z"
+            },
+            {
+              "title": "AI Engineering with Python & LangChain",
+              "url": "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+              "fetched_at": "2026-11-10T11:53:08.512Z"
+            },
+            {
+              "title": "AI Engineering for Intelligent .NET Systems: RAG, Agents & Enterprise Integration",
+              "url": "https://codehub.gr/course/ai-engineering-for-intelligent-net-systems-rag-agents-enterprise-integration/",
+              "fetched_at": "2026-11-10T11:53:07.604Z"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "question": "Τι θα μάθω στο Retrieval-Augmented Generation Systems Engineering;",
+          "check": "Actual RAG course contents",
+          "advisor": null,
+          "answer": "Στο **Retrieval-Augmented Generation (RAG) Systems Engineering** θα μάθεις να σχεδιάζεις και να υλοποιείς ολοκληρωμένα συστήματα RAG, που συνδυάζουν LLMs με εξωτερικές πηγές γνώσης. Η ύλη καλύπτει τη ροή από την επεξεργασία εγγράφων και τα embeddings έως την ανάκτηση πληροφοριών και τη δημιουργία απαντήσεων. [1]\n\nΣυγκεκριμένα, θα ασχοληθείς με:\n- εισαγωγή εγγράφων, προεπεξεργασία, τεμαχισμό (chunking) και embeddings,\n- vector databases, αναζήτηση ομοιότητας, κατάταξη και βελτιστοποίηση της ανάκτησης,\n- υβριδική αναζήτηση και multi-hop reasoning,\n- ενσωμάτωση RAG σε APIs και εφαρμογές, μαζί με prompt engineering,\n- αξιολόγηση, παρακολούθηση, κλιμάκωση και βελτιστοποίηση συστημάτων για παραγωγική χρήση. [1]\n\nΥπάρχουν πρακτικές ασκήσεις και τελικό έργο για την κατασκευή και βελτιστοποίηση ενός ολοκληρωμένου συστήματος RAG. Το μάθημα διαρκεί 24 ώρες, είναι μεσαίου επιπέδου και προϋποθέτει εμπειρία με Python ή .NET, εξοικείωση με APIs και επεξεργασία δεδομένων, καθώς και βασική κατανόηση machine learning και LLMs. [1]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 7948,
+          "sources": [
+            {
+              "title": "Retrieval-Augmented Generation (RAG) Systems Engineering",
+              "url": "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/",
+              "fetched_at": "2026-11-10T11:53:36.138Z"
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "question": "Ποιες γνώσεις χρειάζομαι πριν παρακολουθήσω το AI Engineering with Python & LangChain;",
+          "check": "Actual prerequisites of named course",
+          "advisor": null,
+          "answer": "Απαραίτητη προϋπόθεση είναι να έχεις **στέρεες βάσεις στην Python**. [1]\n\nΩφέλιμη, αλλά όχι υποχρεωτική, είναι η εξοικείωση με:\n- APIs και RESTful υπηρεσίες\n- JSON και δομημένα δεδομένα\n- Βασικές έννοιες μηχανικής μάθησης και LLM\n- Git και ροές ανάπτυξης λογισμικού\n- Βασικές έννοιες cloud [1]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 7078,
+          "sources": [
+            {
+              "title": "AI Engineering with Python & LangChain",
+              "url": "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+              "fetched_at": "2026-11-10T11:53:08.512Z"
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "question": "Ποιες διαφορές έχουν το RAG Systems Engineering και το AI Engineering with Python & LangChain;",
+          "check": "Both course pages and grounded comparison",
+          "advisor": null,
+          "answer": "Και τα δύο είναι επαγγελματικά μαθήματα που καλύπτουν RAG, αλλά έχουν διαφορετικό εύρος: το **RAG Systems Engineering** εστιάζει στην κατασκευή και βελτιστοποίηση συστημάτων RAG, ενώ το **AI Engineering with Python & LangChain** καλύπτει ευρύτερα την ανάπτυξη εφαρμογών AI με LLMs, agents και παραγωγική ανάπτυξη. [1][2]\n\n- **RAG Systems Engineering — 24 ώρες, Intermediate:** Εμβαθύνει στην αρχιτεκτονική RAG, από την εισαγωγή και επεξεργασία εγγράφων, τα embeddings και τις vector databases (π.χ. FAISS, Pinecone), έως hybrid retrieval, multi-hop reasoning, ενσωμάτωση μέσω APIs, αξιολόγηση, παρακολούθηση και κλιμάκωση. Στόχος είναι να μπορείτε να σχεδιάζετε και να υλοποιείτε αξιόπιστα, παραγωγικά συστήματα RAG. [1]\n- **AI Engineering with Python & LangChain — 88 ώρες, Intermediate/Advanced:** Περιλαμβάνει RAG με LangChain και Chroma, αλλά επεκτείνεται σε agents με LangGraph, knowledge graphs και Neo4j, εφαρμογές με διεπαφές χρήστη, MCP, πολυτροπική επεξεργασία, αξιολόγηση και fine-tuning μοντέλων, καθώς και ανάπτυξη σε Azure και MLOps. Στόχος είναι η δημιουργία και ανάπτυξη ολοκληρωμένων εφαρμογών AI. [2]\n\n**Σε ποιους ταιριάζει:** Το πρώτο αναφέρει ρόλους όπως AI Engineer, Data Engineer και Machine Learning Engineer, με επίπεδο Junior έως Mid-Level· ζητά εμπειρία σε Python ή .NET, APIs και επεξεργασία δεδομένων, καθώς και βασική γνώση ML και LLMs. Το δεύτερο απευθύνεται, μεταξύ άλλων, σε AI και Software Engineers, Solution Architects και Technical Leads, από Junior έως Senior· απαιτεί σταθερές βάσεις Python, ενώ οι υπόλοιπες γνώσεις που αναφέρει είναι ωφέλιμες αλλά όχι υποχρεωτικές. [1][2]\n\n**Με λίγα λόγια:** επιλέξτε το πρώτο για πιο στοχευμένη εμβάθυνση στο RAG· το δεύτερο αν θέλετε ευρύτερη εκπαίδευση στην κατασκευή εφαρμογών AI, με Python και LangChain. [1][2]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 9644,
+          "sources": [
+            {
+              "title": "Retrieval-Augmented Generation (RAG) Systems Engineering",
+              "url": "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/",
+              "fetched_at": "2026-11-10T11:53:36.138Z"
+            },
+            {
+              "title": "AI Engineering with Python & LangChain",
+              "url": "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+              "fetched_at": "2026-11-10T11:53:08.512Z"
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "question": "Δεν έχω εμπειρία στο cloud. Υπάρχει εισαγωγική εκπαίδευση για AWS;",
+          "check": "Introductory AWS option and prerequisites",
+          "advisor": null,
+          "answer": "Ναι. Η πιο άμεση εισαγωγή για αρχάριους είναι το **AWS Discovery Day: Cloud Practitioner Essentials**: ήταν δωρεάν, τρίωρο διαδικτυακό webinar και δεν απαιτούσε προηγούμενα προσόντα ή εμπειρία. Όμως η εκδήλωση έχει ολοκληρωθεί και δεν δέχεται πλέον αιτήσεις. [1]\n\nΥπάρχει επίσης το **AWS Cloud Practitioner Essentials**, εισαγωγικό μάθημα 12 ωρών που καλύπτει βασικές υπηρεσίες AWS, υπολογιστική ισχύ, αποθήκευση, δίκτυα, ασφάλεια και τιμολόγηση. Μια διευκρίνιση: η περιγραφή λέει ότι απευθύνεται σε άτομα με βασικές γνώσεις AWS, ενώ αναφέρει ότι η περιορισμένη έκθεση στο AWS και η βασική κατανόηση IT είναι προτεινόμενες, όχι υποχρεωτικές. Άρα δεν επιβεβαιώνεται ότι είναι κατάλληλο για κάποιον χωρίς καθόλου προηγούμενη επαφή με AWS. [2]\n\nΓια να ρωτήσεις αν θα προγραμματιστεί ξανά το εισαγωγικό webinar ή αν το 12ωρο μάθημα είναι κατάλληλο για το επίπεδό σου, μπορείς να επικοινωνήσεις με την Code.Hub μέσω της σελίδας του αντίστοιχου μαθήματος. [1][2]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 12283,
+          "sources": [
+            {
+              "title": "AWS Discovery Day: Cloud Practitioner Essentials",
+              "url": "https://codehub.gr/training/aws-discovery-day-cloud-practitioner/",
+              "fetched_at": "2026-11-10T12:03:20.770Z"
+            },
+            {
+              "title": "AWS Cloud Practitioner Essentials",
+              "url": "https://codehub.gr/course/aws-cloud-practitioner-essentials/",
+              "fetched_at": "2026-11-10T11:53:14.437Z"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "question": "Θέλω να χρησιμοποιώ AI εργαλεία για να γράφω κώδικα πιο αποτελεσματικά. Ποια μαθήματα σχετίζονται;",
+          "check": "Coding agents/AI-assisted development courses",
+          "advisor": null,
+          "answer": "Με βάση τον στόχο σου, αυτά είναι τα πιο σχετικά μαθήματα:\n\n- **AI-Augmented Development with GitHub Copilot** — εστιασμένο στη χρήση του Copilot για παραγωγή κώδικα από prompts, refactoring, τεστ και τεκμηρίωση. Διαρκεί 4 ώρες· χρειάζεται πρακτική εμπειρία προγραμματισμού και εξοικείωση με IDE. [1]\n- **AI-Augmented Development with Coding Agents** — καλύπτει τη συνεργασία με coding agents σε ολόκληρο τον κύκλο ανάπτυξης: από απαιτήσεις και δημιουργία κώδικα έως refactoring, δοκιμές και Git. Διαρκεί 24 ώρες και προϋποθέτει καλή γνώση της γλώσσας των παραδειγμάτων, OOP, Git και δομής backend εφαρμογών. [2]\n- **.NET Developer Productivity with AI: Copilots, Automation, and Intelligent Workflows** — για .NET developers που θέλουν AI-assisted coding, debugging, refactoring, τεστ και αυτοματοποίηση. Διαρκεί 18 ώρες· απαιτεί ισχυρή εμπειρία με C#/.NET και Visual Studio. [3]\n- **AI-Augmented Full Stack .NET Code Development** — συνδυάζει Copilot για backend και frontend κώδικα με refactoring, debugging και τεστ. Διαρκεί 18 ώρες· απευθύνεται σε όσους έχουν εμπειρία με C#, ASP.NET Core και React ή Angular. [5]\n- **C# and ASP.NET Core using AI Coding Assistant** — διδάσκει C# και ASP.NET Core μαζί με χρήση AI για scaffolding, ανασκόπηση κώδικα και δημιουργία τεστ. Διαρκεί 40 ώρες και αναφέρει βασική κατανόηση προγραμματισμού, χωρίς προηγούμενη εμπειρία C#. [6]\n\nΑν θέλεις μια σύντομη εισαγωγή ειδικά σε εργαλείο AI, το πρώτο είναι το πιο εστιασμένο. Για χρήση agents σε μεγαλύτερο μέρος της διαδικασίας ανάπτυξης, δες το δεύτερο.",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 10127,
+          "sources": [
+            {
+              "title": "AI-Augmented Development with GitHub Copilot",
+              "url": "https://codehub.gr/course/ai-augmented-development-with-github-copilot/",
+              "fetched_at": "2026-11-10T11:53:03.788Z"
+            },
+            {
+              "title": "AI-Augmented Development with Coding Agents",
+              "url": "https://codehub.gr/course/ai-augmented-development-with-coding-agents/",
+              "fetched_at": "2026-11-10T11:53:02.837Z"
+            },
+            {
+              "title": ".NET Developer Productivity with AI: Copilots, Automation, and Intelligent Workflows",
+              "url": "https://codehub.gr/course/net-developer-productivity-with-ai-copilots-automation-and-intelligent-workflows/",
+              "fetched_at": "2026-11-10T11:53:31.048Z"
+            },
+            {
+              "title": "AI-Augmented Full Stack .NET Code Development",
+              "url": "https://codehub.gr/course/ai-augmented-full-stack-net-code-development/",
+              "fetched_at": "2026-11-10T11:53:04.755Z"
+            },
+            {
+              "title": "C# and ASP.NET Core using AI Coding Assistant",
+              "url": "https://codehub.gr/course/c-and-asp-net-core-using-ai-coding-assistant/",
+              "fetched_at": "2026-11-10T11:53:18.552Z"
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "question": "Υπάρχει εκπαίδευση για να αναγνωρίζουν οι εργαζόμενοι phishing και άλλες ψηφιακές απειλές;",
+          "check": "Cybersecurity awareness course semantic match",
+          "advisor": null,
+          "answer": "Ναι. Το **Cybersecurity Awareness Essentials** είναι εισαγωγικό μάθημα διάρκειας **5 ωρών** για εργαζομένους όλων των τμημάτων, χωρίς να απαιτείται προηγούμενη γνώση κυβερνοασφάλειας (χρειάζεται βασική ψηφιακή εξοικείωση). Καλύπτει την αναγνώριση phishing, vishing, smishing και malware, καθώς και ασφαλείς ψηφιακές πρακτικές και αναφορά περιστατικών. Προσφέρεται online, επιτόπου, διά ζώσης ή υβριδικά. [1]\n\nΓια επιχειρήσεις, η Code.Hub αναφέρει επίσης τη δυνατότητα δημιουργίας **προσαρμοσμένων e-learning μαθημάτων κυβερνοασφάλειας**, με σενάρια και παραδείγματα από τον κλάδο της εταιρείας. [2]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 7573,
+          "sources": [
+            {
+              "title": "Cybersecurity Awareness Essentials",
+              "url": "https://codehub.gr/course/cybersecurity-awareness-essentials/",
+              "fetched_at": "2026-11-10T11:53:20.385Z"
+            },
+            {
+              "title": "For Businesses",
+              "url": "https://codehub.gr/services/enterprise-learning-academy-solutions/elearning-course-design-development/",
+              "fetched_at": "2026-11-10T12:02:55.240Z"
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "question": "Ποια μαθήματα αφορούν βάσεις δεδομένων και SQL;",
+          "check": "Database/SQL courses, no unsupported completeness claim",
+          "advisor": null,
+          "answer": "Τα πιο σχετικά **μαθήματα** είναι:\n\n- **Relational Databases (PostgreSQL) & AI Assistants** — 47 ώρες. Καλύπτει θεμελιώδεις έννοιες σχεσιακών βάσεων, βασική και πιο σύνθετη SQL, σχεδιασμό σχημάτων, συναλλαγές και βελτιστοποίηση ερωτημάτων. Εισαγωγικό/μεσαίο επίπεδο· προϋποθέτει βασική κατανόηση προγραμματισμού. [1]\n- **MS SQL with Generative AI** — 14 ώρες, μεσαίο επίπεδο. Εστιάζει σε SQL Server και χρήση AI για δημιουργία και βελτιστοποίηση ερωτημάτων, αλλά απαιτεί βασική γνώση SQL, σχεσιακών βάσεων και μοντελοποίησης δεδομένων. [3]\n- **PostgreSQL for Modern Architectures and AI-Driven Applications** — 8 ώρες, προχωρημένο επίπεδο. Εμβαθύνει σε σύγχρονες δυνατότητες SQL και PostgreSQL· προϋποθέτει βασική SQL και εξοικείωση με PostgreSQL και σχεσιακές βάσεις. [4]\n\nΣχετικό είναι επίσης το **Data Engineering & Business Intelligence**, ένα ξεχωριστό πρόγραμμα εκπαίδευσης 80 ωρών — όχι μάθημα του καταλόγου μαθημάτων. Περιλαμβάνει σχεσιακές βάσεις, βασικά SQL Server και σύνταξη SQL queries. [2]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 10899,
+          "sources": [
+            {
+              "title": "Relational Databases (PostgreSQL) & AI Assistants",
+              "url": "https://codehub.gr/course/relational-databases-postgresql-ai-assistants/",
+              "fetched_at": "2026-11-10T11:53:35.290Z"
+            },
+            {
+              "title": "MS SQL with Generative AI",
+              "url": "https://codehub.gr/course/ms-sql-with-generative-ai/",
+              "fetched_at": "2026-11-10T11:53:30.071Z"
+            },
+            {
+              "title": "PostgreSQL for Modern Architectures and AI-Driven Applications",
+              "url": "https://codehub.gr/course/postgresql-for-modern-architectures-and-ai-driven-applications/",
+              "fetched_at": "2026-11-10T11:53:32.714Z"
+            },
+            {
+              "title": "Data Engineering & Business Intelligence",
+              "url": "https://codehub.gr/training/project-future-13/",
+              "fetched_at": "2026-11-10T12:03:21.646Z"
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "question": "Πόσο κοστίζει το σεμινάριο RAG και πότε ξεκινά; Αν αυτά δεν αναφέρονται, πες μου πώς μπορώ να τα μάθω.",
+          "check": "No invented price/date; useful contact direction if unavailable",
+          "advisor": null,
+          "answer": "Η διαθέσιμη σελίδα για το σεμινάριο **Retrieval-Augmented Generation (RAG) Systems Engineering** δεν αναφέρει τιμή ή ημερομηνία έναρξης. Αναφέρει διάρκεια 24 ωρών. [1]\n\nΓια να μάθετε το κόστος και το επόμενο διαθέσιμο ξεκίνημα, επικοινωνήστε με την Code.Hub στο **+30 211 411 7481** ή στο **info@codehub.gr**. [2]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 8102,
+          "sources": [
+            {
+              "title": "Retrieval-Augmented Generation (RAG) Systems Engineering",
+              "url": "https://codehub.gr/course/retrieval-augmented-generation-rag-systems-engineering/",
+              "fetched_at": "2026-11-10T11:53:36.138Z"
+            },
+            {
+              "title": "Contact Us",
+              "url": "https://codehub.gr/contact/",
+              "fetched_at": "2026-11-10T11:52:56.617Z"
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "question": "Πόσες θέσεις εργασίας υπάρχουν στον κατάλογό σας;",
+          "check": "Published jobs catalogue total",
+          "advisor": null,
+          "answer": "Με βάση τα διαθέσιμα στοιχεία του καταλόγου **Open Job Opportunities**, αναφέρονται **61 ρόλοι**. [1]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 2494,
+          "sources": [
+            {
+              "title": "Find new job opportunities and begin a new career",
+              "url": "https://codehub.gr/open-job-opportunities/",
+              "fetched_at": "2026-11-10T11:56:16.529Z"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "question": "Ποιες είναι οι διαθέσιμες θέσεις εργασίας;",
+          "check": "Job names and clear pagination",
+          "advisor": null,
+          "answer": "Από τον κατάλογο για τον οποίο έχω διαθέσιμα στοιχεία:\n\n**Θέσεις 1–10 από 61**:\n\n- **.NET Software Engineer** (PO-803). [1]\n- **.NET Software Engineer** (PO-823). [2]\n- **.NET Software Engineer** (PO-830). [3]\n- **Adobe Application Consultant** (PO-912). [4]\n- **Adobe Developer** (PO-914). [5]\n- **AI Architect** (PO-782). [6]\n- **AI Creative Technologist** (PO-814). [7]\n- **AI Developer (.NET)** (PO-917). [8]\n- **Application Support Engineer** (PO-572). [9]\n- **Application Support Engineer** (PO-899). [10]\n\nΆνοιξε κάθε αγγελία για την τρέχουσα διαθεσιμότητα, τις προϋποθέσεις και την αίτηση.",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 2974,
+          "sources": [
+            {
+              "title": ".NET Software Engineer",
+              "url": "https://codehub.gr/job/po-803-net-software-engineer/",
+              "fetched_at": "2026-11-10T11:55:05.831Z"
+            },
+            {
+              "title": ".NET Software Engineer",
+              "url": "https://codehub.gr/job/po-823-net-software-engineer/",
+              "fetched_at": "2026-11-10T11:55:14.875Z"
+            },
+            {
+              "title": ".NET Software Engineer",
+              "url": "https://codehub.gr/job/po-830-net-software-engineer/",
+              "fetched_at": "2026-11-10T11:55:18.689Z"
+            },
+            {
+              "title": "Adobe Application Consultant",
+              "url": "https://codehub.gr/job/po-912-adobe-application-consultant/",
+              "fetched_at": "2026-11-10T11:55:42.549Z"
+            },
+            {
+              "title": "Adobe Developer",
+              "url": "https://codehub.gr/job/po-914-adobe-developer/",
+              "fetched_at": "2026-11-10T11:55:43.801Z"
+            },
+            {
+              "title": "AI Architect",
+              "url": "https://codehub.gr/job/po-782-ai-architect/",
+              "fetched_at": "2026-11-10T11:55:04.518Z"
+            },
+            {
+              "title": "AI Creative Technologist",
+              "url": "https://codehub.gr/job/po-814-ai-creative-technologist/",
+              "fetched_at": "2026-11-10T11:55:12.214Z"
+            },
+            {
+              "title": "AI Developer (.NET)",
+              "url": "https://codehub.gr/job/po-917-ai-developer-net/",
+              "fetched_at": "2026-11-10T11:55:47.714Z"
+            },
+            {
+              "title": "Application Support Engineer",
+              "url": "https://codehub.gr/job/po-572-application-support-engineer/",
+              "fetched_at": "2026-11-10T11:54:52.798Z"
+            },
+            {
+              "title": "Application Support Engineer",
+              "url": "https://codehub.gr/job/po-899-application-support-engineer/",
+              "fetched_at": "2026-11-10T11:55:38.621Z"
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "question": "Γνωρίζω Python και ψάχνω δουλειά στην Αθήνα. Ποιες αγγελίες ταιριάζουν;",
+          "check": "Jobs where both Python and Athens apply to that job, not related cards",
+          "advisor": null,
+          "answer": "Βρήκα δύο αγγελίες στην Αθήνα όπου ζητείται Python. Και οι δύο, όμως, απαιτούν και σχετική επαγγελματική εμπειρία και άλλες τεχνολογίες:\n\n- **Data Engineer/Databricks – Cloud** — μεσαίου επιπέδου, **on-site**. Ζητά Python και PySpark, μαζί με Azure, Databricks, SQL και Azure Data Factory, καθώς και τουλάχιστον **4 χρόνια σχετικής εμπειρίας**. [1]\n- **Data Engineer** — senior, **hybrid**. Η Python αναφέρεται μαζί με Spark ή Scala, SQL και εμπειρία σε cloud data engineering· ζητούνται τουλάχιστον **5 χρόνια εμπειρίας**. [2]\n\nΑν γνωρίζεις Python αλλά δεν έχεις την αντίστοιχη εμπειρία στα data engineering ή στις υπόλοιπες τεχνολογίες, οι αγγελίες δεν φαίνεται να ταιριάζουν πλήρως. Τα διαθέσιμα στοιχεία δεν επιβεβαιώνουν αν οι θέσεις είναι ακόμη ενεργές. [1][2]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 9695,
+          "sources": [
+            {
+              "title": "Data Engineer/Databricks – Cloud",
+              "url": "https://codehub.gr/job/po-924-data-engineer-databricks-cloud/",
+              "fetched_at": "2026-11-10T11:55:51.771Z"
+            },
+            {
+              "title": "Data Engineer",
+              "url": "https://codehub.gr/job/po-929-data-engineer/",
+              "fetched_at": "2026-11-10T11:55:54.329Z"
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "question": "Θέλω να δουλεύω από το σπίτι. Ποιες θέσεις αναφέρουν remote εργασία;",
+          "check": "Actual remote jobs, distinguish hybrid",
+          "advisor": null,
+          "answer": "Οι θέσεις που αναφέρουν δυνατότητα **remote** είναι:\n\n- **Oracle PL/SQL Developer** — υβριδική εργασία με 1 ημέρα την εβδομάδα στο γραφείο στην Αθήνα ή **πλήρως remote για υποψηφίους εκτός Αθήνας**. [2]\n- **iOS Engineer** — η καταχώριση έχει την ένδειξη «Remote», αλλά στην περιγραφή παροχών αναφέρει υβριδικό μοντέλο εργασίας. Επομένως, η δυνατότητα πλήρως εξ αποστάσεως εργασίας δεν είναι ξεκάθαρη. [1]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 7719,
+          "sources": [
+            {
+              "title": "Oracle PL/SQL Developer",
+              "url": "https://codehub.gr/job/po-946-oracle-pl-sql-developer/",
+              "fetched_at": "2026-11-10T11:56:07.420Z"
+            },
+            {
+              "title": "iOS Engineer",
+              "url": "https://codehub.gr/job/po-778-ios-engineer/",
+              "fetched_at": "2026-11-10T11:55:03.277Z"
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "question": "Ασχολούμαι με interfaces και εφαρμογές στον browser. Υπάρχουν σχετικές θέσεις;",
+          "check": "Semantic frontend/UI job matches",
+          "advisor": null,
+          "answer": "Ναι—βρήκα αρκετές σχετικές καταχωρίσεις στην Αθήνα:\n\n- **Lead Angular Developer** — ανάπτυξη web εφαρμογών με Angular, TypeScript και RxJS, μαζί με server-side rendering. Είναι θέση lead και ζητά τουλάχιστον 5 χρόνια εμπειρίας και προηγούμενη τεχνική καθοδήγηση ομάδας. **Hybrid.** [2]\n- **Full-Stack Software Engineer** — frontend με Angular, μαζί με C#/.NET και REST APIs. Ζητά τουλάχιστον 5 χρόνια εμπειρίας σε ανάπτυξη εφαρμογών με τεχνολογίες Microsoft. **Hybrid.** [3]\n- **Java Web Developer** — ανάπτυξη web εφαρμογών με Java· ζητούνται επίσης βασικές γνώσεις JavaScript, HTML5/CSS3 και τουλάχιστον 2 χρόνια εμπειρίας. **Mid, hybrid.** [4]\n- **.NET Software Engineer** — περιλαμβάνει ανάπτυξη UI με Blazor, καθώς και JavaScript, HTML και CSS. Ζητά C#/.NET και τουλάχιστον 2 χρόνια εμπειρίας. **Mid, hybrid.** [6]\n- **React Engineer** — εστίαση σε σύνθετα interfaces με React και Electron για desktop εφαρμογή, άρα είναι σχετικό με UI αλλά όχι καθαρά browser-based. Ζητά 3+ χρόνια React και εμπειρία με Electron/Node.js. Η καταχώριση το χαρακτηρίζει **on-site**, ενώ αναφέρει ότι εξετάζεται πιθανή hybrid εργασία. [1]\n\nΟι καταχωρίσεις αναφέρουν προθεσμίες που δεν έχουν παρέλθει, αλλά τα διαθέσιμα στοιχεία δεν επιβεβαιώνουν από μόνα τους αν οι θέσεις παραμένουν ενεργές.",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 14766,
+          "sources": [
+            {
+              "title": "Lead Angular Developer",
+              "url": "https://codehub.gr/job/po-934-lead-angular-developer/",
+              "fetched_at": "2026-11-10T11:55:59.345Z"
+            },
+            {
+              "title": "Full-Stack Software Engineer",
+              "url": "https://codehub.gr/job/po-829-full-stack-software-engineer/",
+              "fetched_at": "2026-11-10T11:55:17.489Z"
+            },
+            {
+              "title": "Java Web Developer",
+              "url": "https://codehub.gr/job/po-805-java-web-developer/",
+              "fetched_at": "2026-11-10T11:55:07.157Z"
+            },
+            {
+              "title": ".NET Software Engineer",
+              "url": "https://codehub.gr/job/po-803-net-software-engineer/",
+              "fetched_at": "2026-11-10T11:55:05.831Z"
+            },
+            {
+              "title": "React Engineer",
+              "url": "https://codehub.gr/job/po-935-react-engineer/",
+              "fetched_at": "2026-11-10T11:56:01.079Z"
+            }
+          ]
+        },
+        {
+          "id": 26,
+          "question": "Έχω εμπειρία σε AWS, Azure και υποδομές. Ποιες επαγγελματικές ευκαιρίες σχετίζονται;",
+          "check": "Cloud/infrastructure jobs",
+          "advisor": null,
+          "answer": "Με εμπειρία σε AWS, Azure και υποδομές, οι πιο συναφείς καταχωρίσεις είναι:\n\n- **Cloud Engineer — Θεσσαλονίκη, υβριδικά:** σχεδιασμός και αυτοματοποίηση cloud υποδομών σε AWS/Azure/GCP, με Terraform και CI/CD. Είναι θέση senior και ζητά τουλάχιστον 5 χρόνια εμπειρίας και ισχυρή γνώση σε έναν μεγάλο cloud πάροχο. [2]\n- **Cloud Administrator — Αθήνα, με φυσική παρουσία:** διαχείριση Azure, AWS και άλλων cloud υπηρεσιών, VM και storage, μαζί με monitoring, ασφάλεια, backup και disaster recovery. Ζητά τουλάχιστον 3 χρόνια εμπειρίας και πρακτική γνώση Azure, M365 και IaC. [1]\n- **DevOps/Systems Engineer — Αθήνα, με φυσική παρουσία:** εστιάζει σε Azure και υβριδικές cloud/on-prem υποδομές, με Terraform, Ansible, CI/CD, Linux/Windows και scripting· η γνώση AWS είναι ευπρόσδεκτη. Είναι senior ρόλος με απαίτηση τουλάχιστον 6 ετών εμπειρίας. Η περιγραφή διευκρινίζει ότι προς το παρόν η εργασία είναι on-premises, παρότι εξετάζεται μελλοντικά το hybrid. [4]\n- **Cloud Security Specialist — Αθήνα, υβριδικά:** κατάλληλη αν η εμπειρία σου περιλαμβάνει και cloud security. Καλύπτει Azure και AWS, με Sentinel και AWS security services· ζητά τουλάχιστον 5 χρόνια εμπειρίας και αναφέρει σχετικά Azure/AWS πιστοποιητικά στα απαιτούμενα προσόντα. [3]\n- **IT Infrastructure Section Manager — Αθήνα, με φυσική παρουσία:** συνδυάζει Azure και on-prem υποδομές, αρχιτεκτονική, IaC, disaster recovery και διαχείριση ομάδων. Είναι διοικητική θέση· η καταχώριση αναφέρει τουλάχιστον 7 χρόνια εμπειρίας, αλλά σε άλλο σημείο αναφέρει 4–6 χρόνια σχετικής εμπειρίας, οπότε η απαίτηση ετών δεν είναι απολύτως συνεπής. [5]\n\nΟι καταχωρίσεις αυτές είναι συναφείς με το προφίλ σου, αλλά τα διαθέσιμα στοιχεία δεν επιβεβαιώνουν από μόνα τους ότι οι θέσεις παραμένουν ενεργές. [1][2][3][4][5]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 16293,
+          "sources": [
+            {
+              "title": "Cloud Engineer",
+              "url": "https://codehub.gr/job/po-760-cloud-engineer/",
+              "fetched_at": "2026-11-10T11:54:59.220Z"
+            },
+            {
+              "title": "Cloud Administrator",
+              "url": "https://codehub.gr/job/po-869-cloud-administrator/",
+              "fetched_at": "2026-11-10T11:55:25.225Z"
+            },
+            {
+              "title": "DevOps/Systems Engineer",
+              "url": "https://codehub.gr/job/po-937-devops-systems-engineer/",
+              "fetched_at": "2026-11-10T11:56:02.478Z"
+            },
+            {
+              "title": "Cloud Security Specialist",
+              "url": "https://codehub.gr/job/po-951-cloud-security-specialist/",
+              "fetched_at": "2026-11-10T11:56:07.542Z"
+            },
+            {
+              "title": "IT Infrastructure Section Manager",
+              "url": "https://codehub.gr/job/po-905-it-infrastructure-section-manager/",
+              "fetched_at": "2026-11-10T11:55:41.140Z"
+            }
+          ]
+        },
+        {
+          "id": 27,
+          "question": "Τι απαιτεί η θέση Oracle PL/SQL Developer και ποιο εύρος αποδοχών αναφέρει;",
+          "check": "Requirements and salary of correct specific listing",
+          "advisor": null,
+          "answer": "**Απαιτήσεις:** Ζητούνται τουλάχιστον 3 χρόνια επαγγελματικής εμπειρίας σε ανάπτυξη βάσεων Oracle, ισχυρή γνώση PL/SQL και SQL, καθώς και καλή κατανόηση σχεδιασμού σχεσιακών βάσεων, μοντελοποίησης δεδομένων και βελτιστοποίησης ερωτημάτων. Χρειάζεται πρακτική εμπειρία ή έκθεση στο ORDS και σε REST APIs, πτυχίο σε Πληροφορική ή συναφές τεχνικό πεδίο, άριστα Αγγλικά και μητρικά ή άπταιστα Ελληνικά. Στα πρόσθετα προσόντα περιλαμβάνονται εμπειρία σε χρηματοοικονομικές υπηρεσίες ή ασφάλειες, Git και CI/CD. [1]\n\n**Αποδοχές:** Η αγγελία εμφανίζει **2.000–2.200 € μικτά τον μήνα**, αλλά υπάρχει ασυμφωνία στις πληροφορίες της για τη μονάδα πληρωμής, οπότε η περίοδος καταβολής χρειάζεται επιβεβαίωση. [1]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 7813,
+          "sources": [
+            {
+              "title": "Oracle PL/SQL Developer",
+              "url": "https://codehub.gr/job/po-946-oracle-pl-sql-developer/",
+              "fetched_at": "2026-11-10T11:56:07.420Z"
+            }
+          ]
+        },
+        {
+          "id": 28,
+          "question": "Ποιες αγγελίες αναφέρουν μικτές μηνιαίες αποδοχές πάνω από 3.000 ευρώ;",
+          "check": "Published monthly gross salaries; clarify ranges crossing threshold",
+          "advisor": null,
+          "answer": "Στα διαθέσιμα στοιχεία, οι παρακάτω αγγελίες εμφανίζουν εύρος μικτών μηνιαίων αποδοχών **ολόκληρο πάνω από 3.000 €**:\n\n- **Software Development Lead** — Αθήνα, επιτόπια εργασία, επίπεδο Lead/Principal: **3.800–4.200 €**. [2]\n- **Project Manager** — Αθήνα, υβριδική εργασία, senior: **3.800–4.000 €**. [3]\n- **Full-Stack Engineer** — Αθήνα, υβριδική εργασία, senior: **4.000–5.000 €**. [4]\n\nΟι αγγελίες εμφανίζουν τα ποσά ως μικτά ανά μήνα, αλλά υπάρχει ασυμφωνία στα στοιχεία για τη μονάδα μισθού· επομένως η μηνιαία περίοδος χρειάζεται επιβεβαίωση. [2][3][4]\n\nΔεν συμπεριέλαβα την αγγελία RPA Developer (3.000–3.500 €), επειδή το εύρος ξεκινά ακριβώς από 3.000 €, ούτε εύρη που μόνο εν μέρει ξεπερνούν το όριο. [1][5][6][7]",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 12071,
+          "sources": [
+            {
+              "title": "Software Development Lead",
+              "url": "https://codehub.gr/job/po-627-software-development-lead/",
+              "fetched_at": "2026-11-10T11:54:54.071Z"
+            },
+            {
+              "title": "Project Manager",
+              "url": "https://codehub.gr/job/po-806-project-manager/",
+              "fetched_at": "2026-11-10T11:55:08.392Z"
+            },
+            {
+              "title": "Full-Stack Engineer",
+              "url": "https://codehub.gr/job/po-941-full-stack-engineer/",
+              "fetched_at": "2026-11-10T11:56:05.001Z"
+            },
+            {
+              "title": "RPA Developer",
+              "url": "https://codehub.gr/job/po-772-rpa-developer/",
+              "fetched_at": "2026-11-10T11:55:01.863Z"
+            },
+            {
+              "title": "Cloud Administrator",
+              "url": "https://codehub.gr/job/po-869-cloud-administrator/",
+              "fetched_at": "2026-11-10T11:55:25.225Z"
+            },
+            {
+              "title": "Project Manager – CRM",
+              "url": "https://codehub.gr/job/po-942-project-manager-crm/",
+              "fetched_at": "2026-11-10T11:56:06.169Z"
+            },
+            {
+              "title": "Data Engineer",
+              "url": "https://codehub.gr/job/po-876-data-engineer/",
+              "fetched_at": "2026-11-10T11:55:26.538Z"
+            }
+          ]
+        },
+        {
+          "id": 29,
+          "question": "Και ποιες από αυτές είναι στην Αθήνα;",
+          "check": "Preserve Python job topic while applying Athens constraint",
+          "advisor": null,
+          "answer": "Από τις δύο, μόνο η **Data Engineer/Databricks – Cloud** επιβεβαιώνεται ως θέση στην Αθήνα· αναφέρεται επίσης ως **on-site**. [1]\n\nΔεν έχω διαθέσιμα στοιχεία για την τοποθεσία της δεύτερης αγγελίας, **Data Engineer**, οπότε δεν μπορώ να επιβεβαιώσω αν είναι στην Αθήνα.",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 6245,
+          "sources": [
+            {
+              "title": "Data Engineer/Databricks – Cloud",
+              "url": "https://codehub.gr/job/po-924-data-engineer-databricks-cloud/",
+              "fetched_at": "2026-11-10T11:55:51.771Z"
+            }
+          ]
+        },
+        {
+          "id": 30,
+          "question": "Δείξε μου και τις επόμενες, χωρίς να επαναλάβεις τις προηγούμενες.",
+          "check": "Next job page, no repeated URLs",
+          "advisor": null,
+          "answer": "Από τον κατάλογο για τον οποίο έχω διαθέσιμα στοιχεία:\n\n**Θέσεις 11–20 από 61**:\n\n- **BI Developer** (PO-931). [1]\n- **Cloud Administrator** (PO-869). [2]\n- **Cloud Engineer** (PO-760). [3]\n- **Cloud Security Specialist** (PO-951). [4]\n- **Data Engineer** (PO-876). [5]\n- **Data Engineer** (PO-929). [6]\n- **Data Engineer/Databricks – Cloud** (PO-924). [7]\n- **Data Governance Expert** (PO-922). [8]\n- **Data Insights Consultant** (PO-915). [9]\n- **DevOps/Systems Engineer** (PO-937). [10]\n\nΆνοιξε κάθε αγγελία για την τρέχουσα διαθεσιμότητα, τις προϋποθέσεις και την αίτηση.",
+          "completed": true,
+          "transport": "local-production-handler",
+          "http_status": 200,
+          "latency_ms": 2858,
+          "sources": [
+            {
+              "title": "BI Developer",
+              "url": "https://codehub.gr/job/po-931-bi-developer/",
+              "fetched_at": "2026-11-10T11:55:56.833Z"
+            },
+            {
+              "title": "Cloud Administrator",
+              "url": "https://codehub.gr/job/po-869-cloud-administrator/",
+              "fetched_at": "2026-11-10T11:55:25.225Z"
+            },
+            {
+              "title": "Cloud Engineer",
+              "url": "https://codehub.gr/job/po-760-cloud-engineer/",
+              "fetched_at": "2026-11-10T11:54:59.220Z"
+            },
+            {
+              "title": "Cloud Security Specialist",
+              "url": "https://codehub.gr/job/po-951-cloud-security-specialist/",
+              "fetched_at": "2026-11-10T11:56:07.542Z"
+            },
+            {
+              "title": "Data Engineer",
+              "url": "https://codehub.gr/job/po-876-data-engineer/",
+              "fetched_at": "2026-11-10T11:55:26.538Z"
+            },
+            {
+              "title": "Data Engineer",
+              "url": "https://codehub.gr/job/po-929-data-engineer/",
+              "fetched_at": "2026-11-10T11:55:54.329Z"
+            },
+            {
+              "title": "Data Engineer/Databricks – Cloud",
+              "url": "https://codehub.gr/job/po-924-data-engineer-databricks-cloud/",
+              "fetched_at": "2026-11-10T11:55:51.771Z"
+            },
+            {
+              "title": "Data Governance Expert",
+              "url": "https://codehub.gr/job/po-922-data-governance-expert/",
+              "fetched_at": "2026-11-10T11:55:50.265Z"
+            },
+            {
+              "title": "Data Insights Consultant",
+              "url": "https://codehub.gr/job/po-915-data-insights-consultant/",
+              "fetched_at": "2026-11-10T11:55:44.993Z"
+            },
+            {
+              "title": "DevOps/Systems Engineer",
+              "url": "https://codehub.gr/job/po-937-devops-systems-engineer/",
+              "fetched_at": "2026-11-10T11:56:02.478Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

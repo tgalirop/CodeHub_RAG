@@ -4,6 +4,7 @@ import { expandQuery } from "./lexical.js";
 import { embed, answer, ProviderError } from "./provider.js";
 import { catalogueAnswer, catalogueListAnswer } from "./catalogue.js";
 import { semanticPlan, validatePlan, nextOffset } from "./planner.js";
+import { learningRequest, courseFacts, eligibleCourses } from "./learning.js";
 
 const HEADERS = {
   "Cache-Control": "no-store, no-transform",
@@ -57,7 +58,12 @@ export function validate(payload) {
       ...(value.snapshot_id ? { snapshot_id: value.snapshot_id } : {}),
     };
   }
-  return { messages, kind: payload.kind || null, listing };
+  return {
+    messages,
+    kind: payload.kind || null,
+    listing,
+    ...learningRequest(payload),
+  };
 }
 async function readPayload(request) {
   if (!request.headers.get("content-type")?.includes("application/json"))
@@ -119,6 +125,9 @@ export function createCloudHandler({
           documents: snapshot.documents,
           chunks: snapshot.chunks,
           backend: "vercel-postgres",
+          features: snapshot.config?.parent_documents
+            ? ["learning-advisor", "course-comparison", "evidence-trace"]
+            : [],
         });
       } catch {
         return json(
@@ -146,7 +155,10 @@ export function createCloudHandler({
     try {
       store = getStore();
       snapshot = await store.snapshot(
-        parsed.payload.listing?.snapshot_id || env.RAG_SNAPSHOT_ID || null,
+        parsed.payload.explore?.snapshot_id ||
+          parsed.payload.listing?.snapshot_id ||
+          env.RAG_SNAPSHOT_ID ||
+          null,
       );
       const ip = (
         request.headers.get("x-vercel-forwarded-for") ||
@@ -187,10 +199,45 @@ export function createCloudHandler({
     ]);
     let cancelled = false;
     let planningUsage = null;
+    const requestStarted = performance.now();
+    let firstTokenMs = null,
+      lastSources = [],
+      consulted = new Set(),
+      finalPlan = null;
+    let comparison = null;
+    let durationFilterApplied = false;
     const encoder = new TextEncoder();
     const body = new ReadableStream({
       async start(controller) {
         const emit = (event, data) => {
+          if (event === "sources") {
+            lastSources = data.sources || [];
+            for (const source of lastSources) consulted.add(source.url);
+          }
+          if (event === "delta" && firstTokenMs === null)
+            firstTokenMs = Math.round(performance.now() - requestStarted);
+          if (event === "done") {
+            const courses = lastSources.filter((s) =>
+              s.categories?.includes("course"),
+            );
+            emit("learning", {
+              snapshot_id: snapshot.id,
+              cards: courses.slice(0, 5).map(courseFacts),
+              comparison,
+              trace: {
+                query: finalPlan?.query || null,
+                collection: finalPlan?.collection || null,
+                consulted: consulted.size,
+                cited: lastSources.length,
+                first_token_ms: firstTokenMs,
+                total_ms: Math.round(performance.now() - requestStarted),
+                max_hours: durationFilterApplied
+                  ? parsed.payload.advisor.max_hours
+                  : null,
+                profile_max_hours: parsed.payload.advisor?.max_hours ?? null,
+              },
+            });
+          }
           if (event === "done" && planningUsage)
             data = {
               ...data,
@@ -214,18 +261,58 @@ export function createCloudHandler({
           const start = performance.now();
           const question = parsed.payload.messages.at(-1).content;
           const listing = parsed.payload.listing;
-          const resolved = listing
+          const selection = parsed.payload.explore;
+          const resolved = selection
             ? {
-                operation: "list",
-                collection: listing.kind,
-                constrained: false,
+                operation: "search",
+                collection: "course",
+                constrained: true,
                 next_page: false,
                 query: question,
-                language: /[\u0370-\u03ff]/u.test(question) ? "el" : "en",
+                language: "el",
               }
-            : await planQuery(parsed.payload, env, signal, fetcher);
+            : listing
+              ? {
+                  operation: "list",
+                  collection: listing.kind,
+                  constrained: false,
+                  next_page: false,
+                  query: question,
+                  language: /[\u0370-\u03ff]/u.test(question) ? "el" : "en",
+                }
+              : await planQuery(parsed.payload, env, signal, fetcher);
           const plan = validatePlan(resolved);
+          if (parsed.payload.advisor && plan.collection === "course") {
+            plan.operation = "search";
+            plan.constrained = true;
+          }
+          finalPlan = plan;
           planningUsage = resolved.usage || null;
+          if (selection) {
+            const pages = await store.coursePages(snapshot);
+            const sources = selection.urls.map((url) =>
+              pages.find((p) => p.url === url),
+            );
+            if (sources.some((s) => !s))
+              throw new Error("course_not_in_snapshot");
+            const numbered = sources.map((s, index) => ({
+              ...s,
+              id: index + 1,
+            }));
+            comparison =
+              selection.type === "compare" ? numbered.map(courseFacts) : null;
+            emit("sources", { sources: numbered });
+            emit("stage", { stage: "answering" });
+            for await (const [event, data] of answer(
+              { ...parsed.payload, queryPlan: plan },
+              numbered,
+              env,
+              signal,
+              fetcher,
+            ))
+              emit(event, data);
+            return;
+          }
           if (plan.operation === "list") {
             const offset =
               listing?.offset ??
@@ -273,6 +360,19 @@ export function createCloudHandler({
             emit("done", { mode: "catalogue", usage: null });
             return;
           }
+          let allowedUrls = null;
+          const profile = parsed.payload.advisor;
+          if (
+            profile &&
+            plan.collection === "course" &&
+            profile.max_hours != null
+          ) {
+            const pages = await store.coursePages(snapshot);
+            allowedUrls = eligibleCourses(pages, profile.max_hours).map(
+              (p) => p.url,
+            );
+            durationFilterApplied = true;
+          }
           const query = expandQuery(
             [...new Set([question, plan.query])].join("\n"),
           );
@@ -290,7 +390,7 @@ export function createCloudHandler({
             parsed.payload.kind === plan.collection
               ? parsed.payload.kind
               : null,
-            { preferredKind: plan.collection },
+            { preferredKind: plan.collection, allowedUrls },
           );
           signal.throwIfAborted();
           emit("sources", {
@@ -320,7 +420,11 @@ export function createCloudHandler({
                       parsed.payload.kind === plan.collection
                         ? parsed.payload.kind
                         : null,
-                      { preferredKind: plan.collection, offset: 12 },
+                      {
+                        preferredKind: plan.collection,
+                        offset: 12,
+                        allowedUrls,
+                      },
                     );
                     const merged = [
                       ...new Map(

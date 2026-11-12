@@ -99,7 +99,12 @@ async function ask(item) {
     const options = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages }),
+      body: JSON.stringify({
+        messages,
+        ...(item.advisor ? { advisor: item.advisor } : {}),
+        ...(item.explore ? { explore: item.explore } : {}),
+        ...(item.kind ? { kind: item.kind } : {}),
+      }),
       signal: AbortSignal.timeout(105000),
     };
     const response = local

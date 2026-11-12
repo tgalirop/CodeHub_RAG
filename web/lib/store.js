@@ -32,6 +32,19 @@ export function createStore(sql) {
       return operation(tx);
     });
   return {
+    coursePages: (snapshot) =>
+      transaction(async (tx) => {
+        if (!snapshot.config.parent_documents) return [];
+        const rows =
+          await tx`SELECT url,title,body AS text,categories,warnings,fetched_at
+        FROM rag_cloud.pages WHERE snapshot_id=${snapshot.id} AND 'course'=ANY(categories)
+        ORDER BY url LIMIT 500`;
+        return rows.map((row, index) => ({
+          ...row,
+          id: index + 1,
+          heading_path: [],
+        }));
+      }),
     snapshot: (snapshotId = null) =>
       transaction(async (tx) => {
         const [row] =
@@ -125,10 +138,12 @@ export function createStore(sql) {
       transaction(async (tx) => {
         const literal = JSON.stringify(vector);
         const terms = [...new Set(tokens(query))];
+        const allowedUrls = options.allowedUrls || null;
         const dense =
           await tx`SELECT id,url,categories,1-(embedding <=> ${literal}::vector) AS score
         FROM rag_cloud.chunks WHERE snapshot_id=${snapshot.id}
         AND (${kind}::text IS NULL OR ${kind}=ANY(categories))
+        AND (${allowedUrls}::text[] IS NULL OR url=ANY(${allowedUrls}::text[]))
         ORDER BY embedding <=> ${literal}::vector,id LIMIT 100`;
         const lexical = terms.length
           ? await tx`SELECT c.id,c.url,c.categories,sum(p.weight) AS score
@@ -136,6 +151,7 @@ export function createStore(sql) {
           ON c.snapshot_id=p.snapshot_id AND c.id=p.chunk_id
         WHERE p.snapshot_id=${snapshot.id} AND p.term=ANY(${terms}::text[])
         AND (${kind}::text IS NULL OR ${kind}=ANY(c.categories))
+        AND (${allowedUrls}::text[] IS NULL OR c.url=ANY(${allowedUrls}::text[]))
         GROUP BY c.id,c.url,c.categories ORDER BY score DESC,c.id LIMIT 100`
           : [];
         if (snapshot.config.parent_documents) {
@@ -171,7 +187,11 @@ export function createStore(sql) {
           );
           // A small verified contact page enables useful next steps for missing
           // course fees/dates. It is still subject to the relevance/evidence check.
-          if (!kind && !urls.includes("https://codehub.gr/contact/"))
+          if (
+            !kind &&
+            !allowedUrls &&
+            !urls.includes("https://codehub.gr/contact/")
+          )
             urls.push("https://codehub.gr/contact/");
           if (!urls.length) return [];
           const pages =

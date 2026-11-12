@@ -5,13 +5,33 @@ Independent portfolio project by [tgalirop](https://github.com/tgalirop).
 
 ## Open the chatbot
 
+Live demo: **https://codehub-rag.vercel.app/**.
+
+Choose **Το επόμενο skill μου** for a guided learning advisor: describe a goal,
+your current knowledge and an optional maximum total duration per course. Results
+include source-backed course cards, prerequisites, selection of two courses for a
+direct comparison, and a **Πώς προέκυψε αυτή η απάντηση;** evidence panel. The profile
+stays with that browser conversation and can be changed or removed.
+
+To preview the same Node API used on Vercel, with the root `.env` configured:
+
+```powershell
+cd web
+npm ci --ignore-scripts
+npm run dev
+```
+
+Open **http://127.0.0.1:3000**. This uses the configured Neon/OpenAI services and
+normal demo request limits. The original Python preview remains available below;
+the new advisor controls appear only when the backend advertises support.
+
 ```powershell
 uv sync --locked
 docker compose up -d postgres
 uv run codehub-rag serve
 ```
 
-Open **http://127.0.0.1:8000**. The local development instance is already running.
+Open **http://127.0.0.1:8000** after starting the server.
 The branded UI uses real hybrid retrieval and streams OpenAI answers with source
 citations. Configure `OPENAI_API_KEY` only in the root `.env`; without it the UI
 clearly shows source-only preview results. Conversation history stays in the browser.
@@ -28,6 +48,11 @@ See [chatbot validation](reports/chat-validation-2026-11-10.md) for live API che
 automated tests, Linux container validation and the browser-verification limit.
 
 ## Current chatbot quality
+
+See the [learning advisor review](reports/learning-advisor-2026-11-12.html) for
+six profile/comparison cases, the 30-question regression, source dates and known
+limitations. The exact comparison uses the selected source pages; duration limits
+are enforced before retrieval rather than relying on the model to remember them.
 
 The cloud pipeline now retrieves substantial passages, expands them to their source
 pages, checks the evidence and streams answers with only the citations actually used.
@@ -47,9 +72,12 @@ Latest full crawl (2026-11-10): **546 URLs attempted, 542 canonical documents,
 Four duplicate canonical responses were excluded. See the
 [full audit report](reports/site-audit-2026-11-10.md).
 
-The improved cloud snapshot contains **167 parent documents and 1,294 substantive
+The improved cloud snapshot contains **167 parent documents and 1,754 substantive
 chunks**, with 384-dimensional OpenAI embeddings and persisted BM25 weights. It was
 re-extracted from the November 10 HTML, not freshly crawled on November 12.
+The extractor preserves accessible tab labels, including prerequisite sections for
+all 46 courses. Forty-five courses have a positive published duration; a zero-hour
+placeholder is treated as unknown and excluded when a duration ceiling is selected.
 The separate local Python/E5 snapshot still contains 2,481 chunks until reindexed.
 See the historical [retrieval validation](reports/retrieval-validation-2026-11-10.md).
 

@@ -36,6 +36,9 @@
             >↗</span
           >
         </button>
+        <button class="advisor-nav" id="advisor-open">
+          <span data-icon="compass"></span>Το επόμενο skill μου <span>ΝΕΟ</span>
+        </button>
         <p class="nav-label">ΕΞΕΡΕΥΝΗΣΕ</p>
         <nav class="topic-nav" aria-label="Ενότητες">
           <button class="topic active" data-kind="">
@@ -125,6 +128,20 @@
                   />
                   Βρες αυτό που χρειάζεσαι, με πηγές από το codehub.gr.
                 </p>
+                <button class="learning-hero" id="advisor-start">
+                  <span class="learning-kicker"
+                    >Ο ΔΙΚΟΣ ΣΟΥ ΣΤΟΧΟΣ. Η ΔΙΚΗ ΣΟΥ ΔΙΑΔΡΟΜΗ.</span
+                  >
+                  <strong>Τι θέλεις να μπορείς να κάνεις μετά;</strong>
+                  <span
+                    >Πες μου πού βρίσκεσαι. Βρες μαθήματα που ταιριάζουν,
+                    σύγκρινέ τα και δες τι χρειάζεσαι για να ξεκινήσεις.</span
+                  >
+                  <span class="learning-cta"
+                    >Σχεδίασε το επόμενο βήμα
+                    <span aria-hidden="true">↗</span></span
+                  >
+                </button>
                 <div class="suggestions" id="suggestions">
                   <button
                     class="suggestion"
@@ -182,6 +199,13 @@
               ></div>
             </div>
             <div class="composer-area">
+              <div id="learning-context" class="learning-context" hidden></div>
+              <div
+                id="compare-tray"
+                class="compare-tray"
+                aria-live="polite"
+                hidden
+              ></div>
               <div class="mode-note" id="mode-note" hidden>
                 Η αναζήτηση πηγών είναι ενεργή. Η σύνθεση απαντήσεων AI
                 περιμένει σύνδεση με OpenAI.
@@ -301,6 +325,87 @@
         </div>
       </main>
     </div>
+    <dialog
+      id="advisor-dialog"
+      class="advisor-dialog"
+      aria-labelledby="advisor-title"
+    >
+      <button
+        type="button"
+        class="icon-button advisor-close"
+        id="advisor-close"
+        aria-label="Κλείσιμο συμβούλου"
+      >
+        <span data-icon="close"></span>
+      </button>
+      <p class="learning-kicker" id="advisor-progress">01 / Ο ΣΤΟΧΟΣ ΣΟΥ</p>
+      <h2 id="advisor-title">Ένα επόμενο βήμα<br />που σου ταιριάζει.</h2>
+      <form id="advisor-form">
+        <div id="advisor-step-goal">
+          <label for="advisor-goal"
+            >Τι θέλεις να μάθεις ή να δημιουργήσεις;</label
+          >
+          <textarea
+            id="advisor-goal"
+            maxlength="500"
+            rows="3"
+            required
+            placeholder="π.χ. Να φτιάχνω AI εφαρμογές που απαντούν από εταιρικά έγγραφα"
+          ></textarea>
+          <div class="goal-examples">
+            <button
+              type="button"
+              data-goal="Να φτιάχνω AI εφαρμογές που απαντούν από εταιρικά έγγραφα"
+            >
+              AI & εταιρικά έγγραφα
+            </button>
+            <button
+              type="button"
+              data-goal="Να μάθω cloud και τις βασικές υπηρεσίες AWS"
+            >
+              Τα πρώτα μου βήματα στο cloud
+            </button>
+            <button
+              type="button"
+              data-goal="Να χρησιμοποιώ AI εργαλεία για πιο αποτελεσματική ανάπτυξη λογισμικού"
+            >
+              AI στην καθημερινή ανάπτυξη
+            </button>
+          </div>
+          <button type="button" class="learning-primary" id="advisor-next">
+            Συνέχεια <span aria-hidden="true">→</span>
+          </button>
+        </div>
+        <div id="advisor-step-profile" hidden>
+          <label for="advisor-background">Ποια βάση έχεις ήδη;</label>
+          <textarea
+            id="advisor-background"
+            maxlength="500"
+            rows="3"
+            placeholder="π.χ. Junior developer, γνωρίζω Python και SQL. Δεν έχω δουλέψει με LLMs."
+          ></textarea>
+          <label for="advisor-hours">Διάρκεια κάθε μαθήματος</label>
+          <select id="advisor-hours">
+            <option value="">Χωρίς όριο</option>
+            <option value="8">Έως 8 ώρες</option>
+            <option value="16">Έως 16 ώρες</option>
+            <option value="24">Έως 24 ώρες</option>
+            <option value="40">Έως 40 ώρες</option>
+            <option value="80">Έως 80 ώρες</option>
+          </select>
+          <p class="learning-note">
+            Συνολικές ώρες του μαθήματος, όχι εβδομαδιαίος χρόνος μελέτης. Οι
+            προτάσεις βασίζονται στις δημοσιευμένες πηγές και σε όσα δηλώσεις.
+          </p>
+          <div class="advisor-form-actions">
+            <button type="button" id="advisor-back">← Πίσω</button
+            ><button type="submit" class="learning-primary">
+              Βρες το επόμενο βήμα μου
+            </button>
+          </div>
+        </div>
+      </form>
+    </dialog>
     <div class="toast" id="toast" role="status" hidden></div>
     <dialog id="about-dialog">
       <button class="dialog-close icon-button" aria-label="Κλείσιμο">

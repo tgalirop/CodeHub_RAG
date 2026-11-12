@@ -43,6 +43,22 @@ test(
       );
       // An inferred preference still permits useful sources of another kind.
       assert.ok(details.some((s) => s.categories.includes("course")));
+      const courses = await store.coursePages(snapshot);
+      assert.equal(courses.length, 1);
+      const bounded = await store.search(snapshot, "training", vector, null, {
+        preferredKind: "course",
+        allowedUrls: courses.map((c) => c.url),
+      });
+      assert.deepEqual(
+        bounded.map((s) => s.url),
+        courses.map((c) => c.url),
+      );
+      assert.deepEqual(
+        await store.search(snapshot, "training", vector, null, {
+          allowedUrls: [],
+        }),
+        [],
+      );
       const filtered = await store.search(
         snapshot,
         "training",

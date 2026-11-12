@@ -94,6 +94,7 @@ export async function semanticPlan(payload, env, signal, fetcher = fetch) {
               content: m.content.slice(0, 1400),
             })),
             selected_kind: payload.kind || null,
+            visitor_profile: payload.advisor || null,
           }),
         },
       ],

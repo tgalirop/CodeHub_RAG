@@ -196,6 +196,38 @@ Job listings describe recorded pages without asserting current availability.
 
 See deployment instructions for the provisioning steps and verification limits.
 
+## Learning advisor and course comparison
+
+The guided advisor submits an explicit visitor profile (goal, self-reported knowledge,
+optional total-hours ceiling). It does not infer a CV or assign a match percentage.
+Only declared knowledge can inform a suitability recommendation; unknown knowledge
+is distinguished from a missing skill. Profiles remain in browser conversation
+storage and are sent as untrusted context for the current API request.
+
+`web/lib/learning.js` extracts duration, level, audience and prerequisite sections
+from the stored page. Accessible HTML tab labels become real section headings during
+ingestion. Explicit required/beneficial grouping is preserved where the source labels
+it; unclassified prerequisite prose remains source text rather than inferred fields.
+Missing or zero duration does not satisfy a selected ceiling. A verified course URL
+allowlist is applied to both dense and lexical retrieval, including the recovery pass.
+
+Comparison/detail actions validate one or two canonical course URLs and pin the
+source snapshot. They fetch those exact parent pages, bypass query planning and
+similarity search, and still apply evidence checking before generation. Explicitly
+selected comparisons may include an over-budget course, which the answer must flag;
+the duration filter applies to recommendations, not to hiding a selected comparison.
+
+The `learning` SSE event contains deterministic course facts, optional comparison
+facts and operational evidence metadata: resolved query, consulted/cited page counts,
+actual duration filter and response timing. It contains no hidden reasoning or
+invented confidence score. UI cards use only finally cited course sources. All links
+are constrained to Code.Hub and rendered with text nodes; the comparison table is
+built from verified facts, not generated HTML. No new database schema or credentials
+are needed; the tab-aware corpus is staged and activated through the existing CLI.
+
+The original Python relay does not implement these action payloads. `/api/status`
+advertises features so unsupported backends do not show the advisor entry points.
+
 ## Primary references
 
 - [Code.Hub robots.txt](https://codehub.gr/robots.txt)

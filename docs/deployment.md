@@ -111,13 +111,19 @@ check must identify supporting source IDs for a Code.Hub question. Unsupported
 questions receive a fixed localized response, with irrelevant source cards cleared.
 Malformed/incomplete verdicts fail closed. This additional model call adds latency
 and API usage, and is still a fallible model check, not a guarantee of factual accuracy.
-The improved snapshot has 1,294 chunks and 167 parent documents. Exact cosine search
+The tab-aware snapshot has 1,754 chunks and 167 parent documents. Exact cosine search
 avoids an approximate-index recall tradeoff. The model checks up to 12 ranked parent
 pages plus contact details, capped at 16,000 characters per page. A relevant failed
 check can retrieve one additional batch; out-of-scope questions do not trigger it.
 Fuller evidence increases input-token usage; see the committed quality report for
 measured totals. Truncated pages are marked so missing information is not treated
 as proof that the full page lacks it.
+
+The learning advisor needs the tab-aware parent corpus for structured prerequisites.
+Re-run `prepare --run ...` with the current extractor, embed and stage a separate
+bundle, then validate `evaluation/learning-advisor.json` before activation. Its
+comparison cases pin a snapshot ID: update that ID to the staged bundle when testing
+a new corpus. Existing saved comparisons retain their original snapshot.
 
 ### 3. Configure the existing Vercel project
 
