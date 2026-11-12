@@ -27,16 +27,31 @@ The original Python-container relay remains available as an alternative.
 See [chatbot validation](reports/chat-validation-2026-11-10.md) for live API checks,
 automated tests, Linux container validation and the browser-verification limit.
 
-## Current milestone: local hybrid retrieval
+## Current chatbot quality
+
+The cloud pipeline now retrieves substantial passages, expands them to their source
+pages, checks the evidence and streams answers with only the citations actually used.
+Extraction removes recommendation cards that previously mixed facts from different
+jobs, and keeps office/training-centre labels. Semantic planning supports paraphrases,
+Greeklish, comparisons and conversational follow-ups. A bounded second retrieval
+attempt handles relevant questions with insufficient initial evidence.
+
+See the [before/after answer review](reports/chatbot-quality-2026-11-12.html) for
+30 repeated questions, 12 additional cases, actual responses, caveats and API usage.
+These are development evaluations, not a guarantee of accuracy on arbitrary questions.
+
+## Corpus and retrieval
 
 Latest full crawl (2026-11-10): **546 URLs attempted, 542 canonical documents,
 167 documents eligible for retrieval and zero fetch errors**.
 Four duplicate canonical responses were excluded. See the
 [full audit report](reports/site-audit-2026-11-10.md).
 
-The active retrieval snapshot contains **2,481 token-budgeted chunks and 384-dimensional
-multilingual embeddings**. PostgreSQL, persisted BM25 and hybrid search are implemented.
-See [retrieval validation](reports/retrieval-validation-2026-11-10.md).
+The improved cloud snapshot contains **167 parent documents and 1,294 substantive
+chunks**, with 384-dimensional OpenAI embeddings and persisted BM25 weights. It was
+re-extracted from the November 10 HTML, not freshly crawled on November 12.
+The separate local Python/E5 snapshot still contains 2,481 chunks until reindexed.
+See the historical [retrieval validation](reports/retrieval-validation-2026-11-10.md).
 
 Implemented and runnable:
 
@@ -63,8 +78,9 @@ citations, branded responsive UI and a direct Vercel Node.js/PostgreSQL hybrid A
 The cloud mode uses `text-embedding-3-small` (384 dimensions), a private `rag_cloud`
 schema, persisted BM25 postings, atomic snapshots and durable demo request limits.
 Cloud provisioning/data upload are separate from deploying the frontend. CLI search commands
-continue returning source passages. Cross-encoder reranking and independent
-answer-quality evaluation remain next milestones.
+continue returning source passages. An independent cross-encoder and exhaustive
+structured filtering/counts are not implemented; current reranking selects evidence
+with the answerability model. Exact filtered totals are not guessed from top results.
 
 ## Run hybrid search (PowerShell)
 

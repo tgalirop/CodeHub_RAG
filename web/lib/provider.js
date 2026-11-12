@@ -74,7 +74,14 @@ export async function* readEvents(body) {
   }
 }
 
-export async function* answer(payload, sources, env, signal, fetcher = fetch) {
+export async function* answer(
+  payload,
+  sources,
+  env,
+  signal,
+  fetcher = fetch,
+  recoverEvidence = null,
+) {
   const model = env.OPENAI_MODEL || "gpt-6-luna";
   const history = payload.messages.slice(-9, -1);
   const gateResponse = await fetcher("https://api.openai.com/v1/responses", {
@@ -90,7 +97,41 @@ export async function* answer(payload, sources, env, signal, fetcher = fetch) {
     await gateResponse.body?.cancel();
     throw new ProviderError(gateResponse.status);
   }
-  const verdict = parseVerdict(await gateResponse.json(), sources);
+  let verdict = parseVerdict(await gateResponse.json(), sources);
+  if (
+    !verdict.answerable &&
+    verdict.reason !== "out_of_scope" &&
+    recoverEvidence
+  ) {
+    const recovered = await recoverEvidence();
+    signal.throwIfAborted();
+    if (recovered.length) {
+      sources = recovered;
+      yield ["sources", { sources }];
+      const retry = await fetcher("https://api.openai.com/v1/responses", {
+        method: "POST",
+        signal,
+        headers: {
+          Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(gateRequest(payload, sources, model)),
+      });
+      if (!retry.ok) {
+        await retry.body?.cancel();
+        throw new ProviderError(retry.status);
+      }
+      const next = parseVerdict(await retry.json(), sources);
+      next.usage = {
+        input_tokens:
+          (next.usage?.input_tokens || 0) + (verdict.usage?.input_tokens || 0),
+        output_tokens:
+          (next.usage?.output_tokens || 0) +
+          (verdict.usage?.output_tokens || 0),
+      };
+      verdict = next;
+    }
+  }
   if (!verdict.answerable) {
     yield ["sources", { sources: [] }];
     yield [
@@ -111,9 +152,15 @@ export async function* answer(payload, sources, env, signal, fetcher = fetch) {
     ];
     return;
   }
-  const supported = sources.filter((source) =>
-    verdict.source_ids.includes(source.id),
-  );
+  const supported = [...new Set(verdict.source_ids)]
+    .slice(0, 10)
+    .map((id, index) => ({
+      ...sources.find((s) => s.id === id),
+      id: index + 1,
+    }));
+  // Give generation a contiguous source namespace and publish that same mapping
+  // before any token is streamed. No inference/remapping of hallucinated IDs.
+  yield ["sources", { sources: supported }];
   const { default: config } = await import("./chat-config.json", {
     with: { type: "json" },
   });

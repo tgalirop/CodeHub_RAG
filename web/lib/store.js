@@ -1,5 +1,5 @@
 import postgres from "postgres";
-import { SEARCH_CONFIG, tokens, diverseChunks } from "./lexical.js";
+import { SEARCH_CONFIG, tokens, diverseChunks, fuse } from "./lexical.js";
 
 let cached;
 export function database(env = process.env) {
@@ -121,23 +121,60 @@ export function createStore(sql) {
               : null,
         };
       }),
-    search: (snapshot, query, vector, kind = null) =>
+    search: (snapshot, query, vector, kind = null, options = {}) =>
       transaction(async (tx) => {
         const literal = JSON.stringify(vector);
         const terms = [...new Set(tokens(query))];
         const dense =
-          await tx`SELECT id,url,1-(embedding <=> ${literal}::vector) AS score
+          await tx`SELECT id,url,categories,1-(embedding <=> ${literal}::vector) AS score
         FROM rag_cloud.chunks WHERE snapshot_id=${snapshot.id}
         AND (${kind}::text IS NULL OR ${kind}=ANY(categories))
-        ORDER BY embedding <=> ${literal}::vector,id LIMIT 60`;
+        ORDER BY embedding <=> ${literal}::vector,id LIMIT 100`;
         const lexical = terms.length
-          ? await tx`SELECT c.id,c.url,sum(p.weight) AS score
+          ? await tx`SELECT c.id,c.url,c.categories,sum(p.weight) AS score
         FROM rag_cloud.postings p JOIN rag_cloud.chunks c
           ON c.snapshot_id=p.snapshot_id AND c.id=p.chunk_id
         WHERE p.snapshot_id=${snapshot.id} AND p.term=ANY(${terms}::text[])
         AND (${kind}::text IS NULL OR ${kind}=ANY(c.categories))
-        GROUP BY c.id,c.url ORDER BY score DESC,c.id LIMIT 60`
+        GROUP BY c.id,c.url,c.categories ORDER BY score DESC,c.id LIMIT 100`
           : [];
+        if (snapshot.config.parent_documents) {
+          const pageRanks = [dense, lexical].map((rows) => [
+            ...new Set(rows.map((r) => r.url)),
+          ]);
+          if (options.preferredKind) {
+            for (const rows of [dense, lexical])
+              pageRanks.push([
+                ...new Set(
+                  rows
+                    .filter((r) => r.categories.includes(options.preferredKind))
+                    .map((r) => r.url),
+                ),
+              ]);
+          }
+          const urls = fuse(pageRanks).slice(
+            options.offset || 0,
+            (options.offset || 0) + 12,
+          );
+          // A small verified contact page enables useful next steps for missing
+          // course fees/dates. It is still subject to the relevance/evidence check.
+          if (!kind && !urls.includes("https://codehub.gr/contact/"))
+            urls.push("https://codehub.gr/contact/");
+          if (!urls.length) return [];
+          const pages =
+            await tx`SELECT url,title,body AS text,categories,warnings,fetched_at
+            FROM rag_cloud.pages WHERE snapshot_id=${snapshot.id} AND url=ANY(${urls}::text[])`;
+          const byUrl = new Map(pages.map((p) => [p.url, p]));
+          return urls
+            .filter((url) => byUrl.has(url))
+            .map((url, index) => ({
+              ...byUrl.get(url),
+              id: index + 1,
+              heading_path: [],
+              truncated: byUrl.get(url).text.length > 16000,
+              text: byUrl.get(url).text.slice(0, 16000),
+            }));
+        }
         const selected = diverseChunks(dense, lexical);
         if (!selected.length) return [];
         const rows =

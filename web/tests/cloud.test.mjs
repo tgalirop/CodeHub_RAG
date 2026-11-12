@@ -7,7 +7,7 @@ import {
   contextualQuery,
   diverseChunks,
 } from "../lib/lexical.js";
-import { readEvents } from "../lib/provider.js";
+import { readEvents, answer } from "../lib/provider.js";
 
 // Provider/stream tests isolate query planning; planner tests cover the real protocol.
 const createCloudHandler = (options) =>
@@ -330,4 +330,73 @@ test("client stop cancels the in-flight provider request", async () => {
   await started;
   await response.body.cancel();
   assert.equal(cancelled, true);
+});
+
+test("insufficient evidence gets one bounded recovery and usage includes both checks", async () => {
+  let checks = 0,
+    recoveries = 0;
+  const updates = [];
+  for await (const update of answer(
+    { messages: [{ role: "user", content: "Training prerequisites?" }] },
+    [source],
+    env,
+    new AbortController().signal,
+    async (_url, options) => {
+      if (!JSON.parse(options.body).stream)
+        return ++checks === 1 ? gateResult(false, []) : gateResult(true, [1]);
+      return new Response(
+        frame({
+          type: "response.output_text.delta",
+          delta: "Requirements [1].",
+        }) +
+          frame({
+            type: "response.completed",
+            response: { usage: { input_tokens: 10, output_tokens: 2 } },
+          }),
+      );
+    },
+    async () => {
+      recoveries++;
+      return [{ ...source, text: "Actual prerequisites" }];
+    },
+  ))
+    updates.push(update);
+  assert.equal(checks, 2);
+  assert.equal(recoveries, 1);
+  assert.equal(updates.at(-1)[1].usage.input_tokens, 70);
+});
+
+test("out of scope verdict does not trigger recovery", async () => {
+  let recovered = false;
+  for await (const _update of answer(
+    { messages: [{ role: "user", content: "Unrelated trivia?" }] },
+    [source],
+    env,
+    new AbortController().signal,
+    async () =>
+      Response.json({
+        status: "completed",
+        output: [
+          {
+            type: "message",
+            content: [
+              {
+                type: "output_text",
+                text: JSON.stringify({
+                  answerable: false,
+                  source_ids: [],
+                  reason: "out_of_scope",
+                }),
+              },
+            ],
+          },
+        ],
+      }),
+    async () => {
+      recovered = true;
+      return [source];
+    },
+  )) {
+  }
+  assert.equal(recovered, false);
 });

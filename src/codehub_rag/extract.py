@@ -12,9 +12,30 @@ from bs4 import BeautifulSoup, Comment, NavigableString, Tag
 
 from .web import Resource, site_url
 
-EXTRACTOR_VERSION = "html-v3"
-CHUNKER_VERSION = "sections-v1"
+EXTRACTOR_VERSION = "html-v4"
+CHUNKER_VERSION = "sections-v2"
 BLOCK_TAGS = {"h1", "h2", "h3", "h4", "h5", "h6", "p", "li", "tr", "blockquote", "pre", "dt", "dd"}
+UI_TEXT = re.compile(
+    r"^(?:learn more|apply(?: now)?|share link|ready to apply\??|"
+    r"see all (?:courses|trainings|open roles)|back to all (?:courses|trainings|roles)|"
+    r"hot (?:course|position)|~3 minutes.*)$",
+    re.I,
+)
+
+
+def trim_recommendations(root: Tag) -> None:
+    """Recommendations belong to other entities, never to this page's subject."""
+    marker = root.find(string=re.compile(r"^\s*Recommended for you\s*$", re.I))
+    if marker is None:
+        return
+    current = marker
+    while current is not root:
+        for sibling in list(current.next_siblings):
+            sibling.extract()
+        parent = current.parent
+        if current is marker:
+            current.extract()
+        current = parent
 
 
 def digest(value: str) -> str:
@@ -128,7 +149,21 @@ def extract(resource: Resource, categories: list[str]) -> dict:
                 "maps.google.com",
                 "maps.app.goo.gl",
             }:
-                value = "Office address: " + clean(anchor.get_text(" ", strip=True))
+                label = "Office address"
+                # Preserve the location label from the same footer block; never
+                # label a training-centre address as the headquarters.
+                for parent in anchor.parents:
+                    if parent.name == "footer" or parent.get("id") == "brx-footer":
+                        break
+                    labels = [
+                        clean(p.get_text(" ", strip=True))
+                        for p in parent.find_all(["p", "h2", "h3", "h4"])
+                        if re.search(r"\b(center|centre|office|headquarters)\b", p.get_text(), re.I)
+                    ]
+                    if labels:
+                        label = labels[0]
+                        break
+                value = label + ": " + clean(anchor.get_text(" ", strip=True))
             if value and value not in contact_blocks:
                 contact_blocks.append(value)
     resolved_counters = []
@@ -145,22 +180,31 @@ def extract(resource: Resource, categories: list[str]) -> dict:
         except (ValueError, TypeError, KeyError):
             continue
     root = soup.select_one("main") or soup.select_one("article") or soup.body or soup
+    primary = root.find("h1")
+    if primary:
+        title = clean(primary.get_text(" ", strip=True)) or title
+    if urlsplit(canonical).path.startswith(("/job/", "/course/", "/training/")):
+        trim_recommendations(root)
     used_fallback = root.name not in {"main", "article"}
     for element in root.select(
         "script, style, nav, footer, aside, form, noscript, template, "
         "[hidden], [aria-hidden='true'], .cookie-banner, .cookie-notice, "
-        ".cmplz-cookiebanner, .cky-consent-container, .breadcrumbs, .breadcrumb"
+        ".cmplz-cookiebanner, .cky-consent-container, .breadcrumbs, .breadcrumb, "
+        ".brxe-offcanvas, .floating-apply-bar, button"
     ):
         element.decompose()
     if used_fallback:
         for element in root.select("header"):
             element.decompose()
+    for anchor in list(root.find_all("a")):
+        if UI_TEXT.fullmatch(clean(anchor.get_text(" ", strip=True))):
+            anchor.decompose()
     sections = []
     heading_stack: list[tuple[int, str]] = []
     current: dict = {"heading_path": [], "blocks": []}
     events = list(content_events(root))
     for kind, text in events:
-        if not text:
+        if not text or UI_TEXT.fullmatch(text):
             continue
         if re.fullmatch(r"h[1-6]", kind):
             if current["blocks"]:
@@ -184,7 +228,9 @@ def extract(resource: Resource, categories: list[str]) -> dict:
         sections = [{"heading_path": [], "blocks": [full_text]}]
     text = "\n".join(text for _, text in events).strip() if not fallback else full_text
     if contact_blocks:
-        heading = "Published contact details: email, telephone and office addresses"
+        heading = (
+            "Published contact details: offices, training center, addresses, email and telephone"
+        )
         sections.append({"heading_path": ["Contact Us", heading], "blocks": contact_blocks})
         text += "\n" + heading + "\n" + "\n".join(contact_blocks)
     content_hash = digest(
@@ -244,6 +290,8 @@ def chunk(document: dict, max_words: int = 350, overlap: int = 45) -> list[dict]
     chunks = []
     for section in document["sections"]:
         words = "\n".join(section["blocks"]).split()
+        if not words or UI_TEXT.fullmatch(" ".join(words)):
+            continue
         for start in range(0, len(words), max_words - overlap):
             body = " ".join(words[start : start + max_words])
             ordinal = len(chunks)

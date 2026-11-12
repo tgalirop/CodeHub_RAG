@@ -206,14 +206,25 @@ function showSources(sources, id) {
   }
 }
 function inline(parent, text, sources) {
-  const pattern = /(\*\*[^*]+\*\*|`[^`]+`|\[\d+\])/g;
+  const pattern =
+    /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]\n]+\]\(https?:\/\/[^\s)]+\)|\[\d+\])/g;
   let cursor = 0;
   for (const match of text.matchAll(pattern)) {
     parent.append(document.createTextNode(text.slice(cursor, match.index)));
     const v = match[0];
     if (v.startsWith("**")) parent.append(el("strong", "", v.slice(2, -2)));
     else if (v.startsWith("`")) parent.append(el("code", "", v.slice(1, -1)));
-    else {
+    else if (v.includes("](")) {
+      const link = v.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      const href = link && safeUrl(link[2]);
+      if (href) {
+        const a = el("a", "answer-link", link[1]);
+        a.href = href;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        parent.append(a);
+      } else parent.append(document.createTextNode(v));
+    } else {
       const id = Number(v.slice(1, -1));
       const source = sources.find((s) => s.id === id);
       if (source && safeUrl(source.url)) {

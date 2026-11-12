@@ -112,3 +112,69 @@ test("cloud completion sends only sources cited in the answer, not all approved 
   );
   assert.equal(updates.at(-1)[0], "done");
 });
+
+test("generation gets contiguous IDs after selecting sparse retrieved sources", async () => {
+  const sources = [5, 9].map((id) => ({
+    id,
+    url: `https://codehub.gr/${id}/`,
+    title: `Page ${id}`,
+    text: "Verified source",
+    warnings: [],
+  }));
+  let call = 0;
+  const updates = [];
+  for await (const update of answer(
+    { messages: [{ role: "user", content: "Contact?" }] },
+    sources,
+    { OPENAI_API_KEY: "test-only" },
+    new AbortController().signal,
+    async (_url, options) => {
+      if (++call === 1)
+        return Response.json({
+          status: "completed",
+          output: [
+            {
+              type: "message",
+              content: [
+                {
+                  type: "output_text",
+                  text: JSON.stringify({
+                    answerable: true,
+                    source_ids: [9, 5],
+                    reason: "supported",
+                  }),
+                },
+              ],
+            },
+          ],
+        });
+      const input = JSON.parse(
+        JSON.parse(options.body).input.at(-1).content,
+      ).WEBSITE_EVIDENCE;
+      assert.deepEqual(
+        input.map((s) => [s.source, s.url]),
+        [
+          [1, "https://codehub.gr/9/"],
+          [2, "https://codehub.gr/5/"],
+        ],
+      );
+      return new Response(
+        [
+          { type: "response.output_text.delta", delta: "Contact [1]." },
+          {
+            type: "response.completed",
+            response: { usage: { input_tokens: 1, output_tokens: 1 } },
+          },
+        ]
+          .map((x) => `data: ${JSON.stringify(x)}\n\n`)
+          .join(""),
+      );
+    },
+  ))
+    updates.push(update);
+  assert.equal(
+    updates.findLast(([type]) => type === "sources")[1].sources[0].url,
+    "https://codehub.gr/9/",
+  );
+  assert.equal(updates[0][0], "sources");
+});

@@ -342,3 +342,34 @@ for (const kind of ["job", "course"])
     const replies = ui.document.querySelectorAll(".message.assistant");
     assert.equal(replies[replies.length - 1].querySelector(".next-jobs"), null);
   });
+
+test("answer links are clickable for Code.Hub only and markup remains inert", async () => {
+  const ui = await preview([
+    {
+      id: "links",
+      title: "Links",
+      messages: [
+        {
+          role: "assistant",
+          mode: "openai",
+          sources: [],
+          content:
+            "[Επικοινωνία](https://codehub.gr/contact/) [External](https://evil.test/) <img src=x onerror=alert(1)> [Bad](javascript:alert(1))",
+        },
+      ],
+    },
+  ]);
+  const body = ui.document.querySelector(".message.assistant .message-body");
+  const links = ui.document.querySelectorAll(".answer-link");
+  assert.equal(links.length, 1);
+  assert.equal(links[0].getAttribute("href"), "https://codehub.gr/contact/");
+  assert.equal(
+    ui.document.querySelectorAll(".message.assistant img").length,
+    0,
+  );
+  assert.ok(
+    ui.document
+      .querySelector(".message.assistant")
+      .textContent.includes("External"),
+  );
+});

@@ -22,9 +22,12 @@ from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
 from .database import connect
-from .ingest import write_json
+from .extract import EXTRACTOR_VERSION, extract
+from .extract import chunk as make_chunks
+from .ingest import read_jsonl, write_json
 from .lexical import STOPWORDS, TOKENIZER_VERSION, tokens
 from .query import CONCEPTS, QUERY_VERSION
+from .web import Resource
 
 MODEL = "text-embedding-3-small"
 DIMENSIONS = 384
@@ -155,7 +158,89 @@ def load_bundle(directory: Path) -> dict:
         raise ValueError("Cloud statistics mismatch")
     if bundle["documents"] != len({c["url"] for c in bundle["chunks"]}):
         raise ValueError("Cloud document count mismatch")
+    if config.get("parent_documents"):
+        if config.get("pages_hash") != digest(bundle.get("pages", [])):
+            raise ValueError("Parent document checksum mismatch")
+        if {p["url"] for p in bundle["pages"]} != {c["url"] for c in bundle["chunks"]}:
+            raise ValueError("Parent document coverage mismatch")
     return bundle
+
+
+def prepare_run(run: Path, output: Path) -> dict:
+    """Re-extract saved HTML into a new cloud bundle without changing the crawl."""
+    audit = json.loads((run / "audit.json").read_text(encoding="utf-8"))
+    crawl = json.loads((run / "crawl.json").read_text(encoding="utf-8"))
+    if not audit["inventory_complete"] or not crawl.get("crawl_complete") or crawl["errors"]:
+        raise ValueError("Preparation requires a complete crawl without recorded errors")
+    chunks, pages = [], []
+    for old in read_jsonl(run / "documents.jsonl"):
+        raw = (run / old["raw_path"]).resolve()
+        if not raw.is_relative_to(run.resolve()):
+            raise ValueError("Raw path leaves crawl directory")
+        doc = extract(
+            Resource(
+                old["url"], 200, raw.read_bytes(), "text/html", old.get("response_headers", {})
+            ),
+            old["categories"],
+        )
+        items = make_chunks(doc)
+        substantive = [item for item in items if len(item["text"]) >= 40]
+        if substantive:
+            items = substantive
+        if not items:
+            continue
+        parent = {
+            "url": doc["canonical_url"],
+            "title": doc["title"],
+            "text": "\n\n".join(
+                "\n".join([" > ".join(s["heading_path"]), *s["blocks"]]) for s in doc["sections"]
+            ),
+            "categories": doc["categories"],
+            "warnings": doc["quality"]["metadata_warnings"],
+            "fetched_at": old["fetched_at"],
+        }
+        pages.append(parent)
+        for item in items:
+            chunks.append(
+                {
+                    **item,
+                    "categories": parent["categories"],
+                    "warnings": parent["warnings"],
+                    "fetched_at": parent["fetched_at"],
+                    "input_hash": digest(item["retrieval_text"]),
+                }
+            )
+    chunks.sort(key=lambda c: c["id"])
+    pages.sort(key=lambda p: p["url"])
+    config = {
+        "format": "cloud-v1",
+        "model": MODEL,
+        "dimensions": DIMENSIONS,
+        "tokenizer_version": TOKENIZER_VERSION,
+        "query_version": QUERY_VERSION,
+        "lexical_config_hash": lexical_config()["fingerprint"],
+        "bm25_parameters": PARAMETERS,
+        "corpus_hash": digest(chunks),
+        "parent_documents": True,
+        "pages_hash": digest(pages),
+        "extractor_version": EXTRACTOR_VERSION,
+    }
+    bundle = {
+        "snapshot_id": digest(config),
+        "config": config,
+        "statistics": corpus_statistics(chunks)[0],
+        "documents": len(pages),
+        "chunks": chunks,
+        "pages": pages,
+    }
+    output.mkdir(parents=True, exist_ok=True)
+    write_json(output / "corpus.json", bundle)
+    return {
+        "snapshot_id": bundle["snapshot_id"],
+        "documents": len(pages),
+        "chunks": len(chunks),
+        "extractor_version": EXTRACTOR_VERSION,
+    }
 
 
 @contextmanager
@@ -231,7 +316,7 @@ def schema_path() -> Path:
     return bundled if bundled.exists() else Path(__file__).resolve().parents[2] / "cloud/schema.sql"
 
 
-def publish(connection, directory: Path) -> dict:
+def publish(connection, directory: Path, *, activate: bool = True) -> dict:
     bundle = load_bundle(directory)
     chunks = bundle["chunks"]
     snapshot_id = bundle["snapshot_id"]
@@ -286,6 +371,20 @@ def publish(connection, directory: Path) -> dict:
                 with cursor.copy("COPY rag_cloud.postings FROM STDIN") as copy:
                     for term, chunk_id, weight in postings(chunks, statistics, counts, terms):
                         copy.write_row((snapshot_id, term, chunk_id, weight))
+                if bundle.get("pages"):
+                    with cursor.copy("COPY rag_cloud.pages FROM STDIN") as copy:
+                        for page in bundle["pages"]:
+                            copy.write_row(
+                                (
+                                    snapshot_id,
+                                    page["url"],
+                                    page["title"],
+                                    page["text"],
+                                    page["categories"],
+                                    Jsonb(page["warnings"]),
+                                    page["fetched_at"],
+                                )
+                            )
         actual = connection.execute(
             """SELECT count(*) AS n,count(DISTINCT url) AS documents
             FROM rag_cloud.chunks WHERE snapshot_id=%s""",
@@ -304,11 +403,22 @@ def publish(connection, directory: Path) -> dict:
             or posting_count != statistics["postings"]
         ):
             raise ValueError("Cloud snapshot row counts differ from prepared corpus")
-        connection.execute("UPDATE rag_cloud.snapshots SET active=false WHERE active")
+        if bundle.get("pages"):
+            parent_count = connection.execute(
+                "SELECT count(*) AS n FROM rag_cloud.pages WHERE snapshot_id=%s", (snapshot_id,)
+            ).fetchone()["n"]
+            if parent_count != bundle["documents"]:
+                raise ValueError("Parent document count mismatch")
+        if activate:
+            connection.execute("UPDATE rag_cloud.snapshots SET active=false WHERE active")
         connection.execute(
-            "UPDATE rag_cloud.snapshots SET ready=true,active=true WHERE id=%s", (snapshot_id,)
+            "UPDATE rag_cloud.snapshots SET ready=true,active=(active OR %s) WHERE id=%s",
+            (activate, snapshot_id),
         )
-    return {"snapshot_id": snapshot_id, "chunks": len(chunks), "active": True}
+    actual_active = connection.execute(
+        "SELECT active FROM rag_cloud.snapshots WHERE id=%s", (snapshot_id,)
+    ).fetchone()["active"]
+    return {"snapshot_id": snapshot_id, "chunks": len(chunks), "active": actual_active}
 
 
 def cloud_connect(settings: dict):
@@ -330,12 +440,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=["prepare", "embed", "publish", "status"])
     parser.add_argument("--directory", type=Path, default=Path("data/cloud"))
+    parser.add_argument("--run", type=Path, help="Prepare directly from saved crawl HTML")
+    parser.add_argument("--stage", action="store_true", help="Publish a ready, inactive snapshot")
     args = parser.parse_args()
     settings = {**dotenv_values(".env"), **os.environ}
     try:
         if args.command == "prepare":
-            with connect() as connection:
-                result = prepare(connection, args.directory)
+            if args.run:
+                result = prepare_run(args.run, args.directory)
+            else:
+                with connect() as connection:
+                    result = prepare(connection, args.directory)
         elif args.command == "embed":
             from openai import OpenAI
 
@@ -346,7 +461,7 @@ def main():
         else:
             with cloud_connect(settings) as connection:
                 if args.command == "publish":
-                    result = publish(connection, args.directory)
+                    result = publish(connection, args.directory, activate=not args.stage)
                 else:
                     row = connection.execute(
                         "SELECT id,documents,chunks,ready FROM rag_cloud.snapshots WHERE active"

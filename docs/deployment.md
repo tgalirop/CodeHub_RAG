@@ -8,9 +8,10 @@ durable demo request counters. The computer does not need to remain online.
 Existing Supabase PostgreSQL projects are also supported by the same code.
 
 ```text
-Browser -> Vercel /api/chat -> OpenAI query embedding
-                          -> PostgreSQL: pgvector + persisted BM25 -> page RRF
-                          -> evidence check -> streamed answer + source citations
+Browser -> Vercel /api/chat -> semantic query plan -> query embedding
+                          -> pgvector + persisted BM25 -> page RRF -> parent pages
+                          -> evidence selection / bounded recovery
+                          -> streamed answer + cited sources
 ```
 
 Hosting can stay within the providers' Free/Hobby quotas for a personal demo.
@@ -40,7 +41,35 @@ the local corpus, while publication uses `CLOUD_DATABASE_URL` exclusively.
 For an existing Supabase project, use its Transaction pooler URI; the alias
 `SUPABASE_DATABASE_URL` is accepted when `CLOUD_DATABASE_URL` is absent.
 
-### 2. Export, embed and publish once, from the development machine
+### 2. Prepare, embed and publish from the development machine
+
+Recommended for a saved complete crawl: re-extract the accepted HTML into a separate
+cloud bundle. This removes recommendation cards and boilerplate, retains full parent
+documents and preserves the original fetch dates. It does not modify the original
+crawl, fetch new pages or require the local E5 index.
+
+```powershell
+uv run python -m codehub_rag.cloud prepare --run data/runs/YOUR_FULL_RUN --directory data/cloud-v2
+uv run python -m codehub_rag.cloud embed --directory data/cloud-v2
+uv run python -m codehub_rag.cloud publish --directory data/cloud-v2 --stage
+```
+
+`--stage` uploads and validates an inactive snapshot. Test it locally using the
+returned ID as the process-only `RAG_SNAPSHOT_ID`, then activate the same bundle:
+
+```powershell
+$env:RAG_SNAPSHOT_ID = "RETURNED_SNAPSHOT_ID"
+node --env-file=.env web/scripts/evaluate-site-chatbot.mjs --local --output data/cloud-v2/evaluation.json
+Remove-Item Env:RAG_SNAPSHOT_ID
+uv run python -m codehub_rag.cloud publish --directory data/cloud-v2
+```
+
+The evaluation makes metered OpenAI calls. Its batch-local request counter leaves
+the production rate limits untouched. Never set a test snapshot override on Vercel
+unless deliberately pinning that deployment. Existing snapshots remain available;
+republishing a previously saved bundle reactivates it for rollback.
+
+The legacy export path remains supported:
 
 The existing local PostgreSQL must be running and contain a ready E5 snapshot.
 For a fresh checkout, run the README crawl/index steps first. Source data, local
@@ -82,7 +111,13 @@ check must identify supporting source IDs for a Code.Hub question. Unsupported
 questions receive a fixed localized response, with irrelevant source cards cleared.
 Malformed/incomplete verdicts fail closed. This additional model call adds latency
 and API usage, and is still a fallible model check, not a guarantee of factual accuracy.
-At 2,481 chunks exact cosine search avoids an approximate-index recall tradeoff.
+The improved snapshot has 1,294 chunks and 167 parent documents. Exact cosine search
+avoids an approximate-index recall tradeoff. The model checks up to 12 ranked parent
+pages plus contact details, capped at 16,000 characters per page. A relevant failed
+check can retrieve one additional batch; out-of-scope questions do not trigger it.
+Fuller evidence increases input-token usage; see the committed quality report for
+measured totals. Truncated pages are marked so missing information is not treated
+as proof that the full page lacks it.
 
 ### 3. Configure the existing Vercel project
 

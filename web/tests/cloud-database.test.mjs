@@ -26,6 +26,10 @@ test(
       assert.equal(sources.length, 3);
       assert.match(sources[0].url, /^https:\/\/codehub.gr\//);
       assert.equal(typeof sources[0].text, "string");
+      assert.match(
+        sources[0].text,
+        /Expanded parent document with complete prerequisites/,
+      );
       assert.deepEqual(
         sources.map((s) => s.id),
         [1, 2, 3],

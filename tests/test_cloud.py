@@ -137,15 +137,25 @@ def test_cloud_publication_atomicity_and_durable_limits(database, tmp_path):
     first = publish(database, tmp_path)
     database.execute("DELETE FROM rag_cloud.usage")
     assert publish(database, tmp_path) == first
+    assert publish(database, tmp_path, activate=False) == first
     assert (
         database.execute("SELECT count(*) AS n FROM rag_cloud.snapshots WHERE active").fetchone()[
             "n"
         ]
         == 1
     )
-    assert database.execute("SELECT count(*) AS n FROM rag_cloud.chunks").fetchone()["n"] == 3
     assert (
-        database.execute("SELECT count(*) AS n FROM rag_cloud.postings").fetchone()["n"]
+        database.execute(
+            "SELECT count(*) AS n FROM rag_cloud.chunks WHERE snapshot_id=%s",
+            (first["snapshot_id"],),
+        ).fetchone()["n"]
+        == 3
+    )
+    assert (
+        database.execute(
+            "SELECT count(*) AS n FROM rag_cloud.postings WHERE snapshot_id=%s",
+            (first["snapshot_id"],),
+        ).fetchone()["n"]
         == bundle["statistics"]["postings"]
     )
     row = database.execute("SELECT config FROM rag_cloud.snapshots WHERE active").fetchone()
@@ -163,6 +173,40 @@ def test_cloud_publication_atomicity_and_durable_limits(database, tmp_path):
         "SELECT bool_and(relrowsecurity) AS ok FROM pg_class "
         "WHERE relnamespace='rag_cloud'::regnamespace AND relkind='r'"
     ).fetchone()["ok"]
+
+
+def test_parent_documents_staged_publication_and_checksums(database, tmp_path):
+    import copy
+
+    original = make_bundle(tmp_path)
+    embed_corpus(tmp_path, FakeAPI())
+    publish(database, tmp_path)
+    bundle = copy.deepcopy(original)
+    bundle["pages"] = [
+        {key: c[key] for key in ("url", "title", "text", "categories", "warnings", "fetched_at")}
+        for c in bundle["chunks"]
+    ]
+    bundle["pages"][0]["text"] += "\nImportant prerequisites at the end of the document."
+    bundle["config"].update(parent_documents=True, pages_hash=digest(bundle["pages"]))
+    bundle["snapshot_id"] = digest(bundle["config"])
+    write_json(tmp_path / "corpus.json", bundle)
+    staged = publish(database, tmp_path, activate=False)
+    assert not staged["active"]
+    assert (
+        database.execute("SELECT id FROM rag_cloud.snapshots WHERE active").fetchone()["id"]
+        == original["snapshot_id"]
+    )
+    assert (
+        database.execute(
+            "SELECT count(*) AS n FROM rag_cloud.pages WHERE snapshot_id=%s",
+            (staged["snapshot_id"],),
+        ).fetchone()["n"]
+        == 3
+    )
+    bundle["pages"][0]["text"] += " tampering"
+    write_json(tmp_path / "corpus.json", bundle)
+    with pytest.raises(ValueError, match="Parent document checksum"):
+        load_bundle(tmp_path)
 
 
 @pytest.fixture

@@ -36,6 +36,18 @@ CREATE TABLE IF NOT EXISTS rag_cloud.terms (
     idf double precision NOT NULL,
     PRIMARY KEY(snapshot_id, term)
 );
+-- Clean parent documents let retrieval expand a matched passage without mixing
+-- in navigation/recommendation cards or losing prerequisites at the page end.
+CREATE TABLE IF NOT EXISTS rag_cloud.pages (
+    snapshot_id text NOT NULL REFERENCES rag_cloud.snapshots(id) ON DELETE CASCADE,
+    url text NOT NULL,
+    title text NOT NULL,
+    body text NOT NULL,
+    categories text[] NOT NULL,
+    warnings jsonb NOT NULL,
+    fetched_at timestamptz NOT NULL,
+    PRIMARY KEY(snapshot_id,url)
+);
 CREATE TABLE IF NOT EXISTS rag_cloud.postings (
     snapshot_id text NOT NULL,
     term text NOT NULL,
@@ -84,6 +96,7 @@ REVOKE ALL ON ALL TABLES IN SCHEMA rag_cloud FROM PUBLIC;
 REVOKE ALL ON FUNCTION rag_cloud.reserve_request(text,integer,integer) FROM PUBLIC;
 ALTER TABLE rag_cloud.snapshots ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rag_cloud.chunks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE rag_cloud.pages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rag_cloud.terms ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rag_cloud.postings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rag_cloud.usage ENABLE ROW LEVEL SECURITY;

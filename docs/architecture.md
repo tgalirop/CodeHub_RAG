@@ -141,9 +141,21 @@ Durable SQL request reservations cap public demo API calls across serverless wor
 and retain hashed address counters for two days; conversation history remains local
 to the browser. These limits are not an exact spending cap or full user authentication.
 The historical E5 development benchmark is not a benchmark for the new API model.
+Cloud extraction retains each page's own content and removes trailing recommended
+job/course cards. UI-only chunks are excluded, visible page titles are retained and
+contact addresses keep their office/training-centre labels. The private `pages`
+table stores checksummed parent text beside smaller embedding/BM25 chunks.
+Search fuses up to 100 dense and 100 lexical chunk candidates at page level, applies
+a soft inferred-category preference and expands the first 12 pages (16,000 characters
+each). A contact page can supplement missing price/date questions, subject to the
+same relevance check. Explicit UI category filters remain exclusive.
+
 The cloud answer path first checks answerability with a strict structured verdict
 and validates its source IDs. Unsupported questions receive fixed text; the free-form
-answer generator sees only approved passages. The check adds an API call and can
+answer generator sees only approved parent passages, ordered by usefulness. Their
+IDs are assigned consecutively before streaming starts, preserving the same mapping
+in generation and the UI. A relevant insufficient-evidence verdict permits one
+bounded second batch; unrelated/injection-only questions do not. The check adds an API call and can
 still make mistakes, so generated answers require evaluation against the source.
 Free-text questions first pass through a model-based query planner with a strict
 JSON schema (`web/lib/planner.js`). It interprets Greek, English, Greeklish, typos,

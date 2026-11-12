@@ -110,7 +110,7 @@ export function createCloudHandler({
       return json({ error: "Method not allowed" }, 405);
     if (route === "status") {
       try {
-        const snapshot = await getStore().snapshot();
+        const snapshot = await getStore().snapshot(env.RAG_SNAPSHOT_ID || null);
         return json({
           ready: !!env.OPENAI_API_KEY,
           answer_mode: "openai",
@@ -146,7 +146,7 @@ export function createCloudHandler({
     try {
       store = getStore();
       snapshot = await store.snapshot(
-        parsed.payload.listing?.snapshot_id || null,
+        parsed.payload.listing?.snapshot_id || env.RAG_SNAPSHOT_ID || null,
       );
       const ip = (
         request.headers.get("x-vercel-forwarded-for") ||
@@ -290,6 +290,7 @@ export function createCloudHandler({
             parsed.payload.kind === plan.collection
               ? parsed.payload.kind
               : null,
+            { preferredKind: plan.collection },
           );
           signal.throwIfAborted();
           emit("sources", {
@@ -309,6 +310,30 @@ export function createCloudHandler({
               env,
               signal,
               fetcher,
+              snapshot.config.parent_documents
+                ? async () => {
+                    emit("stage", { stage: "searching" });
+                    const more = await store.search(
+                      snapshot,
+                      query,
+                      vector,
+                      parsed.payload.kind === plan.collection
+                        ? parsed.payload.kind
+                        : null,
+                      { preferredKind: plan.collection, offset: 12 },
+                    );
+                    const merged = [
+                      ...new Map(
+                        [...sources, ...more].map((s) => [s.url, s]),
+                      ).values(),
+                    ];
+                    emit("stage", { stage: "answering" });
+                    return merged.map((source, index) => ({
+                      ...source,
+                      id: index + 1,
+                    }));
+                  }
+                : null,
             ))
               emit(event, data);
           }

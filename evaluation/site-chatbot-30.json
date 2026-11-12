@@ -1,0 +1,154 @@
+[
+  {
+    "id": 1,
+    "question": "Τι ακριβώς κάνει η Code.Hub και σε ποιους απευθύνεται;",
+    "check": "Company services and business/individual audiences"
+  },
+  {
+    "id": 2,
+    "question": "Πώς μπορώ να επικοινωνήσω με την Code.Hub;",
+    "check": "Correct published contact details"
+  },
+  {
+    "id": 3,
+    "question": "Πού βρίσκονται τα γραφεία και πού το εκπαιδευτικό κέντρο της Code.Hub;",
+    "check": "Separate office and training centre addresses"
+  },
+  {
+    "id": 4,
+    "question": "Είμαι ιδιώτης και θέλω να εξελιχθώ επαγγελματικά. Ποιες υπηρεσίες σας με αφορούν;",
+    "check": "Individual career, learning and growth services"
+  },
+  {
+    "id": 5,
+    "question": "Η ομάδα μου δεν προλαβαίνει να παραδώσει ένα έργο. Πώς μπορεί να βοηθήσει η Code.Hub;",
+    "check": "Semantic match to engineering capacity/project delivery"
+  },
+  {
+    "id": 6,
+    "question": "Ποια είναι η διαφορά ανάμεσα στο Managed Staff Augmentation και το End-to-End Project Delivery;",
+    "check": "Explain capacity reinforcement versus delivery ownership"
+  },
+  {
+    "id": 7,
+    "question": "Μπορείτε να διαθέσετε έναν developer ή αναλαμβάνετε και ολόκληρη ομάδα;",
+    "check": "Individual specialists and complete teams"
+  },
+  {
+    "id": 8,
+    "question": "Θέλω να εκπαιδεύσω τους εργαζομένους μου στην τεχνητή νοημοσύνη. Προσαρμόζετε την εκπαίδευση στις ανάγκες της εταιρείας;",
+    "check": "Custom corporate AI training"
+  },
+  {
+    "id": 9,
+    "question": "Χρειαζόμαστε επειγόντως έναν έμπειρο τεχνικό διευθυντή. Ποια υπηρεσία σας ταιριάζει;",
+    "check": "Urgent/executive technical recruitment"
+  },
+  {
+    "id": 10,
+    "question": "Πόσα trainings υπάρχουν συνολικά στον κατάλογό σας;",
+    "check": "Published course catalogue total, not retrieved chunk count"
+  },
+  {
+    "id": 11,
+    "question": "Ποια trainings προσφέρετε;",
+    "check": "Course names, with clear pagination if needed"
+  },
+  {
+    "id": 12,
+    "question": "Θέλω να φτιάξω έναν βοηθό που απαντά χρησιμοποιώντας τα έγγραφα της εταιρείας μου. Ποιο σεμινάριο ταιριάζει;",
+    "check": "Semantic match to RAG Systems Engineering"
+  },
+  {
+    "id": 13,
+    "question": "Τι θα μάθω στο Retrieval-Augmented Generation Systems Engineering;",
+    "check": "Actual RAG course contents"
+  },
+  {
+    "id": 14,
+    "question": "Ποιες γνώσεις χρειάζομαι πριν παρακολουθήσω το AI Engineering with Python & LangChain;",
+    "check": "Actual prerequisites of named course"
+  },
+  {
+    "id": 15,
+    "question": "Ποιες διαφορές έχουν το RAG Systems Engineering και το AI Engineering with Python & LangChain;",
+    "check": "Both course pages and grounded comparison"
+  },
+  {
+    "id": 16,
+    "question": "Δεν έχω εμπειρία στο cloud. Υπάρχει εισαγωγική εκπαίδευση για AWS;",
+    "check": "Introductory AWS option and prerequisites"
+  },
+  {
+    "id": 17,
+    "question": "Θέλω να χρησιμοποιώ AI εργαλεία για να γράφω κώδικα πιο αποτελεσματικά. Ποια μαθήματα σχετίζονται;",
+    "check": "Coding agents/AI-assisted development courses"
+  },
+  {
+    "id": 18,
+    "question": "Υπάρχει εκπαίδευση για να αναγνωρίζουν οι εργαζόμενοι phishing και άλλες ψηφιακές απειλές;",
+    "check": "Cybersecurity awareness course semantic match"
+  },
+  {
+    "id": 19,
+    "question": "Ποια μαθήματα αφορούν βάσεις δεδομένων και SQL;",
+    "check": "Database/SQL courses, no unsupported completeness claim"
+  },
+  {
+    "id": 20,
+    "question": "Πόσο κοστίζει το σεμινάριο RAG και πότε ξεκινά; Αν αυτά δεν αναφέρονται, πες μου πώς μπορώ να τα μάθω.",
+    "check": "No invented price/date; useful contact direction if unavailable"
+  },
+  {
+    "id": 21,
+    "question": "Πόσες θέσεις εργασίας υπάρχουν στον κατάλογό σας;",
+    "check": "Published jobs catalogue total"
+  },
+  {
+    "id": 22,
+    "question": "Ποιες είναι οι διαθέσιμες θέσεις εργασίας;",
+    "check": "Job names and clear pagination"
+  },
+  {
+    "id": 23,
+    "question": "Γνωρίζω Python και ψάχνω δουλειά στην Αθήνα. Ποιες αγγελίες ταιριάζουν;",
+    "check": "Jobs where both Python and Athens apply to that job, not related cards"
+  },
+  {
+    "id": 24,
+    "question": "Θέλω να δουλεύω από το σπίτι. Ποιες θέσεις αναφέρουν remote εργασία;",
+    "check": "Actual remote jobs, distinguish hybrid"
+  },
+  {
+    "id": 25,
+    "question": "Ασχολούμαι με interfaces και εφαρμογές στον browser. Υπάρχουν σχετικές θέσεις;",
+    "check": "Semantic frontend/UI job matches"
+  },
+  {
+    "id": 26,
+    "question": "Έχω εμπειρία σε AWS, Azure και υποδομές. Ποιες επαγγελματικές ευκαιρίες σχετίζονται;",
+    "check": "Cloud/infrastructure jobs"
+  },
+  {
+    "id": 27,
+    "question": "Τι απαιτεί η θέση Oracle PL/SQL Developer και ποιο εύρος αποδοχών αναφέρει;",
+    "check": "Requirements and salary of correct specific listing"
+  },
+  {
+    "id": 28,
+    "question": "Ποιες αγγελίες αναφέρουν μικτές μηνιαίες αποδοχές πάνω από 3.000 ευρώ;",
+    "check": "Published monthly gross salaries; clarify ranges crossing threshold"
+  },
+  {
+    "id": 29,
+    "question": "Και ποιες από αυτές είναι στην Αθήνα;",
+    "history_from": 23,
+    "check": "Preserve Python job topic while applying Athens constraint"
+  },
+  {
+    "id": 30,
+    "question": "Δείξε μου και τις επόμενες, χωρίς να επαναλάβεις τις προηγούμενες.",
+    "history_from": 22,
+    "check": "Next job page, no repeated URLs"
+  }
+]

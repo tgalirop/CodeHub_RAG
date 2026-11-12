@@ -42,7 +42,7 @@ def make_run(directory, marker="alpha", *, newer=0, language="en"):
     ]:
         html = (
             f'<html lang="{language}"><title>{slug} {marker}</title>'
-            f"<main><h1>{slug}</h1><p>{text}</p></main></html>"
+            f"<main><h1>{slug} {marker}</h1><p>{text}</p></main></html>"
         )
         doc = extract(
             Resource(f"https://codehub.gr/{slug}/", 200, html.encode(), "text/html", {}), [category]

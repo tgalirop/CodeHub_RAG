@@ -135,6 +135,36 @@ def test_html_comments_are_not_visible_source_content():
     assert "HIDDEN NOTE" not in extract(resource(html), ["page"])["text"]
 
 
+def test_primary_entity_excludes_recommended_salary_and_ui_chunks():
+    html = """<title>SEO title</title><main><section><h1>Payment Engineer</h1>
+    <p>Salary: 1700-2025 EUR per month gross.</p>
+    <div><p>Required: SQL and payment systems experience.</p></div>
+    <div><div>Recommended for you</div><h3>Unrelated Manager</h3>
+    <p>Salary: 2700-3200 EUR per month gross.</p><a href='/job/other/'>Learn More</a>
+    </div></section><div class='floating-apply-bar'>Apply Now</div></main>"""
+    doc = extract(resource(html), ["job"])
+    assert doc["title"] == "Payment Engineer"
+    assert "1700-2025" in doc["text"]
+    assert "Required: SQL" in doc["text"]
+    assert "2700-3200" not in doc["text"]
+    assert "Unrelated Manager" not in doc["text"]
+    assert not any(c["text"] == "Learn More" for c in chunk(doc))
+    assert "https://codehub.gr/job/other/" in doc["links"]
+
+
+def test_contact_addresses_retain_distinct_location_labels():
+    html = """<main><h1>Contact Us</h1><p>Get in touch.</p></main><footer>
+    <div><p>Software Delivery &amp; Recruitment Center</p>
+    <a href='https://www.google.com/maps/one'>Office street 1</a></div>
+    <div><p>Training Center</p>
+    <a href='https://www.google.com/maps/two'>Training street 2</a></div></footer>"""
+    doc = extract(
+        Resource("https://codehub.gr/contact/", 200, html.encode(), "text/html", {}), ["page"]
+    )
+    assert "Software Delivery & Recruitment Center: Office street 1" in doc["text"]
+    assert "Training Center: Training street 2" in doc["text"]
+
+
 def test_contact_footer_details_are_retained_only_on_contact_page():
     html = """<main><h1>Contact Us</h1><p>Talk to our team.</p></main>
     <footer><a href="mailto:info@codehub.gr">Email</a>

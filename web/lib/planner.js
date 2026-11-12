@@ -23,6 +23,12 @@ Use history to resolve 'and the rest', pronouns and follow-ups. next_page=true o
 for a request to continue a previous catalogue list. The selected_kind is a hint;
 an explicit new question can change topic. Never invent filters or user preferences.
 Write a concise standalone retrieval query, fixing spelling and resolving references.
+The indexed website is primarily English. Write the retrieval query in English,
+including the user's meaning and useful semantic equivalents, not a word-for-word
+translation. Preserve original proper names and exact technology names.
+For comparisons include BOTH named entities and the aspects being compared.
+For follow-ups keep all previous user constraints unless explicitly changed; a
+previous assistant's failure or incomplete list does not remove those constraints.
 Keep positive AND negative constraints in the standalone query. Explicit exclusions
 must remain explicit, including the excluded technology name. Keep exact technology
 names, names, numbers and constraints; Java and JavaScript,
