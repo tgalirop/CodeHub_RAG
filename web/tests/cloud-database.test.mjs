@@ -15,15 +15,15 @@ test(
     try {
       const store = createStore(sql);
       const snapshot = await store.snapshot();
-      assert.equal(snapshot.documents, 3);
-      assert.equal(snapshot.chunks, 3);
+      assert.equal(snapshot.documents, 4);
+      assert.equal(snapshot.chunks, 4);
       const vector = [1, ...Array(383).fill(0)];
       const sources = await store.search(
         snapshot,
         expandQuery("εκπαίδευση C#"),
         vector,
       );
-      assert.equal(sources.length, 3);
+      assert.equal(sources.length, 4);
       assert.match(sources[0].url, /^https:\/\/codehub.gr\//);
       assert.equal(typeof sources[0].text, "string");
       assert.match(
@@ -32,8 +32,17 @@ test(
       );
       assert.deepEqual(
         sources.map((s) => s.id),
-        [1, 2, 3],
+        [1, 2, 3, 4],
       );
+      const details = await store.search(snapshot, "salary", vector, null, {
+        preferredKind: "job",
+      });
+      assert.equal(details.length, 3);
+      assert.ok(
+        details.every((s) => !s.url.endsWith("/open-job-opportunities/")),
+      );
+      // An inferred preference still permits useful sources of another kind.
+      assert.ok(details.some((s) => s.categories.includes("course")));
       const filtered = await store.search(
         snapshot,
         "training",

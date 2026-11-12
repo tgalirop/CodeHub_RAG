@@ -18,7 +18,11 @@ with connect(register=False) as connection:
         raise SystemExit("Requires a dedicated database name ending in _test")
     with tempfile.TemporaryDirectory() as temporary:
         directory = Path(temporary)
-        bundle = make_bundle(directory)
+        bundle = make_bundle(directory, n=4)
+        bundle["chunks"][3].update(
+            url="https://codehub.gr/open-job-opportunities/", categories=["page"]
+        )
+        bundle["config"]["corpus_hash"] = digest(bundle["chunks"])
         bundle["pages"] = [
             {
                 key: c[key]

@@ -183,9 +183,13 @@ export async function* answer(
       ],
       stream: true,
       store: false,
-      max_output_tokens: 2000,
+      max_output_tokens: 3000,
       ...(/^(gpt-[56]|o[134])/.test(model)
-        ? { reasoning: { effort: "low" } }
+        ? {
+            reasoning: {
+              effort: payload.queryPlan?.constrained ? "medium" : "low",
+            },
+          }
         : {}),
     }),
   });

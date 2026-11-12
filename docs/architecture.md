@@ -149,6 +149,10 @@ Search fuses up to 100 dense and 100 lexical chunk candidates at page level, app
 a soft inferred-category preference and expands the first 12 pages (16,000 characters
 each). A contact page can supplement missing price/date questions, subject to the
 same relevance check. Explicit UI category filters remain exclusive.
+Job/course searches exclude aggregate catalogue cards, which lack the detailed
+page's conflict warnings; catalogue browsing/counts still use their dedicated SQL
+operations. Salary-period conflicts require confirmation rather than silently
+treating a displayed monthly label as verified.
 
 The cloud answer path first checks answerability with a strict structured verdict
 and validates its source IDs. Unsupported questions receive fixed text; the free-form
@@ -173,6 +177,11 @@ an explicit matching UI filter is honored. The evidence check sees the query pla
 as context, never as factual evidence. Planning adds one metered model call per new
 free-text question; validated next-page button actions bypass it. Token usage includes
 the planner, evidence check and answer generation, but not query embeddings.
+Answer generation uses medium reasoning for model-planned constrained questions
+and low for other questions; planning and evidence selection stay at low. The
+generation budget is 3,000 output tokens including reasoning. This keeps the same
+Luna model while allowing more reasoning for comparisons and constraints. See
+[Luna's supported reasoning settings](https://developers.openai.com/api/docs/models/gpt-6-luna).
 
 Unconstrained job/course counts use the stored catalogue's explicit total plus a
 distinct-page SQL count. Generic Trainings refers to Training Programs courses;

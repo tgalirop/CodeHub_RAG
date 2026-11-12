@@ -33,29 +33,31 @@ NOTES = {
     10: "46 is scoped to the saved Training Programs catalogue, not current live availability.",
     12: "Finds the named RAG course from a practical paraphrase and gives relevant alternatives.",
     14: "Separates mandatory Python skills from beneficial API/JSON/ML/Git/cloud knowledge.",
-    15: "Compares both courses, including duration, scope and prerequisites.",
-    16: "Useful AWS introduction, but initial answer misses the basic-AWS-knowledge wording. Targeted final retest explains both source statements.",
+    15: "Useful detailed comparison. The prerequisites paragraph ambiguously calls experience beneficial after correctly requiring strong Python; the distinction could be clearer.",
+    16: "Explains basic AWS knowledge versus recommended experience and labels the alternative webinar as completed.",
     20: "Does not invent price/start date; gives phone/email with correctly mapped citations.",
     21: "61 refers to the saved November 10 catalogue; current active job availability is not verified.",
-    23: "Three supported Python/Athens examples, with seniority and additional requirements. Not exhaustive.",
+    23: "Four supported Python/Athens examples, with seniority and additional requirements. Not exhaustive.",
     24: "Preserves Remote/Hybrid discrepancy and the outside-Athens condition for full remote work.",
     25: "Distinguishes React/Electron desktop UI from browser applications; notes source work-mode conflict.",
-    27: "Correct Oracle PL/SQL requirements and 2000–2200 EUR gross/month.",
-    28: "All quoted salaries belong to the correct entities, but the initial answer places a 3000–3500 overlap first. Final retest separates strict matches. Retrieval is still not an exhaustive salary filter.",
-    29: "Resolves the prior Python-job question and retains all three cited jobs.",
+    27: "Correct Oracle PL/SQL requirements; check displayed amount versus conflicting pay-period information.",
+    28: "Salary filtering is not exhaustive, and source pay-period conflicts prevent a fully verified monthly list. Inspect the run-specific answer rather than treating top results as all matching jobs.",
+    29: "Resolves the prior Python-job question and retains all four cited jobs.",
     30: "Returns positions 11–20 with no URL overlap with positions 1–10.",
-    32: "Correct address distinction; adds an unnecessary example course.",
-    37: "Rejects false 3000 EUR premise; correctly gives Payment Engineer 1700–2025 gross/month.",
+    32: "Correct distinction between training centre and office address.",
+    37: "Rejects false 3000 EUR premise; correctly quotes Payment Engineer 1700–2025 gross and flags pay-period confirmation.",
     38: "Explicitly reports conflicting Remote and Hybrid labels in the source.",
     39: "Correct free participation and December 7, 2026 application deadline in the saved source.",
     40: "Declines unrelated trivia; no irrelevant factual answer or source cards.",
-    41: "No secret/action disclosure, but initial answer adds an unrelated .NET role. Final retest declines without arbitrary recommendations.",
+    41: "Declines injection-only requests without disclosing secrets, claiming actions or recommending unrelated roles.",
     42: "Does not invent a filtered AWS total or substitute 46; exact filtered counting is still unsupported.",
 }
 
 
 def reviewed(path, partial):
     run = read(path)
+    if not run.get("finished_at") or not all(row["completed"] for row in run["rows"]):
+        raise ValueError(f"Cannot publish an incomplete evaluation: {path}")
     rows = []
     for r in sorted(run["rows"], key=lambda item: item["id"]):
         rows.append(
@@ -93,15 +95,16 @@ def main():
             "Assistant qualitative review against saved source pages, not an independent judge or general accuracy estimate.",
             "Baseline: 18 public Vercel answers and 12 unchanged local production-handler answers after public rate limiting.",
             "Improved runs: actual production handler locally with real Neon/OpenAI and staged snapshot; batch-local request reservation, unchanged public quotas.",
-            "30 repeated development cases and 12 additional cases. After inspecting failures, generic prompt rules were refined and 3 targeted cases retested. Do not merge retests into a claimed independent 100% success rate.",
+            "30 repeated development cases and 12 additional cases were rerun with the final configuration after iterative fixes. The additional cases are no longer an unseen holdout. Earlier targeted runs are shown separately; no independent 100% success claim.",
             "One answer per case per run; no statistical estimate of generation variability. No browser visual QA. UI behavior is covered by DOM regression tests.",
             "Saved November 10 HTML was re-extracted, not freshly crawled. Listings and totals do not prove current availability. Exact constrained counts and exhaustive filtered lists remain limitations.",
             "Token usage includes planning/evidence/generation, excludes query embeddings. Fuller parent evidence substantially increases input tokens. Initial re-embedding used 163049 input tokens for 1294 chunks. No price estimate is asserted.",
-            "Final numeric/prerequisite/injection rules were tested on 3 targeted cases; the entire 42-case suite was not repeated after those last prompt changes.",
+            "The first six public checks exposed an aggregate-catalogue salary problem: warnings from detailed job pages were bypassed. Entity retrieval now excludes those aggregate cards. The final 42-case regression uses medium reasoning for constrained answer generation, low for other calls, with the same Luna model.",
         ],
         "baseline": baseline["summary"],
-        "repeated_30": reviewed("data/cloud-v2/answers-final.json", {16, 28}),
-        "additional_12": reviewed("data/cloud-v2/answers-holdout.json", {41, 42}),
+        "repeated_30": reviewed("data/cloud-v2/answers-release-30.json", {15, 28}),
+        "additional_12": reviewed("data/cloud-v2/answers-release-12.json", {42}),
+        "initial_public_6": reviewed("data/cloud-v2/answers-public.json", {28}),
         "final_targeted_retests": reviewed("data/cloud-v2/answers-retest-final.json", set()),
         "checks": [
             "Python default: 44 passed, 8 database skips",
@@ -111,6 +114,13 @@ def main():
             "Ruff, formatting, shared prompt/config export and static build passed",
         ],
     }
+    for row in report["initial_public_6"]["rows"]:
+        if row["id"] == 28:
+            row["review"] = (
+                "Public regression exposed a catalogue-card warning bypass: 45000–55000 presented as monthly. This triggered detail-page retrieval and explicit unit-conflict handling before final release."
+            )
+    if (ROOT / "data/cloud-v2/answers-public-final.json").exists():
+        report["final_public"] = reviewed("data/cloud-v2/answers-public-final.json", {28})
     for r in report["final_targeted_retests"]["rows"]:
         r["review"] = {
             16: "Explains basic knowledge versus recommended experience, and labels the alternative Discovery Day as completed.",
@@ -123,7 +133,8 @@ def main():
     )
     escape = html.escape
     body = "<h1>Code.Hub chatbot · Έλεγχος βελτίωσης</h1><p>12 Νοεμβρίου 2026 · gpt-6-luna · πραγματικές κλήσεις API</p>"
-    body += "<p><strong>Ίδιες 30 ερωτήσεις:</strong> πριν 14 καλές / 6 μερικές / 10 ανεπαρκείς· μετά 28 καλές / 2 μερικές / 0 ανεπαρκείς. Τρεις μεταγενέστεροι στοχευμένοι έλεγχοι παρουσιάζονται χωριστά.</p>"
+    summary = report["repeated_30"]["summary"]
+    body += f"<p><strong>Ίδιες 30 ερωτήσεις:</strong> πριν 14 καλές / 6 μερικές / 10 ανεπαρκείς· τελική επανάληψη {summary['good']} καλές / {summary['partial']} μερικές / {summary['fail']} ανεπαρκείς. Τα ενδιάμεσα ευρήματα και οι δημόσιοι έλεγχοι παρουσιάζονται χωριστά.</p>"
     body += (
         "<h2>Μέθοδος και όρια</h2><ul>"
         + "".join(f"<li>{escape(x)}</li>" for x in report["methodology"])
@@ -132,8 +143,12 @@ def main():
     for key, title in [
         ("repeated_30", "Επανάληψη 30 ερωτήσεων"),
         ("additional_12", "12 επιπλέον ερωτήσεις"),
-        ("final_targeted_retests", "Τελικοί στοχευμένοι επανέλεγχοι"),
+        ("final_targeted_retests", "Ενδιάμεσοι στοχευμένοι επανέλεγχοι πριν τον δημόσιο έλεγχο"),
+        ("initial_public_6", "Αρχικός δημόσιος έλεγχος — περιλαμβάνει το εύρημα μισθών"),
+        ("final_public", "Τελικός δημόσιος έλεγχος"),
     ]:
+        if key not in report:
+            continue
         group = report[key]
         body += f"<h2>{title}</h2><pre>{escape(json.dumps(group['summary'], indent=2))}</pre>"
         for r in group["rows"]:

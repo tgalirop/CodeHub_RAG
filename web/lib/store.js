@@ -152,7 +152,20 @@ export function createStore(sql) {
                 ),
               ]);
           }
-          const urls = fuse(pageRanks).slice(
+          // Catalogue cards lack the detail page's metadata/conflict warnings.
+          // Use SQL catalogue operations for lists/counts; use detail evidence
+          // for entity attributes so an aggregate cannot bypass those warnings.
+          const catalogues = new Set([
+            "https://codehub.gr/open-job-opportunities/",
+            "https://codehub.gr/training-programs/",
+          ]);
+          const entitySearch = ["job", "course", "training"].includes(
+            options.preferredKind,
+          );
+          const ranked = fuse(pageRanks).filter(
+            (url) => !entitySearch || !catalogues.has(url),
+          );
+          const urls = ranked.slice(
             options.offset || 0,
             (options.offset || 0) + 12,
           );

@@ -124,7 +124,10 @@ test("generation gets contiguous IDs after selecting sparse retrieved sources", 
   let call = 0;
   const updates = [];
   for await (const update of answer(
-    { messages: [{ role: "user", content: "Contact?" }] },
+    {
+      messages: [{ role: "user", content: "Jobs above a salary threshold?" }],
+      queryPlan: { constrained: true },
+    },
     sources,
     { OPENAI_API_KEY: "test-only" },
     new AbortController().signal,
@@ -148,8 +151,10 @@ test("generation gets contiguous IDs after selecting sparse retrieved sources", 
             },
           ],
         });
+      const generation = JSON.parse(options.body);
+      assert.equal(generation.reasoning.effort, "medium");
       const input = JSON.parse(
-        JSON.parse(options.body).input.at(-1).content,
+        generation.input.at(-1).content,
       ).WEBSITE_EVIDENCE;
       assert.deepEqual(
         input.map((s) => [s.source, s.url]),
