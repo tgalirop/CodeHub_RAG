@@ -1562,5 +1562,161 @@
     "Node default: 35 passed, 1 database skip",
     "Real Node/PostgreSQL integration: 1 passed",
     "Ruff, formatting, shared prompt/config export and static build passed"
-  ]
+  ],
+  "final_public": {
+    "started_at": "2026-11-12T07:44:19.139Z",
+    "summary": {
+      "total": 6,
+      "completed": 6,
+      "good": 5,
+      "partial": 1,
+      "fail": 0,
+      "median_latency_ms": 8229.5,
+      "input_tokens": 88673,
+      "output_tokens": 2148
+    },
+    "rows": [
+      {
+        "id": 3,
+        "question": "Πού βρίσκονται τα γραφεία και πού το εκπαιδευτικό κέντρο της Code.Hub;",
+        "answer": "Τα γραφεία του Software Delivery & Recruitment Center βρίσκονται στη **Νίκης 2 και Καραγεώργη Σερβίας 3, 10563, Αθήνα**. Το εκπαιδευτικό κέντρο βρίσκεται στη **Σοφίας Σλήμαν 3, 11526, Αθήνα**. [1]",
+        "completed": true,
+        "latency_ms": 8019,
+        "transport": "public-vercel",
+        "assessment": "good",
+        "review": "Correctly distinguishes office and training-centre addresses.",
+        "usage": {
+          "input_tokens": 13090,
+          "output_tokens": 156
+        },
+        "sources": [
+          {
+            "id": 1,
+            "url": "https://codehub.gr/contact/",
+            "title": "Contact Us"
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "question": "Ποιες γνώσεις χρειάζομαι πριν παρακολουθήσω το AI Engineering with Python & LangChain;",
+        "answer": "Απαραίτητες είναι **στέρεες βάσεις στην Python**. Το πρόγραμμα χαρακτηρίζεται ενδιάμεσου έως προχωρημένου επιπέδου και απευθύνεται σε επαγγελματίες. [1]\n\nΩφέλιμη, αλλά **όχι υποχρεωτική**, είναι η εξοικείωση με:\n- APIs και REST\n- JSON και διαχείριση δομημένων δεδομένων\n- βασικές έννοιες machine learning και LLM\n- Git και ροές ανάπτυξης λογισμικού\n- βασικές έννοιες cloud. [1]",
+        "completed": true,
+        "latency_ms": 7567,
+        "transport": "public-vercel",
+        "assessment": "good",
+        "review": "Separates mandatory Python skills from beneficial API/JSON/ML/Git/cloud knowledge.",
+        "usage": {
+          "input_tokens": 13348,
+          "output_tokens": 308
+        },
+        "sources": [
+          {
+            "id": 1,
+            "url": "https://codehub.gr/course/ai-engineering-with-python-langchain/",
+            "title": "AI Engineering with Python & LangChain"
+          }
+        ]
+      },
+      {
+        "id": 16,
+        "question": "Δεν έχω εμπειρία στο cloud. Υπάρχει εισαγωγική εκπαίδευση για AWS;",
+        "answer": "Ναι. Το **AWS Cloud Practitioner Essentials** είναι εισαγωγικό πρόγραμμα 12 ωρών για αρχάριους έως junior επαγγελματίες και όσους θέλουν να γνωρίσουν το AWS Cloud. Καλύπτει βασικές υπηρεσίες AWS, υπολογιστική ισχύ, αποθήκευση, δικτύωση, ασφάλεια, τιμολόγηση και υποστήριξη, ενώ βοηθά στην προετοιμασία για την πιστοποίηση AWS Certified Cloud Practitioner. [1]\n\nΜια διευκρίνιση για τις προϋποθέσεις: η περιγραφή λέει ότι το πρόγραμμα προορίζεται για άτομα με βασικές γνώσεις της πλατφόρμας AWS· αναφέρει, όμως, ότι προηγούμενη εξοικείωση με το AWS και βασική κατανόηση IT είναι **προτεινόμενες, όχι υποχρεωτικές**. Άρα δεν τεκμηριώνεται ότι απαιτείται προηγούμενη εμπειρία στο cloud, αλλά η περιγραφή υποθέτει κάποια βασική γνώση AWS. [1]",
+        "completed": true,
+        "latency_ms": 8263,
+        "transport": "public-vercel",
+        "assessment": "good",
+        "review": "Explains basic AWS knowledge versus recommended experience and labels the alternative webinar as completed.",
+        "usage": {
+          "input_tokens": 13410,
+          "output_tokens": 324
+        },
+        "sources": [
+          {
+            "id": 1,
+            "url": "https://codehub.gr/course/aws-cloud-practitioner-essentials/",
+            "title": "AWS Cloud Practitioner Essentials"
+          }
+        ]
+      },
+      {
+        "id": 27,
+        "question": "Τι απαιτεί η θέση Oracle PL/SQL Developer και ποιο εύρος αποδοχών αναφέρει;",
+        "answer": "Η θέση απαιτεί τουλάχιστον 3 χρόνια επαγγελματικής εμπειρίας στην ανάπτυξη βάσεων Oracle, ισχυρή γνώση PL/SQL και SQL, καθώς και κατανόηση σχεδιασμού και μοντελοποίησης σχεσιακών βάσεων, indexing και βελτιστοποίησης απόδοσης. Ζητείται πρακτική εμπειρία ή έκθεση σε ORDS και REST APIs, πτυχίο σε σχετικό τεχνικό πεδίο, ευχέρεια στα Αγγλικά και μητρικό ή ευχερή επίπεδο Ελληνικών. [1]\n\nΩς επιπλέον προσόντα αναφέρονται εμπειρία με ORDS σε αρχιτεκτονική microservices, γνώση του χρηματοοικονομικού ή ασφαλιστικού κλάδου και εμπειρία με Git ή CI/CD pipelines για deployments βάσεων. [1]\n\nΗ αγγελία εμφανίζει εύρος **2.000–2.200 € μικτά τον μήνα**, αλλά τα στοιχεία για την περίοδο αποδοχών είναι ασυνεπή· επομένως χρειάζεται επιβεβαίωση αν το ποσό είναι πράγματι μηνιαίο. [1]",
+        "completed": true,
+        "latency_ms": 10197,
+        "transport": "public-vercel",
+        "assessment": "good",
+        "review": "Correct Oracle PL/SQL requirements; check displayed amount versus conflicting pay-period information.",
+        "usage": {
+          "input_tokens": 15744,
+          "output_tokens": 431
+        },
+        "sources": [
+          {
+            "id": 1,
+            "url": "https://codehub.gr/job/po-946-oracle-pl-sql-developer/",
+            "title": "Oracle PL/SQL Developer"
+          }
+        ]
+      },
+      {
+        "id": 28,
+        "question": "Ποιες αγγελίες αναφέρουν μικτές μηνιαίες αποδοχές πάνω από 3.000 ευρώ;",
+        "answer": "Οι παρακάτω αγγελίες εμφανίζουν εύρος μικτών αποδοχών που είναι **ολόκληρο πάνω από 3.000 € τον μήνα**:\n\n- **Java Architect:** 3.500–4.000 € μικτά/μήνα. [1]\n- **Software Development Lead:** 3.800–4.200 € μικτά/μήνα. [3]\n- **Java Software Engineer:** 3.200–3.600 € μικτά/μήνα. [4]\n\nΣημείωση: παρότι οι αγγελίες εμφανίζουν μηνιαία ποσά, η περίοδος αποδοχών χρειάζεται επιβεβαίωση. Η αγγελία **RPA Developer** αναφέρει 3.000–3.500 €, οπότε δεν την περιλαμβάνω: το εύρος δεν είναι ολόκληρο πάνω από 3.000 €. [2]",
+        "completed": true,
+        "latency_ms": 12686,
+        "transport": "public-vercel",
+        "assessment": "partial",
+        "review": "Salary filtering is not exhaustive, and source pay-period conflicts prevent a fully verified monthly list. Inspect the run-specific answer rather than treating top results as all matching jobs.",
+        "usage": {
+          "input_tokens": 17597,
+          "output_tokens": 628
+        },
+        "sources": [
+          {
+            "id": 1,
+            "url": "https://codehub.gr/job/po-890-java-architect/",
+            "title": "Java Architect"
+          },
+          {
+            "id": 3,
+            "url": "https://codehub.gr/job/po-627-software-development-lead/",
+            "title": "Software Development Lead"
+          },
+          {
+            "id": 4,
+            "url": "https://codehub.gr/job/po-832-java-software-engineer/",
+            "title": "Java Software Engineer"
+          },
+          {
+            "id": 2,
+            "url": "https://codehub.gr/job/po-772-rpa-developer/",
+            "title": "RPA Developer"
+          }
+        ]
+      },
+      {
+        "id": 37,
+        "question": "Ο Payment Engineer παίρνει 3.000 ευρώ τον μήνα;",
+        "answer": "Η αγγελία εμφανίζει **1.700–2.025 € μικτά τον μήνα**, όχι 3.000 €. Ωστόσο, υπάρχει ασυμφωνία στα στοιχεία για την περίοδο αποδοχών, οπότε ο μηνιαίος χαρακτήρας του ποσού δεν επιβεβαιώνεται πλήρως. [1]",
+        "completed": true,
+        "latency_ms": 8196,
+        "transport": "public-vercel",
+        "assessment": "good",
+        "review": "Rejects false 3000 EUR premise; correctly quotes Payment Engineer 1700–2025 gross and flags pay-period confirmation.",
+        "usage": {
+          "input_tokens": 15484,
+          "output_tokens": 301
+        },
+        "sources": [
+          {
+            "id": 1,
+            "url": "https://codehub.gr/job/po-887-payment-engineer/",
+            "title": "Payment Engineer"
+          }
+        ]
+      }
+    ]
+  }
 }
